@@ -1,4 +1,5 @@
-# team1-react
 ## Getting Started
+
+### Install dependencies
+```bash
 pnpm install
-pnpm dev
