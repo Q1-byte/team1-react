@@ -1,7 +1,10 @@
+
+---
+
 ```md
 ## Getting Started
 
-Install dependencies and start development server:
+Make sure you have **pnpm** installed.
 
 ```bash
 pnpm install
