@@ -1,0 +1,9 @@
+{
+  "name": "gubu-root",
+  "private": true,
+  "scripts": {
+    "dev:client": "pnpm --filter @gibu/client dev",
+    "dev:admin": "pnpm --filter @gibu/admin dev",
+    "dev:all": "pnpm --parallel dev"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@gibu/admin",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "scheduler": "^0.27.0",
+    "vite": "^6.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2"
+  }
+}
