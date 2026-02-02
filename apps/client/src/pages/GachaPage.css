@@ -1,0 +1,41 @@
+.gacha-screen {
+    background-color: #99b9d9; /* 요청하신 그 배경색 */
+    min-height: 80vh; /* 헤더/푸터 제외 영역 꽉 채움 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    }
+
+    .gacha-image-container img {
+    width: 200px; /* 아이콘 크기 조절 */
+    }
+
+    /* 흔들기 애니메이션 */
+    @keyframes shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+    100% { transform: rotate(0deg); }
+    }
+
+    .shake {
+    animation: shake 0.2s infinite;
+    }
+
+    .difficulty-selector {
+    margin: 30px 0;
+    color: #333;
+    }
+
+    .draw-button {
+    padding: 12px 40px;
+    font-size: 18px;
+    background-color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
