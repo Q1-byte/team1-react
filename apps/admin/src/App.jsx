@@ -1,4 +1,4 @@
-import { SharedLayout } from "@gibu/ui";
+import { SharedLayout } from "@trip/ui";
 
 function App() {
   return (

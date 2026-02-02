@@ -1,5 +1,5 @@
 {
-  "name": "@gibu/client",
+  "name": "@trip/client",
   "scripts": {
     "dev": "vite"
   },
