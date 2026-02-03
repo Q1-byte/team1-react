@@ -1,0 +1,125 @@
+/* src/pages/SemiAutoPlan/PaymentStatus.css */
+
+/* 전체 레이아웃 컨테이너 */
+.payment-status-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    background-color: #f8f9fa;
+}
+
+/* 상태 표시 카드 */
+.status-card {
+    background: white;
+    padding: 50px 40px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.07);
+    text-align: center;
+    max-width: 420px;
+    width: 90%;
+}
+
+/* [성공/로딩용] 스피너 애니메이션 */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 25px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* [취소/실패용] 상태 아이콘 스타일 */
+.status-icon {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin: 0 auto 25px;
+}
+
+.status-icon.cancel {
+    background-color: #fff3cd; /* 경고 노란색 */
+    color: #856404;
+}
+
+.status-icon.fail {
+    background-color: #f8d7da; /* 위험 빨간색 */
+    color: #721c24;
+}
+
+/* 텍스트 스타일링 */
+.status-card h2 {
+    margin-bottom: 12px;
+    color: #212529;
+    font-size: 1.6rem;
+}
+
+.status-card p {
+    color: #495057;
+    line-height: 1.6;
+    margin-bottom: 5px;
+}
+
+.sub-text {
+    font-size: 0.85rem;
+    color: #adb5bd;
+    margin-top: 10px;
+}
+
+.error-msg {
+    color: #dc3545;
+    font-weight: 600;
+    margin-bottom: 15px !important;
+}
+
+/* 하단 버튼 그룹 */
+.status-button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 35px;
+}
+
+/* 버튼 공통 스타일 */
+.status-button-group button {
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+/* 다시 시도/결제 버튼 */
+.retry-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.retry-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* 홈으로/이전으로 버튼 */
+.home-btn {
+    background-color: #f1f3f5;
+    color: #495057;
+}
+
+.home-btn:hover {
+    background-color: #e9ecef;
+}
