@@ -1,0 +1,222 @@
+/* 1. 기본 컨테이너 스타일 */
+.write-container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.write-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    color: #222;
+    text-align: center;
+    border-bottom: 2px solid #f1f1f1;
+    padding-bottom: 20px;
+}
+
+/* 2. 레이아웃: 평점과 난이도를 가로로 배치 */
+.input-row {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 5px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+/* 3. 공통 입력 요소 스타일 */
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.write-form input[type="text"],
+.write-form textarea,
+.write-form select {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: #fafafa;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.write-form input:focus, 
+.write-form textarea:focus, 
+.write-form select:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.write-form textarea {
+    height: 280px;
+    resize: none;
+    line-height: 1.6;
+}
+
+/* 4. 별점(Rating) 시스템 스타일 */
+.rating-group {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.rating-group input { 
+    display: none; 
+}
+
+.rating-group label {
+    font-size: 2.5rem;
+    color: #eee;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.rating-group input:checked ~ label,
+.rating-group label:hover,
+.rating-group label:hover ~ label {
+    color: #ffc107;
+}
+
+/* 5. 이미지 업로드 및 미리보기 영역 */
+.image-upload-section {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 12px;
+    border: 2px dashed #ccd0d4;
+    margin-top: 10px;
+}
+
+.file-input {
+    width: 100%;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.image-preview-container {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+/* 🚩 버튼과 이미지를 감싸는 카드 구조 */
+.preview-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.preview-item {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 🚩 본문 삽입 버튼 */
+.insert-tag-btn {
+    padding: 6px 12px;
+    background-color: #34495e;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.insert-tag-btn:hover {
+    background-color: #2c3e50;
+}
+
+.helper-text {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 10px;
+    display: block;
+}
+
+/* 6. 공개 설정 영역 스타일 */
+.public-setting-area {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.checkbox-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #444;
+}
+
+/* 7. 하단 액션 버튼 */
+.write-btns {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 50px;
+}
+
+.write-btns button {
+    padding: 16px 50px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s, transform 0.1s; /* active 구문 수정 */
+}
+
+/* 클릭 시 눌리는 효과 별도 분리 */
+.write-btns button:active {
+    transform: scale(0.96);
+}
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #f1f1f1;
+    color: #555;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.cancel-btn:hover {
+    background-color: #e2e2e2;
+}

@@ -1,0 +1,92 @@
+/* 상세 페이지 전체 컨테이너 */
+.detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+    margin-bottom: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.back-button:hover {
+    background: #e0e0e0;
+}
+
+/* 상세 카드 레이아웃 */
+.detail-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.detail-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+.detail-body {
+    padding: 30px;
+}
+
+.detail-title {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: #111;
+}
+
+/* 기간, 장소 정보 박스 */
+.info-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.info-box p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.section-title {
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    margin-top: 30px;
+    font-size: 20px;
+}
+
+.description {
+    line-height: 1.8;
+    color: #444;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+/* 참여 신청 버튼 */
+.apply-button {
+    width: 100%;
+    padding: 18px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: background 0.2s;
+}
+
+.apply-button:hover {
+    background: #0056b3;
+}
