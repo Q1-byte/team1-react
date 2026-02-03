@@ -1,11 +1,16 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
     const navigate = useNavigate();
-    const { user, logout } = useAuth();
+    const location = useLocation();
+    
+    // 1. Context에서 정의된 변수들을 그대로 가져옵니다.
+    const { user, logout, isAuthenticated, isAdmin } = useAuth();
 
-    // 버튼 클릭 이벤트 함수들
+    // 현재 페이지가 로그인 페이지인지 확인
+    const isLoginPage = location.pathname === '/login';
+
     const handleLogin = () => navigate('/login');
     const handleJoin = () => navigate('/register');
     const handleMyPage = () => navigate('/mypage');
@@ -19,40 +24,42 @@ export default function Header() {
     };
 
     return (
-        <header className="header">
-            <div className="header-inner">
-                {user ? (
-                    /* -------------------------------------------
-                        [ 1] 로그인 상태 (유저 공통 + 관리자 전용)
-                    ---------------------------------------------- */
-                    <div className="header-user-zone">
-                        <span className="user-greeting">
-                            <strong>{user.username}</strong>님 안녕하세요
-                            <span className="greeting-spacer"></span>
-                            {user.role === 'ADMIN' && <span className="admin-badge">(관리자)</span>}
-                        </span>
+        <header className="header" style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 100, backgroundColor: 'transparent', borderBottom: 'none', boxShadow: 'none' }}>
+            <div className="header-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: '100%', padding: '20px 40px', boxSizing: 'border-box' }}>
+                
+                <div className="header-left">
+                    <img src="/banner/logo.jpg" alt="Logo" onClick={() => navigate('/')} style={{ cursor: 'pointer', height: '100px', width: 'auto', borderRadius: '50%' , marginLeft: '80px'}} />
+                </div>
+                
+                <div className="header-right" style={{ display: 'flex', alignItems: 'center' }}>
+                    {/* 2. user.isLoggedIn 대신 Context의 isAuthenticated를 사용 */}
+                    {isAuthenticated ? (
+                        <div className="user-zone" style={{ display: 'flex', alignItems: 'center' }}>
+                            <span className="user-greeting" style={{ marginRight: '20px', whiteSpace: 'nowrap', color: '#fff', fontWeight: '500', textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
+                                <strong>{user?.id}</strong>님 안녕하세요
+                                {isAdmin && (
+                                    <span style={{ color: '#ff4d4f', fontWeight: '900', marginLeft: '8px' }}>(관리자)</span>
+                                )}
+                            </span>
 
+                            <button onClick={handleMyPage} className="header-btn">MYPAGE</button>
 
-                        {/* 마이페이지는 로그인한 모든 유저에게 보임 */}
-                        <button onClick={handleMyPage} className="header-btn">MYPAGE</button>
+                            {/* 3. isAdmin 변수를 그대로 사용하여 버튼 노출 결정 */}
+                            {isAdmin && (
+                                <button onClick={handleAdminPage} className="header-btn admin-btn">ADMIN</button>
+                            )}
 
-                        {/* 관리자일 때만 추가로 보이는 버튼 */}
-                        {user.role === 'ADMIN' && (
-                            <button onClick={handleAdminPage} className="header-btn admin-btn">ADMIN</button>
-                        )}
-
-                        {/* 로그아웃은 로그인 상태라면 무조건 보임 */}
-                        <button onClick={handleLogout} className="header-btn">LOGOUT</button>
-                    </div>
-                ) : (
-                    /* -------------------------------------------
-                        [2] 비로그인 상태 (기본 버튼)
-                    ---------------------------------------------- */
-                    <div className="header-auth-zone">
-                        <button onClick={handleLogin} className="header-btn">LOGIN</button>
-                        <button onClick={handleJoin} className="header-btn">JOIN</button>
-                    </div>
-                )}
+                            <button onClick={handleLogout} className="header-btn">LOGOUT</button>
+                        </div>
+                    ) : (
+                        !isLoginPage && (
+                            <div className="header-auth-zone">
+                                <button onClick={handleLogin} className="header-btn">LOGIN</button>
+                                <button onClick={handleJoin} className="header-btn">JOIN</button>
+                            </div>
+                        )
+                    )}
+                </div>
             </div>
         </header>
     );
