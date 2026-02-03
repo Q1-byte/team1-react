@@ -1,0 +1,97 @@
+/* 전체 컨테이너 */
+.plan-keyword-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 40px 30px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+/* 헤더 영역 */
+.keyword-header h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.keyword-header p {
+    color: #888;
+    font-size: 0.95rem;
+    margin-bottom: 40px;
+}
+
+/* 키워드 그리드 레이아웃 */
+.keyword-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 15px;
+    margin-bottom: 50px;
+}
+
+/* 각 키워드 아이템 */
+.keyword-item {
+    padding: 18px 10px;
+    border: 2px solid #f0f0f0;
+    border-radius: 14px;
+    background: #fff;
+    color: #555;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.keyword-item:hover {
+    border-color: #007bff;
+    background: #f8fbff;
+}
+
+/* 활성화(선택) 상태 */
+.keyword-item.active {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+/* 하단 버튼 그룹 */
+.button-group {
+    display: flex;
+    gap: 15px;
+}
+
+.back-button, .submit-button {
+    flex: 1;
+    padding: 18px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s;
+}
+
+.back-button {
+    background-color: #f1f3f5;
+    color: #495057;
+}
+
+.back-button:hover {
+    background-color: #e9ecef;
+}
+
+.submit-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+.submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

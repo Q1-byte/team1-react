@@ -11,7 +11,7 @@ export default function NavBar() {
     ];
 
     const handleMenuClick = (menu) => {
-        if (menu.link && menu.id === 2) {
+        if (menu.link && (menu.id === 1 || menu.id === 2)) {
             // 랜덤여행(가챠) 클릭 시 페이지 이동
             navigate(menu.link);
         } else {

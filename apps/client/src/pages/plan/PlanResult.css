@@ -1,0 +1,84 @@
+.result-layout {
+    display: flex;
+    gap: 30px;
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px;
+    align-items: flex-start;
+}
+
+.itinerary-section {
+    flex: 2; /* 왼쪽 일정이 더 넓게 */
+}
+
+.day-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.day-tabs button {
+    padding: 10px 25px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.day-tabs button.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.itinerary-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 15px;
+}
+
+.itinerary-card.removed {
+    opacity: 0.5;
+    background: #f8f9fa;
+}
+
+.cost-summary-card {
+    flex: 1; /* 오른쪽 요약 카드는 좁게 */
+    position: sticky;
+    top: 20px;
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.cost-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.cost-row.total {
+    border-top: 2px solid #333;
+    padding-top: 15px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.book-btn {
+    width: 100%;
+    padding: 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
