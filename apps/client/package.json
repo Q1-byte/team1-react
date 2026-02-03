@@ -1,11 +1,13 @@
 {
-  "name": "@gibu/client",
+  "name": "@trip/client",
   "scripts": {
     "dev": "vite"
   },
   "dependencies": {
+    "axios": "^1.13.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-router-dom": "^7.13.0",
     "scheduler": "^0.27.0",
     "vite": "^6.0.0"
   },
