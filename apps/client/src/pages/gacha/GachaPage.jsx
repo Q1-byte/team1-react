@@ -34,7 +34,7 @@ const GachaPage = () => {
         <div className="gacha-screen">
             {/* isSpinning 상태에 따라 shake 애니메이션 클래스가 추가됩니다. */}
             <div className={`gacha-image-container ${isSpinning ? 'shake' : ''}`}>
-                <img src="../public/GachaMachine.png" alt="gachamachine" />
+                <img src="/banner/GachaMachine.png" alt="gachamachine" />
             </div>
 
             <div className="difficulty-selector">
