@@ -46,8 +46,7 @@ const GachaPage = () => {
             minHeight: '100vh', 
             backgroundColor: '#f0f2f5'
         }}>
-            <style>
-                {\
+            <style>{`
                 @keyframes shake {
                     0% { transform: rotate(0deg); }
                     25% { transform: rotate(2deg); }
@@ -67,8 +66,7 @@ const GachaPage = () => {
                 .shake { animation: shake 0.2s infinite; }
                 .capsule-pop { animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
                 .list-fade-in { animation: fadeInUp 0.8s ease-out; }
-                \}
-            </style>
+            `}</style>
 
             <div className={isShaking ? 'shake' : ''}>
                 <img src="/banner/GachaMachine.png" alt="machine" style={{ width: '450px' }} />
@@ -108,7 +106,7 @@ const GachaPage = () => {
                                         checked={selectedLevel === num} 
                                         onChange={() => setSelectedLevel(num)} 
                                     />
-                                    {"".repeat(num)}
+                                    {"★".repeat(num)}
                                 </label>
                             ))}
                         </div>
@@ -128,10 +126,10 @@ const GachaPage = () => {
 
             {showList && (
                 <div className="list-fade-in" style={{ marginTop: '40px', width: '100%', maxWidth: '600px' }}>
-                    <h3 style={{ textAlign: 'center', marginBottom: '20px' }}> 추천 여행지</h3>
+                    <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>🎉 추천 여행지</h3>
                     {resultList.map(item => (
                         <div key={item.id} style={resultCardStyle}>
-                            <h2 style={{ color: '#007bff', marginBottom: '10px' }}> {item.name}</h2>
+                            <h2 style={{ color: '#007bff', marginBottom: '10px' }}>📍 {item.name}</h2>
                             <p style={{ color: '#666', lineHeight: '1.6' }}>{item.desc}</p>
                             <button 
                                 onClick={() => { setShowList(false); }} 
@@ -148,6 +146,6 @@ const GachaPage = () => {
 };
 
 const btnStyle = { padding: '15px 50px', fontSize: '1.1rem', borderRadius: '30px', cursor: 'pointer', backgroundColor: '#fff', border: '2px solid #007bff', fontWeight: 'bold' };
-const resultCardStyle = { padding: '30px', borderRadius: '25px', backgroundColor: '#fff', boxShadow: '0 15px 35px rgba(0,0,0,0.1)', textAlign: 'center' };
+const resultCardStyle = { backgroundColor: '#fff', borderRadius: '15px', padding: '30px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', textAlign: 'center' };
 
 export default GachaPage;
