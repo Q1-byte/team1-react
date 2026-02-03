@@ -12,7 +12,7 @@ import MidBanner from '../components/MidBanner';
 import ReviewSection from '../components/ReviewSection';
 
 // 관리자 페이지
-import AdminLayout from '../components/admin/AdminLayout';
+import AdminLayout from '../pages/admin/AdminLayout';
 import AdminDashboard from '../pages/admin/Dashboard';
 import UserManagement from '../pages/admin/users/UserList';
 import SpotManagement from '../pages/admin/spots/SpotList';
