@@ -1,0 +1,355 @@
+.mypage-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  padding-top: 160px;
+}
+
+/* 사용자 정보 헤더 */
+.mypage-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 32px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.user-info h2 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+}
+
+.user-info p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.user-points {
+  text-align: right;
+}
+
+.points-label {
+  display: block;
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.points-value {
+  display: block;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+/* 탭 메뉴 */
+.mypage-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #eee;
+}
+
+.tab {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: #667eea;
+}
+
+.tab.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  font-weight: 600;
+}
+
+/* 컨텐츠 */
+.mypage-content {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.mypage-content h3 {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+  color: #2c3e50;
+}
+
+/* 여행 계획 카드 */
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.plan-card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.plan-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.plan-header h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.plan-info {
+  margin-bottom: 16px;
+}
+
+.plan-info p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.plan-price {
+  font-weight: bold;
+  color: #2c3e50 !important;
+  font-size: 16px !important;
+}
+
+.plan-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* 최근 본 계획 */
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.recent-item:hover {
+  background: #f8f9fa;
+}
+
+.recent-item h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.recent-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.recent-item small {
+  color: #999;
+  font-size: 12px;
+}
+
+/* 회원정보 폼 */
+.profile-form {
+  max-width: 600px;
+}
+
+.profile-form .form-group {
+  margin-bottom: 20px;
+}
+
+.profile-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.profile-form input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.profile-form input:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.profile-form input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* 공통 버튼 */
+.btn-primary, .btn-success, .btn-secondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+  background: #2ecc71;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #27ae60;
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #7f8c8d;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* 테이블 */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  background: #f8f9fa;
+  padding: 14px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 14px;
+}
+
+.data-table td {
+  padding: 14px;
+  border-bottom: 1px solid #dee2e6;
+  font-size: 14px;
+}
+
+.data-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+/* 배지 */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .mypage-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .user-points {
+    text-align: center;
+  }
+
+  .plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mypage-tabs {
+    overflow-x: auto;
+  }
+
+  .tab {
+    white-space: nowrap;
+  }
+}

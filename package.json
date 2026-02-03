@@ -1,9 +1,12 @@
 {
-  "name": "gubu-root",
+  "name": "trip-root",
   "private": true,
   "scripts": {
-    "dev:client": "pnpm --filter @gibu/client dev",
-    "dev:admin": "pnpm --filter @gibu/admin dev",
+    "dev:client": "pnpm --filter @trip/client dev",
+    "dev:admin": "pnpm --filter @trip/admin dev",
     "dev:all": "pnpm --parallel dev"
+  },
+  "dependencies": {
+    "axios": "^1.13.4"
   }
 }

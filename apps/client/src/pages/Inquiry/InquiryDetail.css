@@ -1,0 +1,91 @@
+    .inquiry-detail-wrapper {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 40px;
+    background: #fff;
+    border: 1px solid #eee;
+    }
+
+    .detail-header {
+    border-bottom: 2px solid #333;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    }
+
+    .detail-header h2 {
+    margin: 15px 0;
+    font-size: 24px;
+    }
+
+    .detail-meta {
+    color: #888;
+    font-size: 14px;
+    display: flex;
+    gap: 20px;
+    }
+
+    .user-question {
+    min-height: 200px;
+    line-height: 1.6;
+    white-space: pre-wrap; /* 줄바꿈 유지 */
+    }
+
+    .attached-img {
+    max-width: 100%;
+    margin-top: 20px;
+    border-radius: 4px;
+    }
+
+    /* 답변 박스 스타일 */
+    .admin-answer {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    margin-top: 40px;
+    border-left: 4px solid #4a5568;
+    }
+
+    .answer-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 14px;
+    }
+
+    /* 관리자 답변 입력창 */
+    .admin-answer-form textarea {
+    width: 100%;
+    height: 150px;
+    padding: 15px;
+    margin-top: 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: none;
+    }
+
+    .answer-submit-btn {
+    background-color: #4a5568;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    float: right;
+    }
+
+    .detail-footer {
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    }
+
+    .back-btn, .delete-btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    }
+
+    .back-btn { background: #eee; border: none; }
+    .delete-btn { background: #ff4d4f; color: white; border: none; }

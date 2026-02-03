@@ -1,0 +1,176 @@
+/* 레이아웃 배경 및 정렬 */
+.review-detail-layout {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 50px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 네비게이션 버튼 */
+.detail-nav-header {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 25px;
+}
+
+.back-list-btn {
+    background-color: transparent;
+    border: 1px solid #ced4da;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #495057;
+    transition: background 0.2s;
+}
+
+.back-list-btn:hover {
+    background-color: #e9ecef;
+}
+
+/* 메인 카드 박스 */
+.review-main-card {
+    width: 100%;
+    max-width: 800px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    padding: 50px;
+}
+
+/* 헤더 디자인 */
+.review-header {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.review-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    line-height: 1.4;
+    margin-bottom: 20px;
+    color: #212529;
+    letter-spacing: -0.03em;
+}
+
+.review-meta {
+    display: flex;
+    align-items: center;
+    color: #adb5bd;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+}
+
+.meta-sep {
+    margin: 0 12px;
+    color: #e9ecef;
+}
+
+/* 상단 정보 배지 영역 */
+.review-summary {
+    display: flex;
+    gap: 15px;
+}
+
+.summary-item {
+    background-color: #f8f9fa;
+    padding: 12px 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.summary-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #adb5bd;
+    text-transform: uppercase;
+}
+
+.summary-value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #343a40;
+}
+
+.star-gold {
+    color: #fab005;
+}
+
+/* 본문 디자인 (블로그형 통합 영역) */
+.review-body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 🚩 새로 추가된 믹스 영역 컨테이너 */
+.content-mixed-area {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 🚩 기존 content-text 스타일을 span 기반의 조각에도 동일하게 적용 */
+.content-text-part {
+    font-size: 1.15rem;
+    line-height: 1.9;
+    color: #495057;
+    white-space: pre-wrap;
+    display: block;
+}
+
+/* 🚩 갤러리 카드 (사진 조각) */
+.gallery-card {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.img-frame {
+    width: 100%;
+    height: 500px; /* 원본 500px 유지 */
+    border-radius: 15px;
+    overflow: hidden;
+    background-color: #f1f3f5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.fixed-height-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.img-name-tag {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #ced4da; /* 원본 색상 유지 */
+}
+
+/* 하단 신고 영역 */
+.review-footer {
+    margin-top: 70px;
+    padding-top: 30px;
+    border-top: 1px solid #f1f3f5;
+    text-align: right;
+}
+
+.report-btn {
+    background-color: transparent;
+    border: 1px solid #ffc9c9;
+    color: #fa5252;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.report-btn:hover {
+    background-color: #fff5f5;
+}

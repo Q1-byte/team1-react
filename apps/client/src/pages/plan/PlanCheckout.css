@@ -1,0 +1,165 @@
+/* src/pages/SemiAutoPlan/PlanCheckout.css */
+.checkout-container {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 40px 30px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+.checkout-title {
+    text-align: center;
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+}
+
+.checkout-title h2 {
+    font-size: 1.6rem;
+    color: #212529;
+    margin-bottom: 8px;
+}
+
+.checkout-title p {
+    color: #868e96;
+    font-size: 0.9rem;
+}
+
+/* 요약 정보 박스 */
+.summary-info-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.info-row span {
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+.keyword-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.mini-tag {
+    background: #e9ecef;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+
+/* 총 결제 금액 박스 */
+.total-price-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-top: 1px dashed #dee2e6;
+    margin-bottom: 30px;
+}
+
+.total-price-box span:first-child {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.price-amount {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #007bff;
+}
+
+/* 결제 수단 선택 섹션 */
+.method-section h3 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: #343a40;
+}
+
+.method-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 35px;
+}
+
+.method-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    border: 2px solid #f1f3f5;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.method-item:hover {
+    border-color: #dee2e6;
+}
+
+.method-item.active {
+    border-color: #007bff;
+    background-color: #f0f7ff;
+}
+
+.method-icon {
+    font-size: 1.2rem;
+}
+
+.method-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.method-item.active .method-name {
+    color: #007bff;
+}
+
+/* 하단 버튼 그룹 */
+.pay-submit-btn {
+    width: 100%;
+    padding: 18px;
+    background: #007bff; /* 카카오페이/토스 통합 색상으로 블루 계열 추천 */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 12px;
+}
+
+.pay-submit-btn:hover {
+    background: #0056b3;
+}
+
+.back-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #adb5bd;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.back-btn:hover {
+    color: #868e96;
+}
