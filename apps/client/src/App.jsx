@@ -4,8 +4,6 @@ import './App.css';
 
 // 컴포넌트 임포트
 import Header from './components/Header';
-import TopSlider from './components/TopSlider';
-import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -16,14 +14,12 @@ export default function App() {
   }
 
   return (
-    <div className="App" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div className="App" style={{ position: 'relative', display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       {/* 상단 영역 */}
       <Header />
-      <TopSlider />
-      <NavBar />
 
       {/* 라우트에 따라 바뀌는 영역 */}
-      <main style={{ flex: 1 }}>
+      <main style={{ flex: 1, paddingTop: '140px', backgroundColor: '#f8f9fa' }}>
         <Outlet />
       </main>
 

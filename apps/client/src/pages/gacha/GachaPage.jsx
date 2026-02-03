@@ -44,7 +44,7 @@ const GachaPage = () => {
             alignItems: 'center', 
             padding: '50px', 
             minHeight: '100vh', 
-            backgroundColor: '#f0f2f5'
+            backgroundColor: '#f8f9fa'
         }}>
             <style>{`
                 @keyframes shake {

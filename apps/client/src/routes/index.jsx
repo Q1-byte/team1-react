@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import App from '../App';
 
 // 페이지 임포트
@@ -8,6 +9,8 @@ import MyPage from '../pages/mypage/MyPage';
 import GachaPage from '../pages/gacha/GachaPage';
 
 // 메인 페이지 컴포넌트
+import TopSlider from '../components/TopSlider';
+import NavBar from '../components/NavBar';
 import MidBanner from '../components/MidBanner';
 import ReviewSection from '../components/ReviewSection';
 
@@ -34,9 +37,13 @@ import InquiryManagement from '../pages/admin/inquiries/InquiryList';
 
 // Protected Route (로그인 필요)
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('auth_token');
+  const { isAuthenticated, loading } = useAuth();
 
-  if (!token) {
+  if (loading) {
+    return <div style={{ padding: '40px', textAlign: 'center' }}>로딩 중...</div>;
+  }
+
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
@@ -45,53 +52,53 @@ function ProtectedRoute({ children }) {
 
 // Guest Route (로그인 시 접근 불가)
 function GuestRoute({ children }) {
-  const token = localStorage.getItem('auth_token');
+  const { isAuthenticated, loading } = useAuth();
 
-  if (token) {
+  if (loading) {
+    return <div style={{ padding: '40px', textAlign: 'center' }}>로딩 중...</div>;
+  }
+
+  if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
   return children;
 }
 
-// 메인 홈 컴포넌트
+// 메인 페이지 컴포넌트 임포트
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+
+// 메인 홈 컴포넌트 (헤더가 슬라이더 위에 떠있음)
 function HomePage() {
   return (
-    <>
+    <div style={{ position: 'relative' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 1000 }}>
+        <Header />
+      </div>
+      <TopSlider />
+      <NavBar />
       <MidBanner />
       <ReviewSection />
-    </>
+      <Footer />
+    </div>
   );
 }
 
 export const router = createBrowserRouter([
+  // 메인페이지 (별도 레이아웃 - 헤더가 슬라이더 위에)
+  {
+    path: '/',
+    element: <HomePage />
+  },
+  // 다른 페이지들 (App 레이아웃 - 헤더가 일반 흐름)
   {
     path: '/',
     element: <App />,
     children: [
       {
-        index: true,
-        element: <HomePage />
-      },
-      {
         path: 'gacha',
         element: <GachaPage />
-      },
-      {
-        path: 'mypage',
-        element: (
-          <ProtectedRoute>
-            <MyPage />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: 'login',
-        element: (
-          <GuestRoute>
-            <Login />
-          </GuestRoute>
-        )
       },
       {
         path: 'register',
@@ -132,6 +139,24 @@ export const router = createBrowserRouter([
         element: <PaymentCancel />
       }
     ]
+  },
+  // 로그인 페이지 (헤더/푸터만)
+  {
+    path: '/login',
+    element: (
+      <GuestRoute>
+        <Login />
+      </GuestRoute>
+    )
+  },
+  // 마이페이지 (헤더/푸터만)
+  {
+    path: '/mypage',
+    element: (
+      <ProtectedRoute>
+        <MyPage />
+      </ProtectedRoute>
+    )
   },
   // 관리자 페이지
   {
