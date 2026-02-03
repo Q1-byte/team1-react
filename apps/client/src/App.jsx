@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import './App.css';
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 
 // 컴포넌트 임포트
 import Header from './components/Header';
@@ -42,6 +44,8 @@ export default function App() {
           <Route path="/" element={<MainLayout />} />
           <Route path="/gacha" element={<GachaPage />} />
           <Route path="*" element={<MainLayout />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
           {/* [박진희 추가] 일반 예약 시스템 관련 페이지들 등록 */}
           <Route path="/reserve" element={<PlanSearch />} />
