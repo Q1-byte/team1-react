@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 
 const travelDestinations = [
     { id: 1, name: "제주도", level: 1, desc: "초보 여행자에게 딱! 푸른 바다를 보러 가요." },
@@ -19,12 +19,10 @@ const GachaPage = () => {
         setShowList(false);
         setResultList([]);
 
-        // 1단계: 1초 동안 흔들기
         setTimeout(() => {
             setIsShaking(false);
             setShowCapsule(true); 
 
-            // 2단계: 1.5초 후 결과 공개
             setTimeout(() => {
                 setShowCapsule(false); 
                 
@@ -36,7 +34,7 @@ const GachaPage = () => {
                 }
             }, 1500); 
 
-        }, 1000); // 👈 괄호 위치 수정 완료
+        }, 1000);
     };
 
     return (
@@ -46,10 +44,10 @@ const GachaPage = () => {
             alignItems: 'center', 
             padding: '50px', 
             minHeight: '100vh', 
-            backgroundColor: '#f0f2f5' // 🎨 여기서 배경색 수정 가능!
+            backgroundColor: '#f0f2f5'
         }}>
             <style>
-                {`
+                {\
                 @keyframes shake {
                     0% { transform: rotate(0deg); }
                     25% { transform: rotate(2deg); }
@@ -69,15 +67,13 @@ const GachaPage = () => {
                 .shake { animation: shake 0.2s infinite; }
                 .capsule-pop { animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
                 .list-fade-in { animation: fadeInUp 0.8s ease-out; }
-                `}
+                \}
             </style>
 
-            {/* 1. 가챠 머신 영역 */}
             <div className={isShaking ? 'shake' : ''}>
                 <img src="/banner/GachaMachine.png" alt="machine" style={{ width: '450px' }} />
             </div>
 
-            {/* 2. 난이도 선택 & 버튼 */}
             {!showCapsule && !showList && (
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
                     <div style={{ 
@@ -94,7 +90,7 @@ const GachaPage = () => {
                             padding: '10px 20px', 
                             border: '2px solid #ddd', 
                             borderRadius: '10px',
-                            backgroundColor: '#001F3F' // 별 박스 배경색 (진한 남색)
+                            backgroundColor: '#001F3F'
                         }}>
                             {[1, 2, 3].map(num => (
                                 <label key={num} style={{ 
@@ -112,7 +108,7 @@ const GachaPage = () => {
                                         checked={selectedLevel === num} 
                                         onChange={() => setSelectedLevel(num)} 
                                     />
-                                    {"⭐".repeat(num)}
+                                    {"".repeat(num)}
                                 </label>
                             ))}
                         </div>
@@ -123,7 +119,6 @@ const GachaPage = () => {
                 </div>
             )}
 
-            {/* 3. 중간 연출 */}
             {showCapsule && (
                 <div className="capsule-pop" style={{ marginTop: '20px', textAlign: 'center' }}>
                     <img src="/banner/Gachacapsule.png" alt="opened capsule" style={{ width: '300px' }} />
@@ -131,13 +126,12 @@ const GachaPage = () => {
                 </div>
             )}
 
-            {/* 4. 최종 결과 */}
             {showList && (
                 <div className="list-fade-in" style={{ marginTop: '40px', width: '100%', maxWidth: '600px' }}>
-                    <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>🔍 추천 여행지</h3>
+                    <h3 style={{ textAlign: 'center', marginBottom: '20px' }}> 추천 여행지</h3>
                     {resultList.map(item => (
                         <div key={item.id} style={resultCardStyle}>
-                            <h2 style={{ color: '#007bff', marginBottom: '10px' }}>✈️ {item.name}</h2>
+                            <h2 style={{ color: '#007bff', marginBottom: '10px' }}> {item.name}</h2>
                             <p style={{ color: '#666', lineHeight: '1.6' }}>{item.desc}</p>
                             <button 
                                 onClick={() => { setShowList(false); }} 
@@ -153,7 +147,6 @@ const GachaPage = () => {
     );
 };
 
-// 하단 스타일 정의 (중복 선언 방지를 위해 containerStyle은 제거)
 const btnStyle = { padding: '15px 50px', fontSize: '1.1rem', borderRadius: '30px', cursor: 'pointer', backgroundColor: '#fff', border: '2px solid #007bff', fontWeight: 'bold' };
 const resultCardStyle = { padding: '30px', borderRadius: '25px', backgroundColor: '#fff', boxShadow: '0 15px 35px rgba(0,0,0,0.1)', textAlign: 'center' };
 

@@ -13,6 +13,17 @@ import ReviewSection from '../components/ReviewSection';
 
 // 관리자 페이지
 import AdminLayout from '../pages/admin/AdminLayout';
+
+// Plan 페이지
+import PlanSearch from '../pages/plan/PlanSearch';
+import PlanKeyword from '../pages/plan/PlanKeyword';
+import PlanResult from '../pages/plan/PlanResult';
+import PlanCheckout from '../pages/plan/PlanCheckout';
+
+// Payment 페이지
+import PaymentSuccess from '../pages/payment/PaymentSuccess';
+import PaymentFail from '../pages/payment/PaymentFail';
+import PaymentCancel from '../pages/payment/PaymentCancel';
 import AdminDashboard from '../pages/admin/Dashboard';
 import UserManagement from '../pages/admin/users/UserList';
 import SpotManagement from '../pages/admin/spots/SpotList';
@@ -89,6 +100,36 @@ export const router = createBrowserRouter([
             <Register />
           </GuestRoute>
         )
+      },
+      // Plan 관련 라우트
+      {
+        path: 'reserve',
+        element: <PlanSearch />
+      },
+      {
+        path: 'keyword',
+        element: <PlanKeyword />
+      },
+      {
+        path: 'result',
+        element: <PlanResult />
+      },
+      {
+        path: 'checkout',
+        element: <PlanCheckout />
+      },
+      // Payment 관련 라우트
+      {
+        path: 'payment/success',
+        element: <PaymentSuccess />
+      },
+      {
+        path: 'payment/fail',
+        element: <PaymentFail />
+      },
+      {
+        path: 'payment/cancel',
+        element: <PaymentCancel />
       }
     ]
   },

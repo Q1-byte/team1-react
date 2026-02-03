@@ -112,8 +112,10 @@ function Login() {
             onClick={() => handleSocialLogin('kakao')}
             disabled={loading}
           >
-            <span className="social-icon">💬</span>
-            카카오로 시작하기
+            <svg className="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="#000000">
+              <path d="M12 3C6.48 3 2 6.58 2 11.15c0 2.92 1.94 5.5 4.86 6.96-.21.76-.78 2.75-.89 3.18-.14.55.2.54.42.39.17-.12 2.71-1.84 3.81-2.59.59.09 1.19.13 1.8.13 5.52 0 10-4.08 10-8.07C22 6.58 17.52 3 12 3z"/>
+            </svg>
+            카카오로 로그인
           </button>
 
           <button
@@ -122,8 +124,8 @@ function Login() {
             onClick={() => handleSocialLogin('google')}
             disabled={loading}
           >
-            <span className="social-icon">G</span>
-            구글로 시작하기
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" className="social-icon" />
+            구글로 로그인
           </button>
         </div>
 
