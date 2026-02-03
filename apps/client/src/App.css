@@ -5,10 +5,12 @@
     padding: 0;
     }
 
-    body {
+    html, body, #root {
     font-family: 'Pretendard';
     color: #333;
     line-height: 1.6;
+    background-color: #f8f9fa;
+    min-height: 100vh;
     }
 
     /* 3. 타이틀(제목) 전용 폰트 설정 */
@@ -20,15 +22,15 @@
 
     /* 2. 헤더 스타일 */
     .header {
-    position: absolute;      /* 👈 슬라이더 위에 띄우기 위한 핵심 */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;             /* 가로 전체 너비 */
-    z-index: 1000;           /* 👈 슬라이더보다 높은 숫자로 설정 */
+    z-index: 1000;
     padding: 15px 40px;
     display: flex;
     justify-content: flex-end;
-    background-color: transparent; /* 👈 배경을 투명하게 하여 사진이 보이게 함 */
+    background-color: transparent;
 
     }
 

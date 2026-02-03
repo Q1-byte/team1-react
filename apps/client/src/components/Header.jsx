@@ -24,7 +24,7 @@ export default function Header() {
     };
 
     return (
-        <header className="header" style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 100, backgroundColor: 'transparent', borderBottom: 'none', boxShadow: 'none' }}>
+        <header className="header" style={{ width: '100%', zIndex: 100, backgroundColor: 'transparent', borderBottom: 'none', boxShadow: 'none' }}>
             <div className="header-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: '100%', padding: '20px 40px', boxSizing: 'border-box' }}>
                 
                 <div className="header-left">

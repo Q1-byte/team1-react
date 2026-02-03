@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
 import './Auth.css';
 
 function Login() {
@@ -54,7 +56,9 @@ function Login() {
   };
 
   return (
-    <div className="auth-container">
+    <>
+      <Header />
+      <div className="auth-container">
       <div className="auth-box">
         <h1 className="auth-title">로그인</h1>
         <p className="auth-subtitle">여행 계획을 시작하세요</p>
@@ -136,6 +140,8 @@ function Login() {
         </div>
       </div>
     </div>
+      <Footer />
+    </>
   );
 }
 

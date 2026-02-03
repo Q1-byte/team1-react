@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
 import './MyPage.css';
 
 function MyPage() {
@@ -93,7 +95,9 @@ function MyPage() {
   };
 
   return (
-    <div className="mypage-container">
+    <>
+      <Header />
+      <div className="mypage-container">
       {/* 사용자 정보 헤더 */}
       <div className="mypage-header">
         <div className="user-info">
@@ -255,6 +259,8 @@ function MyPage() {
         )}
       </div>
     </div>
+      <Footer />
+    </>
   );
 }
 
