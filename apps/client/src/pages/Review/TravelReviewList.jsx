@@ -20,7 +20,7 @@ const TravelReviewList = () => {
             is_deleted: false,
             view_count: 1250,
             created_at: "2026-03-05",
-            thumb: "/event/flower.jpg" // review_image 테이블의 첫 번째 이미지(sort_order: 0)
+            thumb: "/banner/event/flower.jpg" // review_image 테이블의 첫 번째 이미지(sort_order: 0)
         },
         { 
             id: 2, 
@@ -35,7 +35,7 @@ const TravelReviewList = () => {
             is_deleted: false,
             view_count: 842,
             created_at: "2026-02-10",
-            thumb: "/event/winter.jpg"
+            thumb: "/banner/event/winter.jpg"
         },
         { 
             id: 3, 
@@ -46,7 +46,7 @@ const TravelReviewList = () => {
             difficulty_score: 3,
             view_count: 2105,
             created_at: "2026-05-15", 
-            thumb: "/event/dokkaebi.jpg"
+            thumb: "/banner/event/dokkaebi.jpg"
         },
         { 
             id: 4, 
@@ -57,7 +57,7 @@ const TravelReviewList = () => {
             difficulty_score: 4,
             view_count: 562,
             created_at: "2026-04-05", 
-            thumb: "/event/sakura.jpg"
+            thumb: "/banner/event/sakura.jpg"
         },
         { 
             id: 5, 
@@ -68,7 +68,7 @@ const TravelReviewList = () => {
             difficulty_score: 3,
             view_count: 320,
             created_at: "2026-10-05", 
-            thumb: "/event/cure.jpg"
+            thumb: "/banner/event/cure.jpg"
         },
         { 
             id: 6, 
@@ -79,7 +79,7 @@ const TravelReviewList = () => {
             difficulty_score: 2,
             view_count: 1580,
             created_at: "2026-06-10", 
-            thumb: "/event/han.jpg"
+            thumb: "/banner/event/han.jpg"
         }
     ]);
 

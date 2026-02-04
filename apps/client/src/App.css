@@ -196,7 +196,7 @@
     width: 100%;
     height: 360px;             /* 탑배너의 2/3 높이 */
     background-color: #E1F1FF; 
-    margin: 40px 0;
+    margin: 1px 0;
     overflow: hidden;
     position: relative;
     display: flex;

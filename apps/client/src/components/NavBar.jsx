@@ -8,14 +8,12 @@ export default function NavBar() {
         { id: 1, title: '예약하기', img: '/banner/icon1.png', link: '/reserve' },
         { id: 2, title: '랜덤여행', img: '/banner/icon2.png', link: '/gacha' },
         { id: 3, title: '이벤트', img: '/banner/icon3.png', link: '/event' },
+        { id: 4, title: '리뷰', img: '/banner/icon3.png', link: '/review' },
     ];
 
     const handleMenuClick = (menu) => {
-        if (menu.link && (menu.id === 1 || menu.id === 2)) {
-            // 랜덤여행(가챠) 클릭 시 페이지 이동
+        if (menu.link) {
             navigate(menu.link);
-        } else {
-            alert(`${menu.title} 페이지는 준비 중입니다!`);
         }
     };
 

@@ -48,15 +48,14 @@ function Login() {
     }
   };
 
-  // 소셜 로그인 핸들러 (나중에 백엔드 연동)
+  // 소셜 로그인 핸들러
   const handleSocialLogin = (provider) => {
-    alert(`${provider} 로그인은 백엔드 연동 후 사용 가능합니다.`);
-    // TODO: 백엔드 OAuth URL로 리다이렉트
-    // window.location.href = `/api/oauth2/authorization/${provider}`;
+    // 백엔드 OAuth2 URL로 리다이렉트
+    window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
   };
 
   return (
-    <>
+    <div className="auth-page-wrapper">
       <Header />
       <div className="auth-container">
       <div className="auth-box">
@@ -141,7 +140,7 @@ function Login() {
       </div>
     </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
