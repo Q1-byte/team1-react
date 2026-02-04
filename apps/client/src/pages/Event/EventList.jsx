@@ -13,7 +13,7 @@ const EventList = () => {
             description: "노란 유채꽃과 함께하는 봄 나들이!",
             startDate: "2026-03-01",
             endDate: "2026-04-15",
-            url: "/event/flower.jpg"
+            url: "/banner/event/flower.jpg"
         },
         {
             id: 2,
@@ -22,7 +22,7 @@ const EventList = () => {
             description: "낭만 가득한 겨울 바다를 기차로 즐기세요.",
             startDate: "2026-02-01",
             endDate: "2026-02-28",
-            url: "/event/winter.jpg"
+            url: "/banner/event/winter.jpg"
         },
         {
             id: 3,
@@ -31,7 +31,7 @@ const EventList = () => {
             description: "맛있는 먹거리와 핸드메이드 소품이 가득!",
             startDate: "2026-05-05",
             endDate: "2026-10-30",
-            url: "/event/dokkaebi.jpg" // 준비된 이미지를 재사용하거나 추가하세요
+            url: "/banner/event/dokkaebi.jpg" // 준비된 이미지를 재사용하거나 추가하세요
         },
         {
             id: 4,
@@ -40,7 +40,7 @@ const EventList = () => {
             description: "서울 도심에서 즐기는 화려한 벚꽃의 향연.",
             startDate: "2026-04-01",
             endDate: "2026-04-10",
-            url: "/event/sakura.jpg"
+            url: "/banner/event/sakura.jpg"
         },
         {
             id: 5,
@@ -49,7 +49,7 @@ const EventList = () => {
             description: "전 세계 영화인들과 함께하는 아시아 최대 축제.",
             startDate: "2026-10-02",
             endDate: "2026-10-11",
-            url: "/event/cure.jpg"
+            url: "/banner/event/cure.jpg"
         },
         {
             id: 6,
@@ -58,7 +58,7 @@ const EventList = () => {
             description: "전통의 숨결이 살아있는 한옥마을에서의 하루.",
             startDate: "2026-06-01",
             endDate: "2026-08-31",
-            url: "/event/han.jpg"
+            url: "/banner/event/han.jpg"
         }
     ]);
 

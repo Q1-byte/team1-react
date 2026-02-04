@@ -24,8 +24,8 @@ const TravelReviewDetail = () => {
             created_at: "2026-03-05 14:20:00", 
             updated_at: "2026-03-05 14:20:00",
             images: [
-                { id: 1, file_name: "화사한 유채꽃밭", url: "/event/flower.jpg", sort_order: 0 },
-                { id: 2, file_name: "jeju_spring_02.jpg", url: "/event/jejuflower.jpg", sort_order: 1 }
+                { id: 1, file_name: "화사한 유채꽃밭", url: "/banner/event/flower.jpg", sort_order: 0 },
+                { id: 2, file_name: "jeju_spring_02.jpg", url: "/banner/event/jejuflower.jpg", sort_order: 1 }
             ]
         },
         "2": { 
@@ -44,7 +44,7 @@ const TravelReviewDetail = () => {
             created_at: "2026-02-10 09:00:00", 
             updated_at: "2026-02-10 09:00:00",
             images: [
-                { id: 3, file_name: "winter_train.jpg", url: "/event/winter.jpg", sort_order: 0 }
+                { id: 3, file_name: "winter_train.jpg", url: "/banner/event/winter.jpg", sort_order: 0 }
             ]
         },
         "3": { 
@@ -63,7 +63,7 @@ const TravelReviewDetail = () => {
             created_at: "2026-05-15 20:30:00", 
             updated_at: "2026-05-15 20:30:00",
             images: [
-                { id: 4, file_name: "night_market.jpg", url: "/event/dokkaebi.jpg", sort_order: 0 }
+                { id: 4, file_name: "night_market.jpg", url: "/banner/event/dokkaebi.jpg", sort_order: 0 }
             ]
         },
         "4": { 
@@ -82,7 +82,7 @@ const TravelReviewDetail = () => {
             created_at: "2026-04-05 11:00:00", 
             updated_at: "2026-04-05 11:00:00",
             images: [
-                { id: 5, file_name: "namsan_sakura.jpg", url: "/event/sakura.jpg", sort_order: 0 }
+                { id: 5, file_name: "namsan_sakura.jpg", url: "/banner/event/sakura.jpg", sort_order: 0 }
             ]
         },
         "5": { 
@@ -101,7 +101,7 @@ const TravelReviewDetail = () => {
             created_at: "2026-10-05 18:00:00", 
             updated_at: "2026-10-05 18:00:00",
             images: [
-                { id: 6, file_name: "busan_biff.jpg", url: "/event/cure.jpg", sort_order: 0 }
+                { id: 6, file_name: "busan_biff.jpg", url: "/banner/event/cure.jpg", sort_order: 0 }
             ]
         },
         "6": { 
@@ -120,7 +120,7 @@ const TravelReviewDetail = () => {
             created_at: "2026-06-10 13:00:00", 
             updated_at: "2026-06-10 13:00:00",
             images: [
-                { id: 7, file_name: "jeonju_hanok.jpg", url: "/event/han.jpg", sort_order: 0 }
+                { id: 7, file_name: "jeonju_hanok.jpg", url: "/banner/event/han.jpg", sort_order: 0 }
             ]
         }
     };

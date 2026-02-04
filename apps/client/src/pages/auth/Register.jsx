@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
 import './Auth.css';
 
 // 여행 성향 키워드 목록
@@ -114,7 +116,9 @@ function Register() {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-page-wrapper">
+      <Header />
+      <div className="auth-container">
       <div className="auth-box">
         <h1 className="auth-title">회원가입</h1>
         <p className="auth-subtitle">여행의 시작을 함께하세요</p>
@@ -221,6 +225,8 @@ function Register() {
           <Link to="/login" className="link">로그인</Link>
         </div>
       </div>
+    </div>
+      <Footer />
     </div>
   );
 }

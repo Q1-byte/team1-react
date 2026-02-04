@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { loginApi, registerApi, getUserByTokenApi } from '../api/authApi';
 
 const AuthContext = createContext(null);
@@ -49,12 +49,17 @@ export function AuthProvider({ children }) {
   };
 
   // 사용자 정보 업데이트 (마이페이지 수정 후 등)
-  const updateUser = (updatedData) => {
-    setUser(prev => ({
-      ...prev,
-      ...updatedData
-    }));
-  };
+  const updateUser = useCallback((updatedData) => {
+    setUser(prev => prev ? { ...prev, ...updatedData } : updatedData);
+  }, []);
+
+  // OAuth 로그인 처리 (외부에서 토큰/사용자 설정)
+  const setAuthData = useCallback((userData, token) => {
+    setUser(userData);
+    if (token) {
+      localStorage.setItem(TOKEN_KEY, token);
+    }
+  }, []);
 
   const value = {
     user,
@@ -63,6 +68,7 @@ export function AuthProvider({ children }) {
     register,
     logout,
     updateUser,
+    setAuthData,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'ADMIN'
   };

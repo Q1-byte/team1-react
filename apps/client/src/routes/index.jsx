@@ -5,6 +5,7 @@ import App from '../App';
 // 페이지 임포트
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
+import OAuthCallback from '../pages/auth/OAuthCallback';
 import MyPage from '../pages/mypage/MyPage';
 import GachaPage from '../pages/gacha/GachaPage';
 
@@ -22,6 +23,21 @@ import PlanSearch from '../pages/plan/PlanSearch';
 import PlanKeyword from '../pages/plan/PlanKeyword';
 import PlanResult from '../pages/plan/PlanResult';
 import PlanCheckout from '../pages/plan/PlanCheckout';
+
+// Inquiry 페이지 (유저용)
+import InquiryList from '../pages/Inquiry/InquiryList';
+import InquiryDetail from '../pages/Inquiry/InquiryDetail';
+import InquiryWrite from '../pages/Inquiry/InquiryWrite';
+
+// Event 페이지 (유저용)
+import EventPage from '../pages/Event/EventList';
+import EventDetail from '../pages/Event/EventDetail';
+
+// Review 페이지 (유저용)
+import TravelReviewList from '../pages/Review/TravelReviewList';
+import TravelReviewDetail from '../pages/Review/TravelReviewDetail';
+import TravelReviewWrite from '../pages/Review/TravelReviewWrite';
+
 
 // Payment 페이지
 import PaymentSuccess from '../pages/payment/PaymentSuccess';
@@ -100,14 +116,6 @@ export const router = createBrowserRouter([
         path: 'gacha',
         element: <GachaPage />
       },
-      {
-        path: 'register',
-        element: (
-          <GuestRoute>
-            <Register />
-          </GuestRoute>
-        )
-      },
       // Plan 관련 라우트
       {
         path: 'reserve',
@@ -137,6 +145,41 @@ export const router = createBrowserRouter([
       {
         path: 'payment/cancel',
         element: <PaymentCancel />
+      },
+      // Inquiry 관련 라우트
+      {
+        path: 'inquiry',
+        element: <InquiryList />
+      },
+      {
+        path: 'inquiry/:id',
+        element: <InquiryDetail />
+      },
+      {
+        path: 'inquiry/write',
+        element: <InquiryWrite />
+      },
+      // Event 라우트
+      {
+        path: 'event',
+        element: <EventPage />
+      },
+      {
+        path: 'events/:id',
+        element: <EventDetail />
+      },
+      // Review 라우트
+      {
+        path: 'review',
+        element: <TravelReviewList />
+      },
+      {
+        path: 'reviews/:id',
+        element: <TravelReviewDetail />
+      },
+      {
+        path: 'reviews/write',
+        element: <TravelReviewWrite />
       }
     ]
   },
@@ -148,6 +191,20 @@ export const router = createBrowserRouter([
         <Login />
       </GuestRoute>
     )
+  },
+  // 회원가입 페이지 (헤더/푸터만)
+  {
+    path: '/register',
+    element: (
+      <GuestRoute>
+        <Register />
+      </GuestRoute>
+    )
+  },
+  // OAuth 콜백 페이지
+  {
+    path: '/oauth/callback',
+    element: <OAuthCallback />
   },
   // 마이페이지 (헤더/푸터만)
   {

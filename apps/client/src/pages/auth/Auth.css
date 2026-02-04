@@ -1,11 +1,26 @@
+.auth-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+}
+
+.auth-page-wrapper > header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
 .auth-container {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
-  padding-top: 160px;
+  padding-top: 80px;
+  padding-bottom: 80px;
 }
 
 .auth-box {
