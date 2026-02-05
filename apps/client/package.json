@@ -4,6 +4,7 @@
     "dev": "vite"
   },
   "dependencies": {
+    "@tosspayments/payment-sdk": "^1.9.2",
     "axios": "^1.13.4",
     "react": "^19.2.3",
     "react-calendar": "^6.0.0",
