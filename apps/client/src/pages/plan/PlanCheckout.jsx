@@ -1,21 +1,14 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { loadTossPayments } from '@tosspayments/payment-sdk';
+import api from '../../api/axiosConfig';
+import { useAuth } from '../../context/AuthContext';
 import './PlanCheckout.css';
-
-
-const api = axios.create({
-    baseURL: 'http://localhost:8080',
-    withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json'
-    }
-});
 
 const PlanCheckout = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const { finalPlanData } = location.state || {};
     const totalPrice = finalPlanData?.total_amount || 0;
@@ -51,13 +44,22 @@ const PlanCheckout = () => {
 
         // 1. 카카오페이 결제
         if (selectedMethod === 'kakaopay') {
+            // 로그인 체크
+            if (!user?.id) {
+                alert("로그인이 필요합니다.");
+                navigate('/login');
+                return;
+            }
+
             try {
                 const response = await api.post('/payment/ready', {
                     item_name: `${finalPlanData?.region_name || '지역'} AI 맞춤 여행 일정`,
                     total_amount: totalPrice,
                     partner_order_id: `order_${new Date().getTime()}`,
-                    partner_user_id: "user_1234",
-                    plan_items: displayDetails 
+                    partner_user_id: String(user.id),
+                    user_id: user.id,
+                    plan_id: finalPlanData?.plan_id || finalPlanData?.id || 1,
+                    plan_items: displayDetails
                 });
 
                 const { next_redirect_pc_url, tid } = response.data;
