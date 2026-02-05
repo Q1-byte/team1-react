@@ -40,8 +40,12 @@ import TravelReviewWrite from '../pages/Review/TravelReviewWrite';
 
 
 // Payment 페이지
-import PaymentSuccess from '../pages/payment/PaymentSuccess';
-import PaymentFail from '../pages/payment/PaymentFail';
+import KakaoPaySuccess from '../pages/payment/kakao/KakaoPaySuccess';
+import KakaoPayFail from '../pages/payment/kakao/KakaoPayFail';
+import TossSuccess from '../pages/payment/toss/TossSuccess';
+import TossFail from '../pages/payment/toss/TossFail';
+import VBankSuccess from '../pages/payment/vbank/VBankSuccess';
+import VBankFail from '../pages/payment/vbank/VBankFail';
 import PaymentCancel from '../pages/payment/PaymentCancel';
 import AdminDashboard from '../pages/admin/Dashboard';
 import UserManagement from '../pages/admin/users/UserList';
@@ -135,12 +139,28 @@ export const router = createBrowserRouter([
       },
       // Payment 관련 라우트
       {
-        path: 'payment/success',
-        element: <PaymentSuccess />
+        path: 'payment/kakao/success',
+        element: <KakaoPaySuccess />
       },
       {
-        path: 'payment/fail',
-        element: <PaymentFail />
+        path: 'payment/kakao/fail',
+        element: <KakaoPayFail />
+      },
+      {
+        path: 'payment/toss/success',
+        element: <TossSuccess />
+      },
+      {
+        path: 'payment/toss/fail',
+        element: <TossFail />
+      },
+      { 
+        path: 'payment/vbank/success', 
+        element: <VBankSuccess /> 
+      },
+      { 
+        path: 'payment/vbank/fail', 
+        element: <VBankFail /> 
       },
       {
         path: 'payment/cancel',
