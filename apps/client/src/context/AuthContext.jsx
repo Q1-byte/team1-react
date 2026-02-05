@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
           const userData = await getUserByTokenApi(token);
           setUser(userData);
         } catch (error) {
-          console.error('자동 로그인 실패:', error);
+          // 토큰이 유효하지 않으면 조용히 삭제 (콘솔 경고 제거)
           localStorage.removeItem(TOKEN_KEY);
         }
       }
