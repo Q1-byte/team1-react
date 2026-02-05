@@ -108,6 +108,11 @@ const PlanCheckout = () => {
                     });
                 }
             } catch (error) {
+                // 사용자가 결제를 취소한 경우 (정상 동작)
+                if (error.code === 'USER_CANCEL' || error.message?.includes('취소')) {
+                    console.log('사용자가 결제를 취소했습니다.');
+                    return;
+                }
                 console.error("토스 결제 호출 에러:", error);
                 alert("결제창을 불러오는 중 오류가 발생했습니다.");
             }
