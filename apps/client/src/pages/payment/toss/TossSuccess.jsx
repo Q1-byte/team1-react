@@ -1,7 +1,7 @@
 // src/domain/payment/toss/TossSuccess.jsx
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../../api/axiosConfig';
 import '../PaymentStatus.css';
 
 const TossSuccess = () => {

@@ -101,6 +101,7 @@ function Register() {
       const userData = {
         username: formData.username,
         password: formData.password,
+        passwordConfirm: formData.passwordConfirm,
         email: formData.email,
         phone: formData.phone || null,
         keyword_pref: formData.keywords.join(',') // 쉼표로 구분

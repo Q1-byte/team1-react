@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // api 대신 axios를 직접 임포트
+import api from '../../../api/axiosConfig';
 import '../PaymentStatus.css';
 
 const VBankSuccess = () => {

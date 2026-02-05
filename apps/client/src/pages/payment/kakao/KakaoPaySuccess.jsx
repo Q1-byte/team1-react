@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../../api/axiosConfig';
 import '../PaymentStatus.css';
-
-const api = axios.create({
-    baseURL: 'http://localhost:8080',
-    withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json'
-    }
-});
 
 const KakaoPaySuccess = () => {
     const location = useLocation();
@@ -34,7 +26,7 @@ const KakaoPaySuccess = () => {
             try {
                 // [핵심 수정] axios.post 대신 팀에서 정의한 api.post를 사용합니다.
                 // 주소도 설정파일에 베이스 URL이 있다면 '/api/payment/kakao/approve'만 써도 될 수 있습니다.
-                const response = await api.post('/api/payment/kakao/approve', {
+                const response = await api.post('/payment/approve', {
                     tid: tid,
                     pg_token: pg_token
                 });

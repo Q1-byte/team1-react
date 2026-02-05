@@ -1,7 +1,7 @@
     import api from './axiosConfig';
 
     // Mock 데이터 사용 여부 (백엔드 연결 전 테스트용)
-    const USE_MOCK = true;
+    const USE_MOCK = false;
 
     // Mock 데이터
     const MOCK_DATA = {

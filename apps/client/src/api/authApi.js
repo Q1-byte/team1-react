@@ -3,7 +3,7 @@
 const API_BASE_URL = 'http://localhost:8080/api/user';
 
 // 백엔드 연결 여부 (false면 임시 데이터 사용)
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 // 임시 사용자 데이터 (테스트용)
 const MOCK_USERS = [
@@ -79,6 +79,7 @@ export const loginApi = async (username, password) => {
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',  // 세션 쿠키 저장/전송을 위해 필수
     body: JSON.stringify({ username, password }),
   });
 
@@ -146,9 +147,11 @@ export const registerApi = async (userData) => {
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify({
       username: userData.username,
       password: userData.password,
+      passwordConfirm: userData.passwordConfirm || userData.password_confirm || userData.password,
       email: userData.email,
       phone: userData.phone,
       keywordPref: userData.keyword_pref || userData.keywordPref,
@@ -198,6 +201,7 @@ export const getUserByTokenApi = async (token) => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
     });
 
     const result = await response.json();
