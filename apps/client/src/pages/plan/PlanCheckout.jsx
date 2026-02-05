@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { loadTossPayments } from '@tosspayments/payment-sdk';
 import './PlanCheckout.css';
+
+
+const api = axios.create({
+    baseURL: 'http://localhost:8080',
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
 
 const PlanCheckout = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // 1. Result 페이지에서 전달한 데이터 추출
     const { finalPlanData } = location.state || {};
-
-    // Result 페이지에서 계산되어 넘어온 최종 금액
     const totalPrice = finalPlanData?.total_amount || 0;
-    
-    // [추가] 화면 표시용 데이터: 필터링된 '확정 일정'만 사용
     const displayDetails = finalPlanData?.confirmed_details || [];
 
-    // 2. 결제 수단 상태 관리
     const [selectedMethod, setSelectedMethod] = useState('kakaopay');
 
+    // 결제 수단 리스트
     const paymentMethods = [
         { id: 'kakaopay', name: '카카오페이', icon: '🟡' },
         { id: 'toss', name: '토스페이', icon: '🔵' },
@@ -26,50 +31,86 @@ const PlanCheckout = () => {
         { id: 'vbank', name: '무통장 입금', icon: '🏦' },
     ];
 
-    // [핵심 수정] 이전으로 돌아갈 때 '원본 데이터(original_details)'를 복원해서 전달
     const handleBackToResult = () => {
         navigate('/result', { 
             state: { 
                 finalPlanData: {
                     ...finalPlanData,
-                    // Checkout에 올 때 백업해둔 전체 리스트를 다시 confirmed_details 위치로 복구
                     confirmed_details: finalPlanData.original_details 
                 } 
             } 
         });
     };
 
-    // 3. 결제 처리 로직
+    // 결제 처리 메인 로직
     const handlePayment = async () => {
         if (totalPrice === 0) {
             alert("결제 금액이 0원입니다. 일정을 다시 확인해주세요.");
             return;
         }
 
+        // 1. 카카오페이 결제
         if (selectedMethod === 'kakaopay') {
             try {
-                // 백엔드에는 '확정된' 정보 위주로 보냅니다.
-                const response = await axios.post('http://localhost:5000/api/payment/ready', {
+                const response = await api.post('/payment/ready', {
                     item_name: `${finalPlanData?.region_name || '지역'} AI 맞춤 여행 일정`,
                     total_amount: totalPrice,
                     partner_order_id: `order_${new Date().getTime()}`,
                     partner_user_id: "user_1234",
-                    // DB 저장용으로는 확정된 일정(displayDetails)만 보내는 것이 효율적입니다.
                     plan_items: displayDetails 
                 });
 
                 const { next_redirect_pc_url, tid } = response.data;
                 localStorage.setItem('kakao_tid', tid);
                 localStorage.setItem('temp_plan_data', JSON.stringify(finalPlanData));
-
                 window.location.href = next_redirect_pc_url;
-
             } catch (error) {
-                console.error("결제 준비 요청 실패:", error);
-                alert("서버와 통신 중 오류가 발생했습니다. 백엔드 서버가 켜져 있는지 확인해주세요.");
+                console.error("카카오 결제 실패:", error);
+                alert("카카오페이 서버와 통신 중 오류가 발생했습니다.");
             }
+
+        // 2. 토스페이 / 3. 신용카드 / 4. 가상계좌 (토스 SDK 공통 사용)
         } else {
-            alert(`${selectedMethod} 결제는 현재 준비 중입니다. 카카오페이를 선택해주세요!`);
+            try {
+                const tossPayments = await loadTossPayments("test_ck_kYG57Eba3GmDmmW4wpMwrpWDOxmA"); 
+                localStorage.setItem('temp_plan_data', JSON.stringify(finalPlanData));
+
+                const orderId = `order_${new Date().getTime()}`;
+                const orderName = `${finalPlanData?.region_name || '지역'} 여행 일정 결제`;
+
+                if (selectedMethod === 'toss') {
+                    // 토스페이 직접 호출
+                    await tossPayments.requestPayment('TOSSPAY', {
+                        amount: totalPrice,
+                        orderId: orderId,
+                        orderName: orderName,
+                        successUrl: `${window.location.origin}/payment/toss/success`,
+                        failUrl: `${window.location.origin}/payment/toss/fail`,
+                    });
+                } else if (selectedMethod === 'card') {
+                    // [추가] 일반 신용/체크카드 결제창 호출
+                    await tossPayments.requestPayment('카드', {
+                        amount: totalPrice,
+                        orderId: orderId,
+                        orderName: orderName,
+                        successUrl: `${window.location.origin}/payment/toss/success`,
+                        failUrl: `${window.location.origin}/payment/toss/fail`,
+                    });
+                } else if (selectedMethod === 'vbank') {
+                    // 가상계좌 호출
+                    await tossPayments.requestPayment('가상계좌', {
+                        amount: totalPrice,
+                        orderId: orderId,
+                        orderName: orderName,
+                        customerName: "홍길동", 
+                        successUrl: `${window.location.origin}/payment/vbank/success`,
+                        failUrl: `${window.location.origin}/payment/vbank/fail`,
+                    });
+                }
+            } catch (error) {
+                console.error("토스 결제 호출 에러:", error);
+                alert("결제창을 불러오는 중 오류가 발생했습니다.");
+            }
         }
     };
 
@@ -90,7 +131,6 @@ const PlanCheckout = () => {
                     <p>선택하신 일정을 확정하기 위해 결제를 진행합니다.</p>
                 </div>
 
-                {/* 여행 요약 정보 섹션 */}
                 <div className="summary-section">
                     <div className="summary-info-box">
                         <div className="info-row">
@@ -100,7 +140,6 @@ const PlanCheckout = () => {
                             </strong>
                         </div>
                         
-                        {/* [추가된 부분] 선택된 장소 요약 리스트 */}
                         <div className="selected-items-summary">
                             <p className="summary-label">선택된 장소 ({displayDetails.length}곳)</p>
                             <ul className="summary-list">
@@ -117,7 +156,6 @@ const PlanCheckout = () => {
                     </div>
                 </div>
 
-                {/* 결제 수단 선택 섹션 */}
                 <div className="method-section">
                     <h3>결제 수단 선택</h3>
                     <div className="method-grid">
