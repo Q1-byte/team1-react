@@ -3,6 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../PaymentStatus.css';
 
+const api = axios.create({
+    baseURL: 'http://localhost:8080',
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
+
 const KakaoPaySuccess = () => {
     const location = useLocation();
     const navigate = useNavigate();
