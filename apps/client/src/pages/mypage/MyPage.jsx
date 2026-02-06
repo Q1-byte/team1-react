@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { getMyPageMain, getMyPlans, getMyPoints, updateProfile, changePassword } from '../../api/mypageApi';
+import { getMyInquiriesApi } from '../../api/inquiryApi';
 import './MyPage.css';
 
 function MyPage() {
@@ -16,6 +17,7 @@ function MyPage() {
   const [pointHistory, setPointHistory] = useState([]);
   const [recentViews, setRecentViews] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
+  const [myInquiries, setMyInquiries] = useState([]);
   
   // 로딩/에러 상태
   const [loading, setLoading] = useState(true);
@@ -78,6 +80,9 @@ function MyPage() {
           if (response.success) {
             setPointHistory(response.data || []);
           }
+        } else if (activeTab === 'inquiries' && myInquiries.length === 0) {
+          const data = await getMyInquiriesApi(0, 5);
+          setMyInquiries(data.content || []);
         }
       } catch (err) {
         console.error('탭 데이터 로드 실패:', err);
@@ -85,7 +90,7 @@ function MyPage() {
     };
 
     fetchTabData();
-  }, [activeTab, user, myPlans.length, pointHistory.length]);
+  }, [activeTab, user, myPlans.length, pointHistory.length, myInquiries.length]);
 
   // 프로필 수정 핸들러
   const handleProfileUpdate = async () => {
@@ -278,6 +283,12 @@ function MyPage() {
           최근 본 계획
         </button>
         <button
+          className={`tab ${activeTab === 'inquiries' ? 'active' : ''}`}
+          onClick={() => setActiveTab('inquiries')}
+        >
+          문의 내역
+        </button>
+        <button
           className={`tab ${activeTab === 'profile' ? 'active' : ''}`}
           onClick={() => setActiveTab('profile')}
         >
@@ -410,6 +421,81 @@ function MyPage() {
                     </div>
                   ))}
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* 문의 내역 */}
+          {activeTab === 'inquiries' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h3 style={{ margin: 0 }}>문의 내역</h3>
+                <button
+                  className="btn-primary btn-sm"
+                  onClick={() => navigate('/inquiry')}
+                >
+                  전체보기
+                </button>
+              </div>
+              {myInquiries.length === 0 ? (
+                <div className="empty-state">
+                  <p>문의 내역이 없습니다.</p>
+                  <button onClick={() => navigate('/inquiry/write')} className="btn-primary">
+                    문의하기
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>카테고리</th>
+                        <th>제목</th>
+                        <th>상태</th>
+                        <th>작성일</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {myInquiries.map(inquiry => (
+                        <tr
+                          key={inquiry.id}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => navigate(`/inquiry/${inquiry.id}`)}
+                        >
+                          <td>
+                            <span className="badge" style={{ background: '#3498db20', color: '#3498db' }}>
+                              {inquiry.category}
+                            </span>
+                          </td>
+                          <td>
+                            {inquiry.title}
+                            {inquiry.isSecret && <span style={{ marginLeft: '5px', color: '#999' }}>🔒</span>}
+                          </td>
+                          <td>
+                            <span
+                              className="badge"
+                              style={{
+                                background: inquiry.status === 'ANSWERED' ? '#2ecc7120' : '#f39c1220',
+                                color: inquiry.status === 'ANSWERED' ? '#2ecc71' : '#f39c12'
+                              }}
+                            >
+                              {inquiry.statusDescription || (inquiry.status === 'ANSWERED' ? '답변완료' : '답변대기')}
+                            </span>
+                          </td>
+                          <td>{inquiry.createdAt?.split('T')[0]}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                    <button
+                      className="btn-secondary"
+                      onClick={() => navigate('/inquiry/write')}
+                    >
+                      새 문의하기
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           )}

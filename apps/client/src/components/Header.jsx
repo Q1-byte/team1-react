@@ -36,7 +36,7 @@ export default function Header() {
                     {isAuthenticated ? (
                         <div className="user-zone" style={{ display: 'flex', alignItems: 'center' }}>
                             <span className="user-greeting" style={{ marginRight: '20px', whiteSpace: 'nowrap', color: '#fff', fontWeight: '500', textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
-                                <strong>{user?.id}</strong>님 안녕하세요
+                                <strong>{user?.username}</strong>님 안녕하세요
                                 {isAdmin && (
                                     <span style={{ color: '#ff4d4f', fontWeight: '900', marginLeft: '8px' }}>(관리자)</span>
                                 )}

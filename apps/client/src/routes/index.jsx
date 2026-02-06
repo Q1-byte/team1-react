@@ -113,93 +113,92 @@ export const router = createBrowserRouter([
   },
   // 다른 페이지들 (App 레이아웃 - 헤더가 일반 흐름)
   {
-    path: '/',
     element: <App />,
     children: [
       {
-        path: 'gacha',
+        path: '/gacha',
         element: <GachaPage />
       },
       // Plan 관련 라우트
       {
-        path: 'reserve',
+        path: '/reserve',
         element: <PlanSearch />
       },
       {
-        path: 'keyword',
+        path: '/keyword',
         element: <PlanKeyword />
       },
       {
-        path: 'result',
+        path: '/result',
         element: <PlanResult />
       },
       {
-        path: 'checkout',
+        path: '/checkout',
         element: <PlanCheckout />
       },
       // Payment 관련 라우트
       {
-        path: 'payment/kakao/success',
+        path: '/payment/kakao/success',
         element: <KakaoPaySuccess />
       },
       {
-        path: 'payment/kakao/fail',
+        path: '/payment/kakao/fail',
         element: <KakaoPayFail />
       },
       {
-        path: 'payment/toss/success',
+        path: '/payment/toss/success',
         element: <TossSuccess />
       },
       {
-        path: 'payment/toss/fail',
+        path: '/payment/toss/fail',
         element: <TossFail />
       },
-      { 
-        path: 'payment/vbank/success', 
-        element: <VBankSuccess /> 
-      },
-      { 
-        path: 'payment/vbank/fail', 
-        element: <VBankFail /> 
+      {
+        path: '/payment/vbank/success',
+        element: <VBankSuccess />
       },
       {
-        path: 'payment/cancel',
+        path: '/payment/vbank/fail',
+        element: <VBankFail />
+      },
+      {
+        path: '/payment/cancel',
         element: <PaymentCancel />
       },
       // Inquiry 관련 라우트
       {
-        path: 'inquiry',
+        path: '/inquiry',
         element: <InquiryList />
       },
       {
-        path: 'inquiry/:id',
-        element: <InquiryDetail />
+        path: '/inquiry/write',
+        element: <InquiryWrite />
       },
       {
-        path: 'inquiry/write',
-        element: <InquiryWrite />
+        path: '/inquiry/:id',
+        element: <InquiryDetail />
       },
       // Event 라우트
       {
-        path: 'event',
+        path: '/event',
         element: <EventPage />
       },
       {
-        path: 'events/:id',
+        path: '/events/:id',
         element: <EventDetail />
       },
       // Review 라우트
       {
-        path: 'review',
+        path: '/review',
         element: <TravelReviewList />
       },
       {
-        path: 'reviews/:id',
-        element: <TravelReviewDetail />
+        path: '/reviews/write',
+        element: <TravelReviewWrite />
       },
       {
-        path: 'reviews/write',
-        element: <TravelReviewWrite />
+        path: '/reviews/:id',
+        element: <TravelReviewDetail />
       }
     ]
   },
