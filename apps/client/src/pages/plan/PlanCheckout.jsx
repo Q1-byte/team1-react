@@ -35,7 +35,7 @@ const PlanCheckout = () => {
     ];
 
     const handleBackToResult = () => {
-        navigate('/result', {
+        navigate('/reserve/result', {
             state: {
                 finalPlanData: {
                     ...finalPlanData,
