@@ -11,7 +11,7 @@ const TravelReviewList = () => {
     useEffect(() => {
         api.get('/reviews')
             .then(res => {
-                setReviews(res.data);
+                setReviews(res.data.content);
                 setLoading(false);
             })
             .catch(err => {

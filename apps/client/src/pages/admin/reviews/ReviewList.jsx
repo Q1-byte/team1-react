@@ -1,41 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import api from '../../../api';
 
 function ReviewList() {
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      username: 'user1',
-      plan_title: '제주 2박3일',
-      content: '정말 좋았어요! 다음에 또 가고 싶습니다.',
-      rating: 5,
-      is_public: true,
-      view_count: 45,
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 2,
-      username: 'user1',
-      plan_title: '부산 당일치기',
-      content: '시간이 부족했지만 알차게 다녔습니다.',
-      rating: 4,
-      is_public: true,
-      view_count: 23,
-      created_at: new Date(Date.now() - 86400000).toISOString()
-    }
-  ]);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchReviews = () => {
+    setLoading(true);
+    api.get('/admin/reviews', { params: { size: 100 } })
+      .then(res => {
+        setReviews(res.data.content || []);
+      })
+      .catch(err => {
+        console.error('리뷰 목록 조회 실패:', err);
+        setReviews([]);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchReviews();
+  }, []);
 
   const handleDelete = (id) => {
     if (window.confirm('후기를 삭제하시겠습니까?')) {
-      setReviews(reviews.filter(r => r.id !== id));
-      alert('삭제되었습니다.');
+      api.delete(`/admin/reviews/${id}`)
+        .then(() => {
+          alert('삭제되었습니다.');
+          fetchReviews();
+        })
+        .catch(err => {
+          console.error('삭제 실패:', err);
+          alert('삭제에 실패했습니다.');
+        });
     }
   };
 
   const togglePublic = (id) => {
-    setReviews(reviews.map(r =>
-      r.id === id ? { ...r, is_public: !r.is_public } : r
-    ));
+    api.patch(`/admin/reviews/${id}/visibility`)
+      .then(() => {
+        fetchReviews();
+      })
+      .catch(err => {
+        console.error('공개 상태 변경 실패:', err);
+        alert('공개 상태 변경에 실패했습니다.');
+      });
   };
+
+  const activeReviews = reviews.filter(r => !r.isDeleted);
+  const avgRating = activeReviews.length > 0
+    ? (activeReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / activeReviews.length).toFixed(1)
+    : '0.0';
+  const totalViews = reviews.reduce((sum, r) => sum + (r.viewCount || 0), 0);
+
+  if (loading) {
+    return <div>로딩 중...</div>;
+  }
 
   return (
     <div>
@@ -54,13 +74,13 @@ function ReviewList() {
         <div className="card">
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>평균 평점</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0, color: '#f39c12' }}>
-            {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)}점
+            {avgRating}점
           </p>
         </div>
         <div className="card">
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>총 조회수</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
-            {reviews.reduce((sum, r) => sum + r.view_count, 0)}회
+            {totalViews}회
           </p>
         </div>
       </div>
@@ -71,7 +91,7 @@ function ReviewList() {
             <tr>
               <th>ID</th>
               <th>작성자</th>
-              <th>여행 계획</th>
+              <th>제목</th>
               <th>후기 내용</th>
               <th>평점</th>
               <th>조회수</th>
@@ -82,10 +102,10 @@ function ReviewList() {
           </thead>
           <tbody>
             {reviews.map(review => (
-              <tr key={review.id}>
+              <tr key={review.id} style={review.isDeleted ? { opacity: 0.5, textDecoration: 'line-through' } : {}}>
                 <td>{review.id}</td>
-                <td>{review.username}</td>
-                <td><strong>{review.plan_title}</strong></td>
+                <td>{review.authorAccountId}</td>
+                <td><strong>{review.title}</strong></td>
                 <td style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {review.content}
                 </td>
@@ -94,21 +114,26 @@ function ReviewList() {
                     ⭐ {review.rating}
                   </span>
                 </td>
-                <td>{review.view_count}</td>
+                <td>{review.viewCount}</td>
                 <td>
                   <button
                     onClick={() => togglePublic(review.id)}
-                    className={`btn btn-sm ${review.is_public ? 'btn-success' : ''}`}
-                    style={!review.is_public ? { background: '#e74c3c', color: 'white' } : {}}
+                    className={`btn btn-sm ${review.isPublic ? 'btn-success' : ''}`}
+                    style={!review.isPublic ? { background: '#e74c3c', color: 'white' } : {}}
+                    disabled={review.isDeleted}
                   >
-                    {review.is_public ? '공개' : '비공개'}
+                    {review.isPublic ? '공개' : '비공개'}
                   </button>
                 </td>
-                <td>{new Date(review.created_at).toLocaleDateString()}</td>
+                <td>{review.createdAt ? new Date(review.createdAt).toLocaleDateString() : '-'}</td>
                 <td>
-                  <button onClick={() => handleDelete(review.id)} className="btn btn-danger btn-sm">
-                    삭제
-                  </button>
+                  {review.isDeleted ? (
+                    <span style={{ color: '#999' }}>삭제됨</span>
+                  ) : (
+                    <button onClick={() => handleDelete(review.id)} className="btn btn-danger btn-sm">
+                      삭제
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

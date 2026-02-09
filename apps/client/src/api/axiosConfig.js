@@ -28,6 +28,8 @@ api.interceptors.response.use(
   (error) => {
     // 401 에러 시 로그인 페이지로 리다이렉트
     if (error.response?.status === 401) {
+      // 세션 만료 시 localStorage 토큰도 함께 제거하여 인증 상태 동기화
+      localStorage.removeItem('auth_token');
       // 현재 페이지가 로그인 페이지가 아닐 때만 리다이렉트
       if (!window.location.pathname.includes('/login')) {
         window.location.href = '/login';

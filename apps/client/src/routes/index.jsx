@@ -38,6 +38,7 @@ import EventDetail from '../pages/Event/EventDetail';
 import TravelReviewList from '../pages/Review/TravelReviewList';
 import TravelReviewDetail from '../pages/Review/TravelReviewDetail';
 import TravelReviewWrite from '../pages/Review/TravelReviewWrite';
+import TravelReviewEdit from '../pages/Review/TravelReviewEdit';
 
 // Payment 페이지
 import KakaoPaySuccess from '../pages/payment/kakao/KakaoPaySuccess';
@@ -155,9 +156,10 @@ export const router = createBrowserRouter([
       { path: 'events/:id', element: <EventDetail /> },
 
       // Review 라우트
-      { path: 'review', element: <TravelReviewList /> },
+      { path: 'reviews', element: <TravelReviewList /> },
       { path: 'reviews/:id', element: <TravelReviewDetail /> },
-      { path: 'reviews/write', element: <TravelReviewWrite /> }
+      { path: 'reviews/write', element: <TravelReviewWrite /> },
+      { path: 'reviews/edit/:id', element: <TravelReviewEdit /> }
     ]
   },
   // 인증 관련
