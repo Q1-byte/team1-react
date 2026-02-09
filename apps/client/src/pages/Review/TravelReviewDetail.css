@@ -1,4 +1,4 @@
-/* 레이아웃 배경 및 정렬 */
+/* 1. 레이아웃 배경 및 정렬 */
 .review-detail-layout {
     background-color: #f8f9fa;
     min-height: 100vh;
@@ -6,9 +6,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: 'Pretendard', -apple-system, sans-serif;
 }
 
-/* 네비게이션 버튼 */
+/* 2. 네비게이션 버튼 */
 .detail-nav-header {
     width: 100%;
     max-width: 800px;
@@ -30,7 +31,7 @@
     background-color: #e9ecef;
 }
 
-/* 메인 카드 박스 */
+/* 3. 메인 카드 박스 */
 .review-main-card {
     width: 100%;
     max-width: 800px;
@@ -40,11 +41,10 @@
     padding: 50px;
 }
 
-/* 헤더 디자인 */
+/* 4. 헤더 디자인 */
 .review-header {
     margin-bottom: 40px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid #f1f3f5;
+    padding-bottom: 10px;
 }
 
 .review-title {
@@ -69,13 +69,17 @@
     color: #e9ecef;
 }
 
-/* 상단 정보 배지 영역 */
-.review-summary {
+/* 5. 평점(좌) + 관리버튼(우) 양 끝 정렬 */
+.review-summary-row {
     display: flex;
-    gap: 15px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #f1f3f5;
 }
 
-.summary-item {
+.summary-item.rating {
     background-color: #f8f9fa;
     padding: 12px 20px;
     border-radius: 12px;
@@ -101,20 +105,53 @@
     color: #fab005;
 }
 
-/* 본문 디자인 (블로그형 통합 영역) */
+.post-admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.text-action-btn {
+    background-color: #f1f3f5;
+    border: none;
+    font-size: 0.85rem;
+    color: #495057;
+    cursor: pointer;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.text-action-btn:hover {
+    background-color: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.text-action-btn.delete-color {
+    color: #fa5252;
+}
+
+.text-action-btn.delete-color:hover {
+    background-color: #fff5f5;
+}
+
+.action-divider {
+    display: none; 
+}
+
+/* 6. 본문 디자인 */
 .review-body {
     display: flex;
     flex-direction: column;
 }
 
-/* 🚩 새로 추가된 믹스 영역 컨테이너 */
 .content-mixed-area {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-/* 🚩 기존 content-text 스타일을 span 기반의 조각에도 동일하게 적용 */
 .content-text-part {
     font-size: 1.15rem;
     line-height: 1.9;
@@ -123,7 +160,6 @@
     display: block;
 }
 
-/* 🚩 갤러리 카드 (사진 조각) */
 .gallery-card {
     width: 100%;
     margin: 20px 0;
@@ -131,7 +167,7 @@
 
 .img-frame {
     width: 100%;
-    height: 500px; /* 원본 500px 유지 */
+    height: 500px;
     border-radius: 15px;
     overflow: hidden;
     background-color: #f1f3f5;
@@ -149,10 +185,10 @@
     margin-top: 15px;
     text-align: center;
     font-size: 0.85rem;
-    color: #ced4da; /* 원본 색상 유지 */
+    color: #ced4da;
 }
 
-/* 하단 신고 영역 */
+/* 7. 하단 신고 영역 */
 .review-footer {
     margin-top: 70px;
     padding-top: 30px;
@@ -173,4 +209,284 @@
 
 .report-btn:hover {
     background-color: #fff5f5;
+}
+
+/* 🚩 8. 신고 모달 (추가됨 - 기존 디자인과 톤 일치) */
+.report-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 오버레이 명도 조절 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px); /* 배경 블러 추가 */
+}
+
+.report-modal-content {
+    background: #ffffff;
+    width: 90%;
+    max-width: 420px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.report-modal-content h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #212529;
+}
+
+.modal-sub-text {
+    font-size: 0.95rem;
+    color: #868e96;
+    margin-bottom: 30px;
+}
+
+.category-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.category-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    color: #495057;
+    cursor: pointer;
+    padding: 5px 0;
+}
+
+.report-textarea {
+    width: 100%;
+    height: 120px;
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: none;
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    outline-color: #fa5252;
+}
+
+.modal-action-btns {
+    display: flex;
+    gap: 12px;
+}
+
+.modal-action-btns button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.cancel-btn {
+    background-color: #f1f3f5;
+    color: #868e96;
+}
+
+.cancel-btn:hover {
+    background-color: #e9ecef;
+}
+
+.submit-btn {
+    background-color: #fa5252;
+    color: #ffffff;
+}
+
+.submit-btn:hover {
+    background-color: #e03131;
+    transform: translateY(-2px);
+}
+
+/* 9. 댓글 섹션 */
+.comment-section {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 50px;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+}
+
+.comment-section h3 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+    color: #212529;
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.comment-item {
+    border-bottom: 1px solid #f1f3f5;
+    padding-bottom: 25px;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.comment-author {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #343a40;
+}
+
+.comment-date {
+    font-size: 0.8rem;
+    color: #adb5bd;
+}
+
+.comment-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.comment-reply-btn, .comment-delete-btn {
+    background: transparent;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.comment-reply-btn {
+    color: #4dabf7;
+}
+
+.comment-reply-btn:hover {
+    background: #e7f5ff;
+}
+
+.comment-delete-btn {
+    color: #fa5252;
+}
+
+.comment-delete-btn:hover {
+    background: #fff5f5;
+}
+
+.comment-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #495057;
+    white-space: pre-wrap;
+}
+
+/* 10. 답글(대댓글) 디자인 */
+.reply-list {
+    margin-top: 20px;
+    padding-left: 20px;
+    border-left: 3px solid #f1f3f5;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.reply-item {
+    padding: 10px 0;
+}
+
+/* 11. 댓글 작성 영역 */
+.comment-write {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reply-indicator {
+    background: #e7f5ff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.reply-indicator span {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1971c2;
+}
+
+.reply-indicator button {
+    background: transparent;
+    border: none;
+    font-size: 0.75rem;
+    color: #495057;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.comment-write textarea {
+    width: 100%;
+    height: 100px;
+    padding: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 12px;
+    resize: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.comment-write textarea:focus {
+    outline: none;
+    border-color: #4dabf7;
+}
+
+.comment-submit-btn {
+    align-self: flex-end;
+    background-color: #212529;
+    color: #ffffff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.comment-submit-btn:hover {
+    background-color: #000000;
+}
+
+.no-comment {
+    text-align: center;
+    color: #adb5bd;
+    padding: 30px 0;
+    font-size: 0.95rem;
 }
