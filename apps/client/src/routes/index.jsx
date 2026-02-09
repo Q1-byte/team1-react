@@ -20,9 +20,11 @@ import AdminLayout from '../pages/admin/AdminLayout';
 
 // Plan 페이지
 import PlanSearch from '../pages/plan/PlanSearch';
+import PlanSetup from '../pages/plan/PlanSetup';
 import PlanKeyword from '../pages/plan/PlanKeyword';
 import PlanResult from '../pages/plan/PlanResult';
 import PlanCheckout from '../pages/plan/PlanCheckout';
+import PlanReceipt from '../pages/plan/PlanReceipt';
 import TravelPlan from '../pages/plan/TravelPlan';
 
 // Inquiry 페이지 (유저용)
@@ -118,21 +120,26 @@ export const router = createBrowserRouter([
           },
           {
             path: 'setup',
+            element: <PlanSetup />
+          },
+          {
+            path: 'keyword',
             element: <PlanKeyword />
           },
           {
             path: 'result',
             element: <PlanResult />
           },
-          {
-            path: 'keyword',
-            element: <PlanKeyword />
-          },
+          
           // 💡 여기에 배치하여 /reserve/check 주소를 활성화합니다.
           {
             path: 'check', 
             element: <PlanCheckout />
-          }
+          },
+          {
+            path: 'receipt', // 👈 영수증 페이지 누락 방지
+            element: <PlanReceipt />
+          },
         ]
       },
       // 💡 외부 중복 주소는 제거되었습니다.

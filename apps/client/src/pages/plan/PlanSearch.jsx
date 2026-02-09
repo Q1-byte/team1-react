@@ -4,14 +4,28 @@ import './PlanSearch.css';
 
 // 지역 데이터 (기존 유지)
 const REGION_DATA = {
-    "seoul": { name: "서울특별시", sub: ["강남구", "종로구", "마포구", "용산구"] },
-    "busan": { name: "부산광역시", sub: ["해운대구", "기장군", "수영구"] },
-    "jeju": { name: "제주특별자치도", sub: ["제주시", "서귀포시"] },
+    "seoul": { name: "서울특별시", sub: ["강남구", "종로구", "마포구", "용산구", "서초구", "송파구"] },
+    "busan": { name: "부산광역시", sub: ["해운대구", "기장군", "수영구", "중구", "동래구"] },
+    "daegu": { name: "대구광역시", sub: ["중구", "수성구", "달서구", "북구"] },
+    "incheon": { name: "인천광역시", sub: ["중구", "연수구", "옹진군", "강화군"] },
+    "gwangju": { name: "광주광역시", sub: ["동구", "남구", "광산구"] },
+    "daejeon": { name: "대전광역시", sub: ["유성구", "중구", "서구"] },
+    "ulsan": { name: "울산광역시", sub: ["남구", "동구", "울주군"] },
+    "sejong": { name: "세종특별자치시", sub: ["세종시"] },
+    "gyeonggi": { name: "경기도", sub: ["수원시", "용인시", "고양시", "가평군", "양평군"] },
+    "gangwon": { name: "강원도", sub: ["강릉시", "속초시", "춘천시", "양양군"] },
+    "chungbuk": { name: "충청북도", sub: ["청주시", "충주시", "제천시", "단양군"] },
+    "chungnam": { name: "충청남도", sub: ["천안시", "아산시", "태안군", "보령시"] },
+    "jeonbuk": { name: "전라북도", sub: ["전주시", "군산시", "익산시", "부안군"] },
+    "jeonnam": { name: "전라남도", sub: ["여수시", "순천시", "목포시", "담양군"] },
+    "gyeongbuk": { name: "경상북도", sub: ["경주시", "포항시", "안동시", "울릉군"] },
+    "gyeongnam": { name: "경상남도", sub: ["창원시", "거제시", "통영시", "남해군"] },
+    "jeju": { name: "제주특별자치도", sub: ["제주시", "서귀포시"] }
 };
 
 const PlanSearch = () => {
     const navigate = useNavigate();
-    
+
     // 🔥 중요: 부모(TravelPlan)로부터 상태와 수정 함수를 가져옵니다.
     const { planConfig, handleConfigChange } = useOutletContext();
 
@@ -22,17 +36,17 @@ const PlanSearch = () => {
         }
         // ✅ 다음 페이지(날짜/인원/키워드 설정)로 이동
         // 주소는 App.jsx 설정에 맞춰서 수정하세요! (예: /travel-plan/setup)
-        navigate('/reserve/setup'); 
+        navigate('/reserve/setup');
     };
 
     return (
         <div className="plan-search-container">
             <h2>어디로 떠나시나요?</h2>
-            
-            <div className="map-placeholder" style={{ 
-                width: '100%', height: '300px', background: '#eee', 
-                display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                marginBottom: '20px', borderRadius: '15px' 
+
+            <div className="map-placeholder" style={{
+                width: '100%', height: '300px', background: '#eee',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: '20px', borderRadius: '15px'
             }}>
                 📍 지도가 들어갈 공간입니다
             </div>
@@ -42,8 +56,8 @@ const PlanSearch = () => {
                     {/* 1. 지역 선택 */}
                     <div className="input-group">
                         <label>📍 지역</label>
-                        <select 
-                            value={planConfig.region_id || ""} 
+                        <select
+                            value={planConfig.region_id || ""}
                             onChange={(e) => {
                                 const regionId = e.target.value;
                                 handleConfigChange('region_id', regionId);
@@ -61,8 +75,8 @@ const PlanSearch = () => {
                     {/* 2. 상세 지역 선택 */}
                     <div className="input-group">
                         <label>🗺️ 세부 지역</label>
-                        <select 
-                            value={planConfig.sub_region || ""} 
+                        <select
+                            value={planConfig.sub_region || ""}
                             onChange={(e) => handleConfigChange('sub_region', e.target.value)}
                             disabled={!planConfig.region_id}
                         >
@@ -80,11 +94,11 @@ const PlanSearch = () => {
                                 {(Number(planConfig.budget_range?.[1]) || 100000).toLocaleString()}원
                             </strong>
                         </label>
-                        <input 
-                            type="range" 
-                            min="100000" 
-                            max="5000000" 
-                            step="10000" 
+                        <input
+                            type="range"
+                            min="100000"
+                            max="5000000"
+                            step="10000"
                             // 부모의 데이터를 가져와서 보여줌
                             value={Number(planConfig.budget_range?.[1]) || 100000}
                             // 부모의 데이터를 직접 수정함
@@ -92,7 +106,7 @@ const PlanSearch = () => {
                         />
                     </div>
                 </div>
-                
+
                 <button className="next-button" onClick={handleNext}>
                     날짜 및 인원 설정하기
                 </button>

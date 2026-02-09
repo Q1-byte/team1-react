@@ -19,7 +19,7 @@
 /* 2. 중앙 화이트 카드 */
 .search-main-card {
     width: 100%;
-    max-width: 650px; /* 통합 버전을 위해 너비를 살짝 넓힘 */
+    max-width: 650px;
     background: white;
     border-radius: 16px;
     padding: 30px;
@@ -54,22 +54,37 @@
     background: white;
 }
 
-/* 달력 타일 스타일 */
+/* [수정] 달력 타일 기본 스타일 및 선택 효과 */
+.react-calendar__tile {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+/* 단일 선택 또는 범위의 시작/끝 스타일 */
+.selected-single-tile,
 .react-calendar__tile--active {
     background: #007bff !important;
     color: white !important;
-    border-radius: 8px;
+    border-radius: 8px !important;
 }
 
+/* 범위 선택 중 내부 타일 스타일 */
+.selected-range-tile,
 .react-calendar__tile--range {
     background: #e6f7ff !important;
     color: #007bff !important;
+    border-radius: 0;
 }
 
-.react-calendar__tile--rangeStart,
-.react-calendar__tile--rangeEnd {
-    background: #007bff !important;
-    color: white !important;
+/* 🚫 비활성화된 날짜 스타일링 (오늘 이전 & 3일 초과) */
+.react-calendar__tile:disabled {
+    background-color: #f8f9fa !important; /* 더 연한 회색 */
+    color: #ced4da !important;           /* 흐릿한 글자색 */
+    cursor: not-allowed !important;       /* 금지 아이콘 */
+    pointer-events: none !important;      /* 클릭 이벤트 완전 차단 */
 }
 
 .selected-range-info {
@@ -82,7 +97,7 @@
     border: 1px solid #d0e7ff;
 }
 
-/* 4. 2x2 선택 그리드 섹션 */
+/* 4. 선택 그리드 섹션 (예산 등) */
 .selection-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -90,30 +105,6 @@
     margin-bottom: 20px;
 }
 
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.input-group label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #666;
-    text-align: left;
-}
-
-.input-group select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #fdfdfd;
-    font-size: 0.95rem;
-    cursor: pointer;
-}
-
-/* 예산 슬라이더 스타일 (full-width) */
 .budget-group.full-width {
     grid-column: span 2;
     margin-top: 10px;
@@ -122,7 +113,7 @@
 .budget-group input[type="range"] {
     width: 100%;
     cursor: pointer;
-    accent-color: #007bff; /* 슬라이더 색상 */
+    accent-color: #007bff;
 }
 
 .budget-display {
@@ -130,9 +121,10 @@
     margin-top: 5px;
     color: #007bff;
     font-size: 1rem;
+    font-weight: 600;
 }
 
-/* 5. 통합된 키워드 카드 섹션 (도안 3페이지 반영) */
+/* 5. 키워드 카드 섹션 */
 .keyword-section {
     margin-top: 30px;
     padding-top: 25px;
@@ -163,7 +155,6 @@
     border-radius: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
-    text-align: left;
 }
 
 .keyword-card:hover {
@@ -228,10 +219,5 @@
     }
     .budget-group.full-width {
         grid-column: span 1;
-    }
-    .kw-img {
-        min-width: 45px;
-        height: 45px;
-        font-size: 1.5rem;
     }
 }
