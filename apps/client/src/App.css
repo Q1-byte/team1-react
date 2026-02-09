@@ -21,45 +21,73 @@
     }
 
     /* 2. 헤더 스타일 */
-    .header {
+    /* 2. 헤더 스타일 */
+.header {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;             /* 가로 전체 너비 */
+    width: 100%;
     z-index: 1000;
-    padding: 15px 40px;
+    padding: 0 40px; /* 상하 여백은 이미 0입니다 */
     display: flex;
     justify-content: flex-end;
     background-color: transparent;
+    
+    /* 추가: 헤더의 높이 자체를 버튼에 맞게 최소화 */
+    align-items: flex-start; 
+}
 
-    }
-
-    .header button {
-    background-color: #005ADE;
-    border: none;
-    color: white;
-    
-    /* 1. 글자 두께를 얇게 (Pretendard 기준) */
-    font-weight: 300; 
-    font-size: 13px;
-    
-    /* 2. 상하 패딩을 줄여서 높이를 얇게 (기존 8px -> 4px) */
-    padding: 4px 12px; 
-    
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    margin-right: 10px;
-    
-    /* gap을 쓰기로 했으므로 margin-right는 삭제해도 됩니다! */
-    }
-
-    .header button:hover {
-    background-color: #6495ED;
-    color: white;
-    /* 호버했을 때만 글자를 약간 또렷하게 하고 싶다면 */
+.header button {
+    /* 1. 폰트 설정 (이 부분에 Pretendard를 최우선으로) */
+    font-family: 'Pretendard', sans-serif;
+    font-size: 20px;
     font-weight: 500;
-    }
+    color: white;
+
+    /* 2. 텍스트 중앙 정렬의 핵심 (Flexbox) */
+    display: inline-flex;     /* 텍스트를 flex 박스 안의 아이템으로 취급 */
+    align-items: center;      /* 세로(수직) 중앙 정렬 */
+    justify-content: center;  /* 가로(수평) 중앙 정렬 */
+
+    /* 3. 높이와 여백 조절 */
+    height: 45px;             /* 높이를 고정하면 중앙 정렬이 훨씬 정확합니다 */
+    padding: 0 20px;          /* 상하 패딩은 0으로 두고, 좌우만 줍니다 */
+    
+    /* 4. 기존 디자인 속성 */
+    background-color: transparent;
+    border: 2px solid white;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    margin-top: -2px;         /* 천장에 붙이기 */
+    margin-right: 10px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: color 0.4s ease;
+}
+
+/* 마우스를 올렸을 때 살짝 변하는 효과 */
+.header button::before {
+    content: "";
+    position: absolute;
+    bottom: -100%;          /* 처음엔 버튼 아래에 숨김 */
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white; /* 채워질 색상 */
+    z-index: -1;            /* 글자 뒤로 배치 */
+    transition: bottom 0.4s ease; /* 위로 올라오는 속도 */
+}
+
+/* 마우스를 올렸을 때 */
+.header button:hover {
+    color: #005ADE;         /* 글자색을 배경색(파랑)이나 검정으로 변경 */
+}
+
+.header button:hover::before {
+    bottom: 0;              /* 아래에서 위로 '슥' 올라옴 */
+}
 
     /* 3. 상단 메인 슬라이더 섹션 */
     .topbanner-section {
@@ -86,12 +114,14 @@
     background-color: #2C5F9E;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: ;
-    transition: opacity 3s ease-in-out;
+    opacity: 10;
+    transition: opacity 30s ease-in-out;
     }
 
     .slide-item.active {
-    opacity: 0.1;
+    opacity: 1;
+    visibility: visible; /* 보이게 설정 */
+    z-index: 2;
     }
 
     .banner-content {
@@ -134,17 +164,7 @@
     font-weight: 800;
     }
 
-    .slide-item::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* 아래에서 위로 검정색(70% 불투명)에서 투명으로 변하는 그라디언트 */
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
-    z-index: 2;
-    }
+    
     /* 4. 아이콘 네비게이션 (이미지 배경 꽉 차게) */
     .nav-bar {
     display: flex;
@@ -174,8 +194,8 @@
     }
 
     .icon-circle img {
-    width: 220%;      /* 이미지 배경으로 쓰기 위해 100% */
-    height: 220%;
+    width: 100%;      /* 이미지 배경으로 쓰기 위해 100% */
+    height: 100%;
     object-fit: cover; /* 원형에 꽉 차게 */
     }
 

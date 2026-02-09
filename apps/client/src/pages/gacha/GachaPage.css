@@ -1,5 +1,5 @@
 .gacha-screen {
-    background-color: #f8f9fa;
+    background-color:#9DBFF5;
     min-height: 80vh; /* 헤더/푸터 제외 영역 꽉 채움 */
     display: flex;
     flex-direction: column;

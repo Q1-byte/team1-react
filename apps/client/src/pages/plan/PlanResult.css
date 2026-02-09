@@ -1,10 +1,11 @@
+/* 레이아웃 배치 조정 */
 .result-layout {
     display: flex;
-    gap: 30px;
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 20px;
+    gap: 40px;          /* 왼쪽과 오른쪽 사이 간격 확보 */
     align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 .itinerary-section {
@@ -48,13 +49,14 @@
 }
 
 .cost-summary-card {
-    flex: 1; /* 오른쪽 요약 카드는 좁게 */
+    flex: 0 0 320px;    /* 너비 고정 */
     position: sticky;
-    top: 20px;
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    top: 150px;         /* 스크롤 시 따라오는 위치 */
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
+    border: 1px solid #f0f0f0;
 }
 
 .cost-row {
@@ -81,4 +83,98 @@
     font-weight: bold;
     cursor: pointer;
     margin-top: 20px;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column; /* 요소들을 세로로 배치 */
+    align-items: center;    /* 수평 중앙 정렬 */
+    justify-content: center; /* 수직 중앙 정렬 */
+    height: calc(100vh - 100px); /* 헤더 높이를 제외한 전체 화면 높이 */
+    text-align: center;      /* 텍스트 중앙 정렬 */
+}
+
+.loading-container p {
+    margin-top: 20px;       /* 스피너와의 간격 */
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+}
+summary-ticket-effect h3 {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+/* 티켓 구분선 효과 */
+.ticket-divider {
+    height: 1px;
+    background: #eee;
+    margin-bottom: 20px;
+}
+
+.ticket-divider-dashed {
+    border-top: 1px dashed #ddd;
+    margin: 20px 0;
+}
+
+/* 정보 요약 행 */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.info-row strong {
+    color: #000;
+}
+
+/* 금액 강조 */
+.cost-row.total-only {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.cost-row.total-only .label {
+    display: block;
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.cost-row.total-only .total-price {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #007bff;
+}
+
+/* 하단 알림 및 버튼 */
+.summary-notice {
+    margin: 20px 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #999;
+    line-height: 1.4;
+}
+
+.book-btn {
+    width: 100%;
+    height: 60px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.book-btn:hover {
+    background: #0056b3;
+    transform: translateY(-2px); /* 살짝 떠오르는 효과 */
 }

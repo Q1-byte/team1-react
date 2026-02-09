@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './PlanResult.css';
+import Header from '../../components/Header';
 
 const PlanResult = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
-    // 1. 이전 페이지에서 넘어온 데이터 (Keyword에서 처음 왔거나, Checkout에서 복귀했거나)
+    // 1. 이전 페이지(Keyword)에서 넘어온 데이터 수신
     const finalPlanData = location.state?.finalPlanData || {};
 
-    // 2. 초기값 설정: Checkout에서 복귀 시 original_details가 있다면 그것을 우선 사용
+    // 2. 초기 상태 설정: 결제 페이지에서 돌아왔을 때 데이터가 있다면 복원
     const [details, setDetails] = useState(() => {
         return finalPlanData.confirmed_details || [];
     });
     
-    // 3. 데이터 존재 여부에 따른 로딩 상태 초기화
+    // 3. 로딩 상태 및 현재 선택된 일차(Day) 관리
     const [loading, setLoading] = useState(details.length === 0); 
     const [activeDay, setActiveDay] = useState(1); 
 
     useEffect(() => {
-        // 처음 진입하여 데이터가 없는 경우에만 AI 시뮬레이션 실행
+        // 데이터가 없는 경우에만 AI 시뮬레이션(Mock Data) 실행
         if (details.length === 0) {
             const mockData = [
                 { id: 1, day: 1, type: '관광', name: '동백섬', address: '부산광역시 해운대구...', price: 30000, is_required: false, is_selected: true },
@@ -37,53 +38,60 @@ const PlanResult = () => {
         }
     }, [details.length]);
 
+    // 일정 선택/해제 핸들러
     const toggleItem = (id) => {
         setDetails(prev => prev.map(item =>
             item.id === id ? { ...item, is_selected: !item.is_selected } : item
         ));
     };
 
-    const getDayTotal = (day) => details
-        .filter(item => item.day === day && item.is_selected)
-        .reduce((sum, item) => sum + item.price, 0);
-
+    // 총 결제 예상 금액 계산
     const totalPrice = details
         .filter(item => item.is_selected)
         .reduce((sum, item) => sum + item.price, 0);
 
-    // [핵심 수정] 결제창으로 이동하는 핸들러
-    const handleGoToCheckout = () => {
-        if (totalPrice === 0) {
-            alert("선택된 일정이 없습니다. 일정을 추가해주세요!");
-            return;
-        }
+    // [핵심] 결제 확인 페이지(/check)로 이동하는 핸들러
+    // PlanResult.jsx 내의 이동 함수
+const handleGoToCheckout = () => {
+    if (totalPrice === 0) {
+        alert("선택된 일정이 없습니다.");
+        return;
+    }
 
-        // 선택된(is_selected: true) 항목만 추출
-        const selectedOnly = details.filter(item => item.is_selected);
+    // 필터링된 데이터 준비
+    const selectedOnly = details.filter(item => item.is_selected);
 
-        navigate('/checkout', { 
-            state: { 
-                finalPlanData: {
-                    ...finalPlanData,
-                    total_amount: totalPrice,
-                    // 결제창 보여주기용 (확정된 것만)
-                    confirmed_details: selectedOnly, 
-                    // 복귀 시 복원용 (전체 리스트 - 선택 안 한 것 포함)
-                    original_details: details 
-                } 
+    // 💡 핵심: '/reserve/check'로 보낼 때 객체 구조를 정확히 맞춥니다.
+    navigate('/reserve/check', { 
+        state: { 
+            finalPlanData: {
+                region_name: finalPlanData.region_name, // 지역명
+                start_date: finalPlanData.start_date,   // 날짜
+                end_date: finalPlanData.end_date,
+                total_amount: totalPrice,               // 총 금액
+                confirmed_details: selectedOnly         // 선택된 리스트
             } 
-        });
-    };
+        } 
+    });
+};
+
+    
 
     if (loading) return (
-        <div className="loading-container">
-            <div className="spinner"></div>
-            <p>🤖 AI가 {finalPlanData.region_name || '지역'} 맞춤형 일정을 구성 중입니다...</p>
-        </div>
+        <>
+            <Header />
+            <div className="loading-container">
+                <div className="spinner"></div>
+                <p>🤖 AI가 {finalPlanData.region_name || '지역'} 맞춤형 일정을 구성 중입니다...</p>
+            </div>
+        </>
     );
 
     return (
+      <> 
+      <Header />
         <div className="result-layout">
+            {/* 왼쪽: 일차별 일정 리스트 영역 */}
             <div className="itinerary-section">
                 <div className="result-header">
                     <h2>{finalPlanData.region_name} 여행 스케줄 관리</h2>
@@ -123,33 +131,49 @@ const PlanResult = () => {
                     ))}
                 </div>
             </div>
-
+            
+            {/* 오른쪽: 요약 정보 카드 (상세 내역 삭제 버전) */}
+            {/* --- 우측 사이드바: 디자인 강화 버전 --- */}
             <div className="cost-summary-card">
-                <h3>여행 경비 요약</h3>
-                <div className="cost-list">
-                    {[...new Set(details.map(item => item.day))].sort().map(day => (
-                        <div className="cost-row" key={day}>
-                            <span>{day}일차 경비</span>
-                            <span>{getDayTotal(day).toLocaleString()} 원</span>
-                        </div>
-                    ))}
+                <div className="summary-ticket-effect">
+                    <h3>Trip Summary</h3>
+                    <div className="ticket-divider"></div>
                     
-                    <div className="cost-row total">
-                        <span>총 결제 예상 금액</span>
-                        <span className="total-price">{totalPrice.toLocaleString()} 원</span>
+                    <div className="summary-info">
+                        <div className="info-row">
+                            <span>장소</span>
+                            <strong>{finalPlanData.region_name}</strong>
+                        </div>
+                        <div className="info-row">
+                            <span>기간</span>
+                            <span>{finalPlanData.start_date?.slice(5)} - {finalPlanData.end_date?.slice(5)}</span>
+                        </div>
+                        <div className="info-row">
+                            <span>인원</span>
+                            <span>{finalPlanData.people_count}명</span>
+                        </div>
+                    </div>
+
+                    <div className="ticket-divider-dashed"></div>
+
+                    <div className="cost-list">
+                        <div className="cost-row total-only">
+                            <span className="label">총 결제 금액</span>
+                            <span className="total-price">{totalPrice.toLocaleString()}원</span>
+                        </div>
                     </div>
                 </div>
-                
+
                 <div className="summary-notice">
-                    <p>* AI가 추천한 최적의 경로입니다.</p>
-                    <p>* 일정 제거 시 총 금액이 자동 차감됩니다.</p>
+                    <p>선택하신 {details.filter(item => item.is_selected).length}개의 일정이 반영되었습니다.</p>
                 </div>
 
                 <button className="book-btn" onClick={handleGoToCheckout}>
-                    최종 예약 및 결제하기 
+                    결제 단계로 이동하기
                 </button>
             </div>
         </div>
+      </>
     );
 };
 
