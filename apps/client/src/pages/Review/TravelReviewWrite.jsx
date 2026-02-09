@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../api';
 import './TravelReviewWrite.css';
 
 const TravelReviewWrite = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     // 1. [요구조건: DB 테이블 대조] 명세서의 모든 컬럼을 상태값으로 관리
     const [formData, setFormData] = useState({
-        user_id: 101,          // DB: user_id (BigInt)
-        plan_id: 501,          // DB: plan_id (BigInt)
+        userId: user.id || 1, // AuthContext의 실제 유저 ID 사용
+        planId: 501,          // DB: plan_id (BigInt)
         title: '',             // DB: title (Varchar)
         content: '',           // DB: content (Text)
         rating: 5,             // DB: rating (Int)
-        difficulty_score: 3,   // DB: difficulty_score (Int)
-        is_random: false,      // DB: is_random (Boolean)
-        is_public: true,       // DB: is_public (Boolean)
-        is_deleted: false,     // DB: is_deleted (Boolean)
+        isRandom: false,      // DB: is_random (Boolean)
+        isPublic: true,       // DB: is_public (Boolean)
+        isDeleted: false,     // DB: is_deleted (Boolean)
         view_count: 0          // DB: view_count (Int)
     });
 
@@ -55,12 +57,50 @@ const TravelReviewWrite = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // 실제 전송 시 formData와 uploadFiles를 결합하여 전송
-        console.log("DB 전송 데이터:", formData, uploadFiles);
-        alert("리뷰가 성공적으로 등록되었습니다!");
-        navigate('/reviews');
+
+        try {
+            // 1. 이미지 파일이 있으면 먼저 서버에 업로드하여 영구 URL 획득
+            let uploadedImages = [];
+            if (uploadFiles.length > 0) {
+                const formDataUpload = new FormData();
+                uploadFiles.forEach(img => {
+                    formDataUpload.append('files', img.file_obj);
+                });
+
+                // FileController의 /api/files/upload 호출
+                const uploadRes = await api.post('/files/upload', formDataUpload, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+
+                // 서버에서 반환한 [ {originName, storedUrl}, ... ] 정보 매핑
+                uploadedImages = uploadRes.data.map((resImg, idx) => ({
+                    originName: resImg.originName,
+                    storedUrl: resImg.storedUrl, // 서버에서 생성된 영구 URL
+                    sortOrder: idx
+                }));
+            }
+
+            // 2. 백엔드 ReviewSaveRequestDto 형식에 맞게 최종 데이터 조립
+            const submitData = {
+                title: formData.title,
+                content: formData.content,
+                userId: formData.userId,
+                planId: formData.planId,
+                rating: parseInt(formData.rating, 10),
+                isPublic: formData.isPublic,
+                images: uploadedImages
+            };
+
+            const response = await api.post('/reviews', submitData);
+            console.log("DB 전송 결과:", response.data);
+            alert("리뷰가 성공적으로 등록되었습니다!");
+            navigate('/reviews');
+        } catch (error) {
+            console.error("리뷰 등록 중 오류 발생:", error);
+            alert("리뷰 등록에 실패했습니다. " + (error.response?.data?.message || error.message));
+        }
     };
 
     return (
@@ -71,8 +111,8 @@ const TravelReviewWrite = () => {
                 {/* 제목 */}
                 <div className="input-group">
                     <label>제목</label>
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         name="title"
                         placeholder="여행의 제목을 입력하세요"
                         value={formData.title}
@@ -94,22 +134,12 @@ const TravelReviewWrite = () => {
                         </select>
                     </div>
 
-                    <div className="input-group flex-1">
-                        <label>난이도</label>
-                        <select name="difficulty_score" value={formData.difficulty_score} onChange={handleChange}>
-                            <option value="1">Level 1 (매우 쉬움)</option>
-                            <option value="2">Level 2 (쉬움)</option>
-                            <option value="3">Level 3 (보통)</option>
-                            <option value="4">Level 4 (어려움)</option>
-                            <option value="5">Level 5 (매우 어려움)</option>
-                        </select>
-                    </div>
                 </div>
 
                 {/* 본문 (태그 삽입 위치) */}
                 <div className="input-group">
                     <label>여행 이야기</label>
-                    <textarea 
+                    <textarea
                         name="content"
                         placeholder="내용을 작성하고 아래 사진의 '본문에 삽입' 버튼을 눌러보세요."
                         value={formData.content}
@@ -121,24 +151,24 @@ const TravelReviewWrite = () => {
                 {/* 이미지 업로드 영역 (모든 요구 조건 통합) */}
                 <div className="input-group image-upload-section">
                     <label>이미지 첨부 (다중 선택 가능)</label>
-                    <input 
-                        type="file" 
-                        accept="image/*" 
-                        multiple 
+                    <input
+                        type="file"
+                        accept="image/*"
+                        multiple
                         className="file-input"
-                        onChange={handleImageChange} 
+                        onChange={handleImageChange}
                     />
 
                     <div className="image-preview-container">
                         {uploadFiles.map((image, index) => (
                             <div key={index} className="preview-card">
-                                <img 
-                                    src={image.url} 
-                                    alt={image.file_name} 
-                                    className="preview-item" 
+                                <img
+                                    src={image.url}
+                                    alt={image.file_name}
+                                    className="preview-item"
                                 />
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     className="insert-tag-btn"
                                     onClick={() => insertImageTag(index)}
                                 >
@@ -156,10 +186,10 @@ const TravelReviewWrite = () => {
                 {/* 공개 여부 설정 */}
                 <div className="public-setting-area">
                     <label className="checkbox-container">
-                        <input 
-                            type="checkbox" 
-                            name="is_public"
-                            checked={formData.is_public}
+                        <input
+                            type="checkbox"
+                            name="isPublic"
+                            checked={formData.isPublic}
                             onChange={handleChange}
                         />
                         <span className="checkbox-text">이 후기를 전체 공개로 등록합니다.</span>

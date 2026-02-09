@@ -7,6 +7,7 @@
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+    font-family: 'Pretendard', -apple-system, sans-serif;
 }
 
 .write-title {
@@ -19,15 +20,15 @@
     padding-bottom: 20px;
 }
 
-/* 2. 레이아웃: 평점과 난이도를 가로로 배치 */
+/* 2. 레이아웃: 평점 영역 */
 .input-row {
     display: flex;
     gap: 30px;
     margin-bottom: 5px;
 }
 
-.flex-1 {
-    flex: 1;
+.flex-1 select {
+    max-width: 200px;
 }
 
 /* 3. 공통 입력 요소 스타일 */
@@ -71,32 +72,22 @@
     line-height: 1.6;
 }
 
-/* 4. 별점(Rating) 시스템 스타일 */
-.rating-group {
+/* 4. 별점 시스템 */
+.rating-select {
+    width: 220px !important;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.rating-select-area {
     display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-    gap: 10px;
+    align-items: center;
 }
 
-.rating-group input { 
-    display: none; 
-}
-
-.rating-group label {
-    font-size: 2.5rem;
-    color: #eee;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.rating-group input:checked ~ label,
-.rating-group label:hover,
-.rating-group label:hover ~ label {
-    color: #ffc107;
-}
-
-/* 5. 이미지 업로드 및 미리보기 영역 */
+/* 5. 이미지 업로드 및 미리보기 (통합 디자인) */
 .image-upload-section {
     background: #f8f9fa;
     padding: 25px;
@@ -105,25 +96,20 @@
     margin-top: 10px;
 }
 
-.file-input {
-    width: 100%;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
 .image-preview-container {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     flex-wrap: wrap;
     margin-top: 20px;
 }
 
-/* 🚩 버튼과 이미지를 감싸는 카드 구조 */
+/* 🚩 미리보기 카드 (기능 통합) */
 .preview-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    position: relative; /* 삭제 버튼용 */
 }
 
 .preview-item {
@@ -133,9 +119,37 @@
     border-radius: 8px;
     border: 1px solid #eee;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
 }
 
-/* 🚩 본문 삽입 버튼 */
+/* 🚩 삭제 버튼 (사용자 디자인 보존하며 추가) */
+.delete-preview-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background-color: #fa5252;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+    transition: transform 0.2s;
+}
+
+.delete-preview-btn:hover {
+    background-color: #e03131;
+    transform: scale(1.1);
+}
+
+/* 🚩 본문 삽입 버튼 (기존 스타일) */
 .insert-tag-btn {
     padding: 6px 12px;
     background-color: #34495e;
@@ -155,7 +169,7 @@
 .helper-text {
     font-size: 0.85rem;
     color: #888;
-    margin-top: 10px;
+    margin-top: 15px;
     display: block;
 }
 
@@ -195,10 +209,9 @@
     font-weight: 700;
     cursor: pointer;
     border: none;
-    transition: opacity 0.2s, transform 0.1s; /* active 구문 수정 */
+    transition: all 0.2s;
 }
 
-/* 클릭 시 눌리는 효과 별도 분리 */
 .write-btns button:active {
     transform: scale(0.96);
 }
@@ -215,6 +228,7 @@
 
 .submit-btn:hover {
     background-color: #0056b3;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
 .cancel-btn:hover {

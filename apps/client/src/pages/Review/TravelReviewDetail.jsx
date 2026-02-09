@@ -1,145 +1,131 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './TravelReviewDetail.css'; 
+import { useAuth } from '../../context/AuthContext';
+import api from '../../api';
+import './TravelReviewDetail.css';
 
 const TravelReviewDetail = () => {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
-    // [검수] 가짜 데이터 6개 전수 기재 (속성별 개행 유지)
-    const reviewDetails = {
-        "1": { 
-            id: 1, 
-            title: "노란 유채꽃밭에서 인생샷 건지고 왔어요! 🌼", 
-            user_id: 101, 
-            author: "봄나들이객", 
-            plan_id: 501,
-            content: "제주도 유채꽃 축제 정말 대박이에요. [IMAGE_1] 특히 성산일출봉 근처 유채꽃 재배단지가 정말 넓어서 사람에 치이지 않고 사진 찍기 좋았어요. [IMAGE_2] 내년에도 꼭 다시 오고 싶네요.", 
-            rating: 5, 
-            difficulty_score: 1, 
-            is_random: false, 
-            is_public: true, 
-            is_deleted: false, 
-            view_count: 1250, 
-            created_at: "2026-03-05 14:20:00", 
-            updated_at: "2026-03-05 14:20:00",
-            images: [
-                { id: 1, file_name: "화사한 유채꽃밭", url: "/banner/event/flower.jpg", sort_order: 0 },
-                { id: 2, file_name: "jeju_spring_02.jpg", url: "/banner/event/jejuflower.jpg", sort_order: 1 }
-            ]
-        },
-        "2": { 
-            id: 2, 
-            title: "겨울 바다 기차 여행... 생각보다 훨씬 낭만적이네요", 
-            user_id: 102, 
-            author: "혼행족", 
-            plan_id: 502,
-            content: "추운 날씨였지만 기차 안에서 따뜻한 커피 한 잔 마시며 보는 바다는 정말 아름다웠어요. 정동진역에 내려서 바다 냄새 한껏 맡고 오니 가슴이 뻥 뚫리네요. 혼자만의 시간이 필요할 때 강력 추천합니다.", 
-            rating: 4, 
-            difficulty_score: 2, 
-            is_random: false, 
-            is_public: true, 
-            is_deleted: false, 
-            view_count: 842, 
-            created_at: "2026-02-10 09:00:00", 
-            updated_at: "2026-02-10 09:00:00",
-            images: [
-                { id: 3, file_name: "winter_train.jpg", url: "/banner/event/winter.jpg", sort_order: 0 }
-            ]
-        },
-        "3": { 
-            id: 3, 
-            title: "야시장 먹거리 털기! 스테이크가 진짜 맛있음 🍖", 
-            user_id: 103, 
-            author: "맛집탐방가", 
-            plan_id: 503,
-            content: "서울 밤도깨비 야시장 다녀왔어요. 웨이팅은 좀 길었지만 큐브 스테이크랑 팟타이 조합은 최고였습니다. 야경을 보며 먹으니 더 맛있더라고요. 한강 바람이 선선해서 데이트 코스로도 딱이에요.", 
-            rating: 5, 
-            difficulty_score: 3, 
-            is_random: false, 
-            is_public: true, 
-            is_deleted: false, 
-            view_count: 2105, 
-            created_at: "2026-05-15 20:30:00", 
-            updated_at: "2026-05-15 20:30:00",
-            images: [
-                { id: 4, file_name: "night_market.jpg", url: "/banner/event/dokkaebi.jpg", sort_order: 0 }
-            ]
-        },
-        "4": { 
-            id: 4, 
-            title: "남산타워 벚꽃, 이번 주말이 절정일 듯합니다", 
-            user_id: 104, 
-            author: "사진작가L", 
-            plan_id: 504,
-            content: "남산 산책로를 따라 핀 벚꽃들이 정말 환상적입니다. 케이블카 대기 줄이 길긴 하지만 위에서 내려다보는 핑크빛 서울 시내는 그만한 가치가 있어요. 야간 조명이 켜지면 더 예쁘니 저녁 방문도 추천드려요.", 
-            rating: 4, 
-            difficulty_score: 4, 
-            is_random: false, 
-            is_public: true, 
-            is_deleted: false, 
-            view_count: 562, 
-            created_at: "2026-04-05 11:00:00", 
-            updated_at: "2026-04-05 11:00:00",
-            images: [
-                { id: 5, file_name: "namsan_sakura.jpg", url: "/banner/event/sakura.jpg", sort_order: 0 }
-            ]
-        },
-        "5": { 
-            id: 5, 
-            title: "영화제 현장 열기 대단하네요! 레드카펫 대기 중", 
-            user_id: 105, 
-            author: "시네마덕후", 
-            plan_id: 505,
-            content: "부산 국제 영화제에 다녀왔습니다! 해운대와 영화의 전당 일대의 축제 분위기가 너무 좋네요. 평소 보고 싶었던 영화를 큰 화면으로 보니 정말 뜻깊었습니다. 레드카펫 행사도 운 좋게 볼 수 있었어요.", 
-            rating: 5, 
-            difficulty_score: 3, 
-            is_random: false, 
-            is_public: true, 
-            is_deleted: false, 
-            view_count: 320, 
-            created_at: "2026-10-05 18:00:00", 
-            updated_at: "2026-10-05 18:00:00",
-            images: [
-                { id: 6, file_name: "busan_biff.jpg", url: "/banner/event/cure.jpg", sort_order: 0 }
-            ]
-        },
-        "6": { 
-            id: 6, 
-            title: "전주 한옥마을 투어! 한복 입고 인생 사진 남기기", 
-            user_id: 106, 
-            author: "전주매니아", 
-            plan_id: 506,
-            content: "전주 여행은 언제 와도 고즈넉하고 좋네요. 이번엔 한복을 대여해서 돌아다녔는데 경기전 앞에서 찍은 사진들이 다 마음에 들어요. 길거리 음식들도 최고였고 한옥에서의 하룻밤도 잊지 못할 겁니다.", 
-            rating: 4, 
-            difficulty_score: 2, 
-            is_random: false, 
-            is_public: true, 
-            is_deleted: false, 
-            view_count: 1580, 
-            created_at: "2026-06-10 13:00:00", 
-            updated_at: "2026-06-10 13:00:00",
-            images: [
-                { id: 7, file_name: "jeonju_hanok.jpg", url: "/banner/event/han.jpg", sort_order: 0 }
-            ]
+    const [review, setReview] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    // 🚩 신고 모달 관련 상태
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [reportCategory, setReportCategory] = useState("스팸/광고");
+    const [reportDetail, setReportDetail] = useState("");
+
+    // 💬 댓글 관련 상태
+    const [newComment, setNewComment] = useState("");
+    const [replyToId, setReplyToId] = useState(null); // 대댓글 부모 ID
+
+    useEffect(() => {
+        api.get(`/reviews/${id}`)
+            .then(res => {
+                setReview(res.data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("후기 상세 정보를 불러오는 중 오류 발생:", err);
+                setLoading(false);
+            });
+    }, [id]);
+
+    // [함수] 댓글 제출 핸들러
+    const handleCommentSubmit = async () => {
+        if (!newComment.trim()) return;
+        if (!user.isLoggedIn) {
+            alert("로그인 후 이용 가능합니다.");
+            return;
+        }
+
+        try {
+            await api.post(`/reviews/${id}/comments`, {
+                userId: user.id,
+                content: newComment,
+                parentId: replyToId // 대댓글일 경우 부모 ID 포함
+            });
+            setNewComment("");
+            setReplyToId(null);
+            // 댓글 등록 후 새로고침
+            const res = await api.get(`/reviews/${id}`);
+            setReview(res.data);
+        } catch (error) {
+            alert("댓글 등록에 실패했습니다.");
         }
     };
 
-    const review = reviewDetails[id];
+    // [함수] 댓글 삭제 핸들러
+    const handleCommentDelete = async (commentId) => {
+        if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
 
-    if (!review || review.is_deleted || !review.is_public) {
+        try {
+            await api.delete(`/reviews/${id}/comments/${commentId}`, {
+                params: { userId: user.id }
+            });
+            // 삭제 후 새로고침
+            const res = await api.get(`/reviews/${id}`);
+            setReview(res.data);
+        } catch (error) {
+            alert("댓글 삭제에 실패했습니다.");
+        }
+    };
+
+    // [함수] 신고 제출 핸들러
+    const handleReportSubmit = async () => {
+        if (!reportDetail.trim()) {
+            alert("상세 사유를 입력해주세요.");
+            return;
+        }
+
+        const finalReason = `[${reportCategory}] ${reportDetail}`;
+
+        try {
+            await api.post('/reports', {
+                reviewId: id,
+                reporterId: user.id || 1,
+                reason: finalReason
+            });
+
+            alert("신고가 정상적으로 접수되었습니다.");
+            setIsReportModalOpen(false);
+            setReportDetail("");
+        } catch (error) {
+            alert("신고 접수 중 오류가 발생했습니다.");
+        }
+    };
+
+    const handleDelete = () => {
+        if (window.confirm("정말로 이 후기를 삭제하시겠습니까?")) {
+            // 삭제 시 userId가 필요함 (백엔드 deleteReview 참고)
+            api.delete(`/reviews/${id}`, { params: { userId: user.id } })
+                .then(() => {
+                    alert("삭제되었습니다.");
+                    navigate('/reviews', { replace: true });
+                })
+                .catch(err => {
+                    alert("삭제 중 오류가 발생했습니다: " + (err.response?.data?.message || err.message));
+                });
+        }
+    };
+
+    if (loading) return <div className="review-detail-layout"><p>로딩 중...</p></div>;
+
+    if (!review) {
         return (
             <div className="error-wrap">
                 <p>요청하신 후기가 존재하지 않거나 삭제되었습니다.</p>
-                <button onClick={() => navigate(-1)}>목록으로 돌아가기</button>
+                <button onClick={() => navigate('/reviews')}>목록으로 돌아가기</button>
             </div>
         );
     }
 
-    // 블로그형 렌더링 로직 (불필요한 줄바꿈 제거)
     const renderMixedContent = (content, images) => {
+        if (!content) return null;
         const parts = content.split(/(\[IMAGE_\d+\])/g);
-        const sortedImages = [...images].sort((a, b) => a.sort_order - b.sort_order);
+        const sortedImages = images ? [...images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
         return parts.map((part, index) => {
             const match = part.match(/\[IMAGE_(\d+)\]/);
@@ -149,9 +135,14 @@ const TravelReviewDetail = () => {
                 return imgObj ? (
                     <div key={`img-${index}`} className="gallery-card">
                         <div className="img-frame">
-                            <img src={imgObj.url} alt={imgObj.file_name} className="fixed-height-img" />
+                            <img
+                                src={imgObj.storedUrl}
+                                alt={imgObj.originName}
+                                className="fixed-height-img"
+                                onError={(e) => { e.target.src = "https://via.placeholder.com/400x300?text=Image+Not+Found"; }}
+                            />
                         </div>
-                        <p className="img-name-tag">{imgObj.file_name}</p>
+                        <p className="img-name-tag">{imgObj.originName}</p>
                     </div>
                 ) : null;
             }
@@ -159,12 +150,15 @@ const TravelReviewDetail = () => {
         });
     };
 
-    const renderStars = (num) => "★".repeat(num) + "☆".repeat(5 - num);
+    const renderStars = (num) => "★".repeat(num || 0) + "☆".repeat(5 - (num || 0));
+
+    // [추가] 관리 권한 체크 (글 작성자이거나 관리자일 때)
+    const canEditOrDelete = review.userId === user.id || user.role === 'admin';
 
     return (
         <div className="review-detail-layout">
             <header className="detail-nav-header">
-                <button className="back-list-btn" onClick={() => navigate(-1)}>
+                <button className="back-list-btn" onClick={() => navigate('/reviews')}>
                     ← 목록으로 돌아가기
                 </button>
             </header>
@@ -173,21 +167,27 @@ const TravelReviewDetail = () => {
                 <div className="review-header">
                     <h1 className="review-title">{review.title}</h1>
                     <div className="review-meta">
-                        <span className="meta-text">작성자: <strong>{review.author}</strong></span>
+                        <span className="meta-text">작성자: <strong>{review.authorAccountId}</strong></span>
                         <span className="meta-sep">|</span>
-                        <span className="meta-text">날짜: {review.created_at.split(' ')[0]}</span>
+                        <span className="meta-text">날짜: {review.createdAt ? review.createdAt.split('T')[0] : ''}</span>
                         <span className="meta-sep">|</span>
-                        <span className="meta-text">조회수: {review.view_count.toLocaleString()}</span>
+                        <span className="meta-text">조회수: {review.viewCount?.toLocaleString() || 0}</span>
                     </div>
-                    <div className="review-summary">
+
+                    <div className="review-summary-row">
                         <div className="summary-item rating">
                             <span className="summary-label">평점</span>
                             <span className="summary-value star-gold">{renderStars(review.rating)}</span>
                         </div>
-                        <div className="summary-item difficulty">
-                            <span className="summary-label">여행 난이도</span>
-                            <span className="summary-value">Level {review.difficulty_score}</span>
-                        </div>
+
+                        {/* 본인 또는 관리자일 때만 노출 */}
+                        {canEditOrDelete && (
+                            <div className="post-admin-actions">
+                                <button className="text-action-btn" onClick={() => navigate(`/reviews/edit/${id}`)}>수정</button>
+                                <span className="action-divider">|</span>
+                                <button className="text-action-btn delete-color" onClick={handleDelete}>삭제</button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -198,11 +198,107 @@ const TravelReviewDetail = () => {
                 </div>
 
                 <footer className="review-footer">
-                    <button className="report-btn" onClick={() => alert('신고 접수 페이지로 연결됩니다.')}>
+                    <button className="report-btn" onClick={() => setIsReportModalOpen(true)}>
                         🚨 이 게시글 신고하기
                     </button>
                 </footer>
             </article>
+
+            {/* 💬 댓글 섹션 추가 */}
+            <section className="comment-section">
+                <h3>댓글 {review.comments?.length || 0}</h3>
+
+                <div className="comment-list">
+                    {review.comments && review.comments.length > 0 ? (
+                        review.comments.map(comment => (
+                            <div key={comment.id} className="comment-item">
+                                <div className="comment-header">
+                                    <span className="comment-author">{comment.authorAccountId}</span>
+                                    <span className="comment-date">{comment.createdAt ? comment.createdAt.split('T')[0] : ''}</span>
+                                    <div className="comment-actions">
+                                        <button className="comment-reply-btn" onClick={() => {
+                                            setReplyToId(comment.id);
+                                            document.querySelector('.comment-write textarea')?.focus();
+                                        }}>답글</button>
+
+                                        {/* 댓글 작성자 또는 관리자만 삭제 가능 */}
+                                        {(comment.userId === user.id || user.role === 'admin') && (
+                                            <button className="comment-delete-btn" onClick={() => handleCommentDelete(comment.id)}>삭제</button>
+                                        )}
+                                    </div>
+                                </div>
+                                <p className="comment-content">{comment.content}</p>
+
+                                {/* 답글(대댓글) 렌더링 */}
+                                {comment.replies && comment.replies.length > 0 && (
+                                    <div className="reply-list">
+                                        {comment.replies.map(reply => (
+                                            <div key={reply.id} className="reply-item">
+                                                <div className="comment-header">
+                                                    <span className="comment-author">↪ {reply.authorAccountId}</span>
+                                                    <span className="comment-date">{reply.createdAt ? reply.createdAt.split('T')[0] : ''}</span>
+
+                                                    {/* 답글 작성자 또는 관리자만 삭제 가능 */}
+                                                    {(reply.userId === user.id || user.role === 'admin') && (
+                                                        <button className="comment-delete-btn" onClick={() => handleCommentDelete(reply.id)}>삭제</button>
+                                                    )}
+                                                </div>
+                                                <p className="comment-content">{reply.content}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))
+                    ) : (
+                        <p className="no-comment">첫 번째 댓글을 남겨보세요!</p>
+                    )}
+                </div>
+
+                <div className="comment-write">
+                    {replyToId && (
+                        <div className="reply-indicator">
+                            <span>답글 작성 중...</span>
+                            <button onClick={() => setReplyToId(null)}>취소</button>
+                        </div>
+                    )}
+                    <textarea
+                        placeholder={replyToId ? "답글을 입력하세요..." : "댓글을 입력하세요..."}
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                    />
+                    <button className="comment-submit-btn" onClick={handleCommentSubmit}>등록</button>
+                </div>
+            </section>
+
+            {/* 🚩 신고 모달 UI */}
+            {isReportModalOpen && (
+                <div className="report-modal-overlay">
+                    <div className="report-modal-content">
+                        <h3>신고 사유 선택</h3>
+                        <p className="modal-sub-text">부적절한 게시글을 신고해주세요.</p>
+
+                        <div className="category-group">
+                            <label><input type="radio" name="category" value="스팸/광고" checked={reportCategory === "스팸/광고"} onChange={(e) => setReportCategory(e.target.value)} /> 스팸/광고</label>
+                            <label><input type="radio" name="category" value="욕설/비하" checked={reportCategory === "욕설/비하"} onChange={(e) => setReportCategory(e.target.value)} /> 욕설/비하</label>
+                            <label><input type="radio" name="category" value="부적절한 콘텐츠" checked={reportCategory === "부적절한 콘텐츠"} onChange={(e) => setReportCategory(e.target.value)} /> 부적절한 콘텐츠</label>
+                            <label><input type="radio" name="category" value="기타" checked={reportCategory === "기타"} onChange={(e) => setReportCategory(e.target.value)} /> 기타</label>
+                        </div>
+
+                        <textarea
+                            className="report-textarea"
+                            placeholder="상세 내용을 입력해 주세요 (필수)"
+                            value={reportDetail}
+                            onChange={(e) => setReportDetail(e.target.value)}
+                        />
+
+                        <div className="modal-action-btns">
+                            <button className="cancel-btn" onClick={() => setIsReportModalOpen(false)}>취소</button>
+                            <button className="submit-btn" onClick={handleReportSubmit}>신고 제출</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
