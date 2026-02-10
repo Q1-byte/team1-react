@@ -1,237 +1,140 @@
-/* 1. 전체 배경 및 컨테이너 */
+/* 전체 배경 및 정렬 - 여백 수정 전 상태 */
 .plan-search-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    padding: 40px 20px;
-    background: #f8f9fa;
+     /* 상단 여백이 60px로 넓었던 상태 */
+    background-color: #f8f9fa;
+    padding: 0px 20px 60px 20px;
     min-height: 100vh;
 }
 
-.plan-search-container h2 {
-    font-size: 1.8rem;
-    color: #333;
-    font-weight: 700;
-    margin-bottom: 10px;
+.search-title {
+    margin-top: 0;      /* 상단 마진 강제 제거 */
+    margin-bottom: 20px; /* 아래쪽 여백도 너무 넓다면 40에서 20으로 조절 */
+    font-size: 32px;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1.2;    /* 줄 간격을 조절해 높이 최적화 */
+    min-height: 40px; 
+    transition: all 0.3s ease;
 }
 
-/* 2. 중앙 화이트 카드 */
-.search-main-card {
+.selected-name-highlight {
+    color: #007bff; /* 선택된 지역명만 파란색으로 강조 */
+    animation: fadeInDown 0.4s ease-out;
+    display: inline-block;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 지도 & 카드 컨테이너 */
+.content-segment {
     width: 100%;
-    max-width: 650px; /* 통합 버전을 위해 너비를 살짝 넓힘 */
-    background: white;
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-}
-
-/* 3. 상단 달력 섹션 */
-.calendar-section {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 25px;
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-.calendar-section label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #444;
-}
-
-.calendar-wrapper {
+    max-width: 1200px;
     display: flex;
     justify-content: center;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
 }
 
-.react-calendar {
+/* 문제의 안쪽 박스 스타일 */
+.map-wrapper {
+    width: 100%;
+    background: #fff; /* 흰색 배경 */
+       /* 지도를 작게 만들었던 범인 */
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 테두리처럼 보였던 그림자 */
+    box-sizing: border-box;
+}
+
+.map-wrapper svg {
     width: 100% !important;
-    border: none !important;
-    font-family: inherit;
+    height: auto !important;
+    max-width: 600px; /* 지도가 작게 고정되어 있던 상태 */
+}
+
+/* 하단 카드 디자인 */
+.search-main-card {
+    width: 100%;
     background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
 }
 
-/* 달력 타일 스타일 */
-.react-calendar__tile--active {
-    background: #007bff !important;
-    color: white !important;
-    border-radius: 8px;
-}
-
-.react-calendar__tile--range {
-    background: #e6f7ff !important;
-    color: #007bff !important;
-}
-
-.react-calendar__tile--rangeStart,
-.react-calendar__tile--rangeEnd {
-    background: #007bff !important;
-    color: white !important;
-}
-
-.selected-range-info {
-    margin-top: 15px;
-    padding: 12px;
-    background: #f0f7ff;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    color: #0056b3;
-    border: 1px solid #d0e7ff;
-}
-
-/* 4. 2x2 선택 그리드 섹션 */
 .selection-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    gap: 40px;
+    margin-bottom: 30px;
 }
 
 .input-group label {
-    font-size: 0.9rem;
     font-weight: 600;
-    color: #666;
-    text-align: left;
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 10px;
+    display: block;
 }
 
 .input-group select {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #fdfdfd;
-    font-size: 0.95rem;
-    cursor: pointer;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    font-size: 1rem;
 }
 
-/* 예산 슬라이더 스타일 (full-width) */
-.budget-group.full-width {
+.budget-group {
     grid-column: span 2;
-    margin-top: 10px;
 }
 
 .budget-group input[type="range"] {
     width: 100%;
-    cursor: pointer;
-    accent-color: #007bff; /* 슬라이더 색상 */
+    accent-color: #007bff;
 }
 
-.budget-display {
-    text-align: right;
-    margin-top: 5px;
-    color: #007bff;
-    font-size: 1rem;
-}
-
-/* 5. 통합된 키워드 카드 섹션 (도안 3페이지 반영) */
-.keyword-section {
-    margin-top: 30px;
-    padding-top: 25px;
-    border-top: 2px dashed #eee;
-}
-
-.section-title {
-    display: block;
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-bottom: 15px;
-    color: #333;
-    text-align: left;
-}
-
-.keyword-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.keyword-card {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    border: 2px solid #f0f0f0;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: left;
-}
-
-.keyword-card:hover {
-    border-color: #007bff;
-    background: #f8fbff;
-}
-
-.keyword-card.active {
-    border-color: #007bff;
-    background: #f0f7ff;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
-}
-
-.kw-img {
-    font-size: 1.8rem;
-    min-width: 55px;
-    height: 55px;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.kw-info h4 {
-    margin: 0 0 4px 0;
-    font-size: 1rem;
-    color: #333;
-}
-
-.kw-info p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #777;
-    line-height: 1.4;
-}
-
-/* 6. 하단 버튼 */
 .next-button {
     width: 100%;
-    padding: 18px;
+    padding: 15px;
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
+    border-radius: 8px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 30px;
-    transition: background 0.3s;
+    transition: background 0.2s;
+    margin-top: 20px;
 }
 
 .next-button:hover {
     background-color: #0056b3;
 }
 
-/* 반응형 처리 */
-@media (max-width: 480px) {
-    .selection-grid {
-        grid-template-columns: 1fr;
-    }
-    .budget-group.full-width {
-        grid-column: span 1;
-    }
-    .kw-img {
-        min-width: 45px;
-        height: 45px;
-        font-size: 1.5rem;
-    }
+.selected-region-display {
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    color: #007bff; /* 강조하고 싶은 색상 */
+    background: #e7f1ff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    animation: fadeIn 0.3s ease-in-out; /* 부드럽게 나타나는 효과 */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
 }

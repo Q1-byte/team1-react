@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>대한민국 지도 완성본</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f0f2f5; font-family: sans-serif; }
+        .map-container { width: 600px; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        svg { width: 100%; height: auto; }
+        
+        /* 지역별 기본 스타일 */
+        .region-group { cursor: pointer; transition: all 0.2s; stroke: #ffffff; stroke-width: 0.15; }
+        .region-group:hover { filter: brightness(0.8); stroke-width: 0.3; }
+        
+        /* 툴팁이나 이름을 띄우고 싶을 때 사용 */
+        .region-group title { font-size: 1px; }
+    </style>
+</head>
+<body>
+
+<div class="map-container">
+    <svg version="1.1" id="korea_map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46.703 70.75">
+        
+        <g id="incheon" class="region-group" fill="#4DBBB0">
+            <title>인천광역시</title>
+            </g>
+
+        <g id="seoul" class="region-group" fill="#AFDCDC">
+            <title>서울특별시</title>
+            </g>
+
+        <g id="gangwon" class="region-group" fill="#7FB3D5">
+            <title>강원특별자치도</title>
+            </g>
+
+        <g id="gyeonggi" class="region-group" fill="#76C7C0">
+            <title>경기도</title>
+            </g>
+
+        <g id="jeonnam" class="region-group" fill="#2F3E9E">
+            <title>전라남도</title>
+            </g>
+
+        <g id="jeju" class="region-group" fill="#8E6FB1">
+            <title>제주특별자치도</title>
+            </g>
+
+        </svg>
+</div>
+
+</body>
+</html>

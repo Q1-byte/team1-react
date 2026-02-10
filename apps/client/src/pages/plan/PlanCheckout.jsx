@@ -35,7 +35,7 @@ const PlanCheckout = () => {
     ];
 
     const handleBackToResult = () => {
-        navigate('/reserve/result', {
+        navigate('/result', {
             state: {
                 finalPlanData: {
                     ...finalPlanData,
@@ -174,20 +174,19 @@ const PlanCheckout = () => {
                         </div>
                     </div>
 
-                    {/* ✅ 수정된 결제 수단 선택 섹션: div를 button으로 변경하여 클릭 감도 상향 */}
+                    {/* 결제 수단 선택 섹션: 4개 버튼 */}
                     <div className="payment-method-section">
                         <p className="method-label">결제 수단 선택</p>
                         <div className="method-grid">
                             {paymentMethods.map((method) => (
-                                <button
+                                <div
                                     key={method.id}
-                                    type="button"
                                     className={`method-item ${selectedMethod === method.id ? 'active' : ''}`}
                                     onClick={() => setSelectedMethod(method.id)}
                                 >
                                     <span className="method-icon">{method.icon}</span>
                                     <span className="method-name">{method.name}</span>
-                                </button>
+                                </div>
                             ))}
                         </div>
                     </div>

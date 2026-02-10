@@ -23,8 +23,7 @@ export default function TravelPlan() {
     return (
         <div className="travel-plan-container">
             <Header />
-            <main style={{ paddingTop: '100px' }}> 
-                {/* context를 통해 자식들에게 데이터와 수정 함수를 전달합니다 */}
+           <main style={{ paddingTop: '20px' }}> {/* 100px에서 20px로 과감하게 줄여보세요 */}
                 <Outlet context={{ planConfig, handleConfigChange }} />
             </main>
         </div>
