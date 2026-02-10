@@ -14,8 +14,12 @@ const InquiryDetail = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login', { state: { from: `/inquiry/${id}` } });
+            return;
+        }
         fetchInquiry();
-    }, [id]);
+    }, [id, isAuthenticated]);
 
     const fetchInquiry = async () => {
         try {
@@ -76,7 +80,14 @@ const InquiryDetail = () => {
     }
 
     if (!inquiry) {
-        return null;
+        return (
+            <div className="inquiry-detail-wrapper">
+                <p style={{ textAlign: 'center', padding: '50px 0', color: '#999' }}>문의를 찾을 수 없습니다.</p>
+                <div style={{ textAlign: 'center' }}>
+                    <button className="back-btn" onClick={() => navigate('/inquiry')}>목록으로</button>
+                </div>
+            </div>
+        );
     }
 
     const isOwner = user?.id === inquiry.userId;

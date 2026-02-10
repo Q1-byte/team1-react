@@ -24,6 +24,8 @@
     color: #007bff; /* 선택된 지역명만 파란색으로 강조 */
     animation: fadeInDown 0.4s ease-out;
     display: inline-block;
+}
+
 /* 2. 중앙 화이트 카드 */
 .search-main-card {
     width: 100%;
@@ -68,6 +70,8 @@
     width: 100% !important;
     height: auto !important;
     max-width: 600px; /* 지도가 작게 고정되어 있던 상태 */
+}
+
 /* [수정] 달력 타일 기본 스타일 및 선택 효과 */
 .react-calendar__tile {
     height: 44px;
@@ -136,6 +140,8 @@
 }
 
 .budget-group {
+}
+
 /* 4. 선택 그리드 섹션 (예산 등) */
 .selection-grid {
     display: grid;
@@ -239,6 +245,8 @@
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
 /* 반응형 처리 */
 @media (max-width: 480px) {
     .selection-grid {

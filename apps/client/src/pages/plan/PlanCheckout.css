@@ -48,15 +48,16 @@
     margin: 15px 0;
 }
 
-.method-grid button {
+.method-item {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     background: white;
     cursor: pointer;
+    text-align: center;
 }
 
-.method-grid button.active {
+.method-item.active {
     border-color: #007bff;
     background: #e7f1ff;
     color: #007bff;
