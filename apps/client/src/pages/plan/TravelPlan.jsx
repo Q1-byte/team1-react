@@ -26,6 +26,7 @@ export default function TravelPlan() {
     return (
         <div className="travel-plan-container">
             <Header />
+           <main style={{ paddingTop: '20px' }}> {/* 100px에서 20px로 과감하게 줄여보세요 */}
             <main style={{ paddingTop: '100px' }}> 
                 <Outlet context={{ planConfig, handleConfigChange }} />
             </main>

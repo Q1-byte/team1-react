@@ -1,38 +1,44 @@
 import React from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import KoreaMap from "../../components/KoreaMap";
 import './PlanSearch.css';
 
-// 지역 데이터 (기존 유지)
 const REGION_DATA = {
-    "seoul": { name: "서울특별시", sub: ["강남구", "종로구", "마포구", "용산구", "서초구", "송파구"] },
-    "busan": { name: "부산광역시", sub: ["해운대구", "기장군", "수영구", "중구", "동래구"] },
-    "daegu": { name: "대구광역시", sub: ["중구", "수성구", "달서구", "북구"] },
-    "incheon": { name: "인천광역시", sub: ["중구", "연수구", "옹진군", "강화군"] },
-    "gwangju": { name: "광주광역시", sub: ["동구", "남구", "광산구"] },
-    "daejeon": { name: "대전광역시", sub: ["유성구", "중구", "서구"] },
-    "ulsan": { name: "울산광역시", sub: ["남구", "동구", "울주군"] },
-    "sejong": { name: "세종특별자치시", sub: ["세종시"] },
-    "gyeonggi": { name: "경기도", sub: ["수원시", "용인시", "고양시", "가평군", "양평군"] },
-    "gangwon": { name: "강원도", sub: ["강릉시", "속초시", "춘천시", "양양군"] },
-    "chungbuk": { name: "충청북도", sub: ["청주시", "충주시", "제천시", "단양군"] },
-    "chungnam": { name: "충청남도", sub: ["천안시", "아산시", "태안군", "보령시"] },
-    "jeonbuk": { name: "전라북도", sub: ["전주시", "군산시", "익산시", "부안군"] },
-    "jeonnam": { name: "전라남도", sub: ["여수시", "순천시", "목포시", "담양군"] },
-    "gyeongbuk": { name: "경상북도", sub: ["경주시", "포항시", "안동시", "울릉군"] },
-    "gyeongnam": { name: "경상남도", sub: ["창원시", "거제시", "통영시", "남해군"] },
-    "jeju": { name: "제주특별자치도", sub: ["제주시", "서귀포시"] }
-};
+    seoul: { name: "서울특별시", sub: ["강남구", "종로구", "마포구", "용산구"] },
+    gyeonggi: { name: "경기도", sub: ["수원시", "용인시", "성남시"] },
+    gangwon: { name: "강원도", sub: ["춘천시", "강릉시"] },
+    chungbuk: { name: "충청북도", sub: ["청주시", "충주시"] },
+    chungnam: { name: "충청남도", sub: ["천안시", "아산시"] },
+    jeonbuk: { name: "전라북도", sub: ["전주시", "군산시"] },
+    jeonnam: { name: "전라남도", sub: ["여수시", "순천시"] },
+    gyeongbuk: { name: "경상북도", sub: ["포항시", "경주시"] },
+    gyeongnam: { name: "경상남도", sub: ["창원시", "진주시"] },
+    busan: { name: "부산광역시", sub: ["해운대구", "기장군"] },
+    jeju: { name: "제주특별자치도", sub: ["제주시", "서귀포시"] },
+    incheon: { name: "인천광역시", sub: ["중구", "남동구"] },
+    ulsan: { name: "울산광역시", sub: ["남구", "북구"] }
+    };
 
-const PlanSearch = () => {
+    const PlanSearch = () => {
     const navigate = useNavigate();
 
     // 🔥 중요: 부모(TravelPlan)로부터 상태와 수정 함수를 가져옵니다.
     const { planConfig, handleConfigChange } = useOutletContext();
 
+    // 🗺️ 지도에서 지역 클릭 시
+    const handleRegionClick = (regionKey) => {
+        const region = REGION_DATA[regionKey];
+        if (!region) return;
+
+        handleConfigChange("region_id", regionKey);
+        handleConfigChange("region_name", region.name);
+        handleConfigChange("sub_region", "");
+    };
+
     const handleNext = () => {
         if (!planConfig.region_id || !planConfig.sub_region) {
-            alert("지역과 세부 지역을 선택해주세요!");
-            return;
+        alert("지역과 세부 지역을 선택해주세요!");
+        return;
         }
         // ✅ 다음 페이지(날짜/인원/키워드 설정)로 이동
         // 주소는 App.jsx 설정에 맞춰서 수정하세요! (예: /travel-plan/setup)
@@ -41,6 +47,24 @@ const PlanSearch = () => {
 
     return (
         <div className="plan-search-container">
+
+        {/* ✅ 상단 표시 */}
+        <h2 className="search-title">
+            {planConfig.region_name ? (
+            <span className="selected-name-highlight">
+                📍 {planConfig.region_name}
+            </span>
+            ) : (
+            "어디로 떠나시나요?"
+            )}
+        </h2>
+
+        <div className="content-segment">
+            <div className="map-wrapper">
+            <KoreaMap
+                onRegionClick={handleRegionClick}
+                selectedRegionId={planConfig.region_id}
+            />
             <h2>어디로 떠나시나요?</h2>
 
             <div className="map-placeholder" style={{
@@ -50,8 +74,46 @@ const PlanSearch = () => {
             }}>
                 📍 지도가 들어갈 공간입니다
             </div>
+        </div>
 
+        <div className="content-segment">
             <div className="search-main-card">
+            <div className="selection-grid">
+
+                <div className="input-group">
+                <label>📍 지역</label>
+                <select
+                    value={planConfig.region_id || ""}
+                    onChange={(e) => {
+                    const regionId = e.target.value;
+                    handleRegionClick(regionId);
+                    }}
+                >
+                    <option value="">지역 선택</option>
+                    {Object.entries(REGION_DATA).map(([key, v]) => (
+                    <option key={key} value={key}>{v.name}</option>
+                    ))}
+                </select>
+                </div>
+
+                <div className="input-group">
+                <label>🗺️ 세부 지역</label>
+                <select
+                    value={planConfig.sub_region || ""}
+                    disabled={!planConfig.region_id}
+                    onChange={(e) =>
+                    handleConfigChange("sub_region", e.target.value)
+                    }
+                >
+                    <option value="">상세 지역 선택</option>
+                    {planConfig.region_id &&
+                    REGION_DATA[planConfig.region_id].sub.map(name => (
+                        <option key={name} value={name}>{name}</option>
+                    ))
+                    }
+                </select>
+                </div>
+
                 <div className="selection-grid">
                     {/* 1. 지역 선택 */}
                     <div className="input-group">
@@ -111,6 +173,12 @@ const PlanSearch = () => {
                     날짜 및 인원 설정하기
                 </button>
             </div>
+
+            <button className="next-button" onClick={handleNext}>
+                날짜 및 인원 설정하기
+            </button>
+            </div>
+        </div>
         </div>
     );
 };

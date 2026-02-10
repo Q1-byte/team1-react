@@ -1,78 +1,152 @@
 /* 전체 컨테이너 */
+/* 전체 컨테이너 */
 .plan-keyword-container {
-    max-width: 600px;
+    max-width: 500px;
     margin: 50px auto;
     padding: 40px 30px;
     background: white;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    text-align: center;
+    box-sizing: border-box;
+    /* 내부의 모든 인라인 요소들을 중앙으로 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
 }
 
-/* 헤더 영역 */
-.keyword-header h2 {
-    font-size: 1.8rem;
+/* 메인 타이틀 (h2) 수정 */
+.plan-keyword-container h2 {
+    width: 100%;
+    text-align: center; /* 텍스트 중앙 정렬 */
+    font-size: 1.6rem;
+    font-weight: 800;
     color: #333;
-    margin-bottom: 12px;
+    margin: 0 0 40px 0; /* 아래쪽 간격 확보 */
+    line-height: 1.4;
+    word-break: keep-all; /* 한글 단어 끊김 방지 */
 }
 
-.keyword-header p {
-    color: #888;
-    font-size: 0.95rem;
-    margin-bottom: 40px;
+/* 섹션 라벨(label) 중앙 정렬 */
+.calendar-section label,
+.info-section label,
+.keyword-section h3 {
+    display: block;
+    width: 100%;
+    text-align: center; /* 라벨들도 중앙으로 */
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+/* 달력 라이브러리 중앙 배치 보정 */
+.calendar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.react-calendar {
+    margin: 0 auto; /* 달력 자체를 중앙으로 */
+}
+
+/* 래퍼 및 섹션 공통 */
+.setup-wrapper, .calendar-section, .info-section, .keyword-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* 달력 라이브러리 너비 강제 맞춤 */
+.react-calendar {
+    width: 100% !important; /* 부모 너비에 무조건 맞춤 */
+    max-width: 100%;
+    border: 1px solid #f0f0f0 !important;
+    border-radius: 12px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 인원 선택 select 박스 정돈 */
+.input-group {
+    width: 100%;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.input-group select {
+    width: 100%; /* 달력과 가로 길이 통일 */
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    outline: none;
+    background-color: #fff;
+    box-sizing: border-box;
 }
 
 /* 키워드 그리드 레이아웃 */
 .keyword-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* 가로 길이에 맞게 자동 조절 */
+    gap: 12px;
+    width: 100%;
+    margin-top: 20px;
     margin-bottom: 50px;
 }
 
 /* 각 키워드 아이템 */
 .keyword-item {
-    padding: 18px 10px;
+    padding: 12px 5px;
     border: 2px solid #f0f0f0;
-    border-radius: 14px;
+    border-radius: 50px; /* 좀 더 둥근 알약 스타일로 변경 (이미지 느낌) */
     background: #fff;
     color: #555;
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 500;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    text-align: center;
 }
 
-.keyword-item:hover {
-    border-color: #007bff;
-    background: #f8fbff;
-}
-
-/* 활성화(선택) 상태 */
-.keyword-item.active {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: white;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
-}
-
+/* 하단 버튼 그룹 - 높이 불일치 해결 */
 /* 하단 버튼 그룹 */
 .button-group {
     display: flex;
-    gap: 15px;
+    gap: 12px;        /* 버튼 사이 간격 */
+    width: 100%;      /* 컨테이너 가로 꽉 채우기 */
+    margin-top: 30px;
+    box-sizing: border-box;
 }
 
 .back-button, .submit-button {
-    flex: 1;
-    padding: 18px;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: bold;
+    flex: 1;          /* 가로 길이를 1:1로 똑같이 배분 */
+    height: 56px;     /* 높이를 똑같이 고정 */
+    
+    /* 모양 관련 설정 */
+    border-radius: 12px; /* 곡률 똑같이 설정 */
+    font-size: 1.05rem;
+    font-weight: 700;
     cursor: pointer;
     border: none;
-    transition: background 0.3s;
+    
+    /* 텍스트 중앙 정렬 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    transition: all 0.2s ease;
+    box-sizing: border-box;
 }
 
+/* 색상은 기존 유지 */
 .back-button {
     background-color: #f1f3f5;
     color: #495057;
@@ -91,6 +165,7 @@
     background-color: #0056b3;
 }
 
+/* 활성화 상태가 아닐 때(disabled) 처리 */
 .submit-button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
