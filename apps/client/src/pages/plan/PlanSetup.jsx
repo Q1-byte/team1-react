@@ -74,7 +74,6 @@ export default function PlanSetup() {
     };
 
     const handleNext = () => {
-        navigate('/travel-plan/search');
         if (!startDate || !endDate) return alert("여행 기간을 선택해주세요!");
         if (selectedKeywords.length === 0) return alert("키워드를 선택해주세요!");
         
@@ -100,94 +99,8 @@ export default function PlanSetup() {
     flexDirection: 'column',
     gap: '20px'
 };
-    const sectionStyle = {
-        backgroundColor: '#fff',
-        borderRadius: '16px',
-        padding: '24px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-        width: '100%',
-        boxSizing: 'border-box' // 패딩이 가로 길이에 영향을 주지 않도록 설정
-    };
-
-    const titleStyle = {
-        fontSize: '18px',
-        fontWeight: '700',
-        marginBottom: '20px',
-        textAlign: 'center',
-        display: 'block'
-    };
-
-    // 달력, 인원수, 키워드 등의 내부 요소 공통 가로 스타일
-    const fullWidthControl = {
-        width: '100%',
-        boxSizing: 'border-box',
-        border: '1px solid #E5E7EB',
-        borderRadius: '12px',
-        padding: '14px',
-        fontSize: '16px',
-        outline: 'none'
-    };
-
     return (
         <div className="setup-container" style={containerStyle}>
-            
-            {/* 1. 날짜 선택 - 가로 길이를 섹션에 꽉 채움 */}
-            <section style={sectionStyle}>
-                <span style={titleStyle}>📅 언제 떠나시나요?</span>
-                <input 
-                    type="date" 
-                    value={planConfig.travel_date || ''}
-                    onChange={(e) => handleConfigChange('travel_date', e.target.value)} 
-                    style={{...fullWidthControl, textAlign: 'center'}}
-                />
-            </section>
-
-            {/* 2. 인원 선택 */}
-            <section style={sectionStyle}>
-                <span style={titleStyle}>👥 인원 선택</span>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
-                    <button 
-                        onClick={() => handleConfigChange('people_count', Math.max(1, planConfig.people_count - 1))}
-                        style={{ width: '44px', height: '44px', borderRadius: '50%', border: '1px solid #ddd', background: '#fff', fontSize: '20px', cursor: 'pointer' }}
-                    >-</button>
-                    <span style={{ fontSize: '20px', fontWeight: '600', width: '60px', textAlign: 'center' }}>{planConfig.people_count}명</span>
-                    <button 
-                        onClick={() => handleConfigChange('people_count', planConfig.people_count + 1)}
-                        style={{ width: '44px', height: '44px', borderRadius: '50%', border: '1px solid #ddd', background: '#fff', fontSize: '20px', cursor: 'pointer' }}
-                    >+</button>
-                </div>
-            </section>
-
-            {/* 3. 취향 키워드 */}
-            <section style={sectionStyle}>
-                <span style={titleStyle}>✨ 당신의 취향은?</span>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
-                    {['남산타워', '야경감상', '맛집탐방', '카페투어', '쇼핑'].map(word => {
-                        const isSelected = planConfig.keywords.includes(word);
-                        return (
-                            <button 
-                                key={word}
-                                onClick={() => {
-                                    const nextKeywords = isSelected
-                                        ? planConfig.keywords.filter(k => k !== word)
-                                        : [...planConfig.keywords, word];
-                                    handleConfigChange('keywords', nextKeywords);
-                                }}
-                                style={{ 
-                                    padding: '10px 18px',
-                                    borderRadius: '20px',
-                                    border: '1px solid',
-                                    borderColor: isSelected ? '#007BFF' : '#EEE',
-                                    backgroundColor: isSelected ? '#F0F7FF' : '#fff',
-                                    color: isSelected ? '#007BFF' : '#666',
-                                    cursor: 'pointer',
-                                    fontSize: '14px'
-                                }}
-                            >
-                                #{word}
-                            </button>
-                        );
-                    })}
         <div className="setup-wrapper" style={{ padding: '120px 20px 60px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div className="setup-content-card" style={{ width: '100%', maxWidth: '600px', background: '#fff', padding: '30px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
                 
@@ -270,10 +183,10 @@ export default function PlanSetup() {
                     }}
                 >
                     일정 생성하기
-                <button className="next-button" onClick={handleNext} style={{ width: '100%', marginTop: '40px', padding: '15px', borderRadius: '12px', background: '#007bff', color: '#fff', border: 'none', fontSize: '1.1rem', fontWeight: 'bold', cursor: 'pointer' }}>
-                    여행 일정 생성하기 🧾
                 </button>
             </div>
+            </div>
         </div>
+    </div>
     );
 }
