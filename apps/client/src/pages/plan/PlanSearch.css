@@ -24,6 +24,14 @@
     color: #007bff; /* 선택된 지역명만 파란색으로 강조 */
     animation: fadeInDown 0.4s ease-out;
     display: inline-block;
+/* 2. 중앙 화이트 카드 */
+.search-main-card {
+    width: 100%;
+    max-width: 650px;
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
 @keyframes fadeInDown {
@@ -60,6 +68,37 @@
     width: 100% !important;
     height: auto !important;
     max-width: 600px; /* 지도가 작게 고정되어 있던 상태 */
+/* [수정] 달력 타일 기본 스타일 및 선택 효과 */
+.react-calendar__tile {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+/* 단일 선택 또는 범위의 시작/끝 스타일 */
+.selected-single-tile,
+.react-calendar__tile--active {
+    background: #007bff !important;
+    color: white !important;
+    border-radius: 8px !important;
+}
+
+/* 범위 선택 중 내부 타일 스타일 */
+.selected-range-tile,
+.react-calendar__tile--range {
+    background: #e6f7ff !important;
+    color: #007bff !important;
+    border-radius: 0;
+}
+
+/* 🚫 비활성화된 날짜 스타일링 (오늘 이전 & 3일 초과) */
+.react-calendar__tile:disabled {
+    background-color: #f8f9fa !important; /* 더 연한 회색 */
+    color: #ced4da !important;           /* 흐릿한 글자색 */
+    cursor: not-allowed !important;       /* 금지 아이콘 */
+    pointer-events: none !important;      /* 클릭 이벤트 완전 차단 */
 }
 
 /* 하단 카드 디자인 */
@@ -97,12 +136,75 @@
 }
 
 .budget-group {
+/* 4. 선택 그리드 섹션 (예산 등) */
+.selection-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.budget-group.full-width {
     grid-column: span 2;
 }
 
 .budget-group input[type="range"] {
     width: 100%;
     accent-color: #007bff;
+    cursor: pointer;
+    accent-color: #007bff;
+}
+
+.budget-display {
+    text-align: right;
+    margin-top: 5px;
+    color: #007bff;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* 5. 키워드 카드 섹션 */
+.keyword-section {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px dashed #eee;
+}
+
+.section-title {
+    display: block;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: left;
+}
+
+.keyword-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.keyword-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: 2px solid #f0f0f0;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.keyword-card:hover {
+    border-color: #007bff;
+    background: #f8fbff;
+}
+
+.keyword-card.active {
+    border-color: #007bff;
+    background: #f0f7ff;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
 }
 
 .next-button {
@@ -137,4 +239,12 @@
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
+/* 반응형 처리 */
+@media (max-width: 480px) {
+    .selection-grid {
+        grid-template-columns: 1fr;
+    }
+    .budget-group.full-width {
+        grid-column: span 1;
+    }
 }

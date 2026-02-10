@@ -18,14 +18,13 @@ const KakaoPaySuccess = () => {
 
         if (!pg_token || !tid) {
             alert("결제 정보가 유효하지 않거나 만료되었습니다.");
-            navigate('/checkout');
+            navigate('/reserve/check'); // 결제 페이지로 복귀
             return;
         }
 
         const approvePayment = async () => {
             try {
-                // [핵심 수정] axios.post 대신 팀에서 정의한 api.post를 사용합니다.
-                // 주소도 설정파일에 베이스 URL이 있다면 '/api/payment/kakao/approve'만 써도 될 수 있습니다.
+                // 2. 백엔드 카카오 결제 승인 API 호출
                 const response = await api.post('/payment/approve', {
                     tid: tid,
                     pg_token: pg_token
@@ -34,25 +33,29 @@ const KakaoPaySuccess = () => {
                 if (response.data) {
                     console.log("카카오 결제 승인 완료:", response.data);
                     
+                    // 성공 후 처리
+                    setIsProcessing(false);
+                    
+                    // 사용한 임시 데이터 삭제
                     localStorage.removeItem('kakao_tid');
                     localStorage.removeItem('temp_plan_data');
                     
-                    setIsProcessing(false);
-                    
-                    alert("결제가 완료되었습니다! AI 일정을 생성합니다.");
-                    navigate('/result', { 
-                        state: { 
-                            finalPlanData: tempPlanData, 
-                            paymentResult: response.data 
-                        } 
-                    });
+                    // 🧾 영수증 페이지로 이동 (중첩 라우트 경로)
+                    // 유저가 완료 메시지를 인지할 수 있도록 1.5초 후 이동
+                    setTimeout(() => {
+                        navigate('/reserve/receipt', { 
+                            replace: true, 
+                            state: { 
+                                finalPlanData: tempPlanData, 
+                                paymentResult: response.data 
+                            } 
+                        });
+                    }, 1500);
                 }
             } catch (error) {
                 console.error("카카오 승인 오류:", error);
-                // [참고] api 설정 덕분에 401 에러(권한 없음) 발생 시 
-                // 자동으로 처리될 수도 있지만, 수동 알럿도 남겨둡니다.
                 alert("결제 승인 처리 중 문제가 발생했습니다. 로그인 상태를 확인해주세요.");
-                navigate('/checkout');
+                navigate('/reserve/check');
             }
         };
 
@@ -67,9 +70,14 @@ const KakaoPaySuccess = () => {
                         <div className="spinner"></div>
                         <h2>카카오페이 결제 승인 중...</h2>
                         <p>결제 정보를 확인하고 있습니다.</p>
+                        <p className="sub-text">잠시만 기다려 주세요.</p>
                     </>
                 ) : (
-                    <h2>결제 완료! 페이지를 이동합니다.</h2>
+                    <>
+                        <div className="success-icon" style={{ fontSize: '3rem', marginBottom: '15px' }}>✅</div>
+                        <h2>결제가 완료되었습니다!</h2>
+                        <p>영수증 페이지로 이동 중입니다...</p>
+                    </>
                 )}
             </div>
         </div>
