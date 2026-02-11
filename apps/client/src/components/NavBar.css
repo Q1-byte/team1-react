@@ -1,0 +1,44 @@
+ /* 4. 아이콘 네비게이션 (이미지 배경 꽉 차게) */
+    .nav-bar {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    padding: 60px 20px;
+    background-color: #fff;
+    }
+
+    .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    }
+
+    .icon-circle {
+    width: 250px; /* 크기 유지 */
+    height: 250px;
+    border-radius: 50%;
+    overflow: hidden; /* 이미지가 원형 밖으로 안 나가게 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background-color: #f0f0f0;
+    }
+
+    .icon-circle img {
+    width: 100%;      /* 이미지 배경으로 쓰기 위해 100% */
+    height: 100%;
+    object-fit: cover; /* 원형에 꽉 차게 */
+    }
+
+    .nav-item:hover .icon-circle {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .nav-item span {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    }

@@ -1,0 +1,82 @@
+    /* 2. 헤더 스타일 */
+    /* 2. 헤더 스타일 */
+.header {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 0 40px; /* 상하 여백은 이미 0입니다 */
+    display: flex;
+    justify-content: flex-end;
+    background-color: transparent;
+    
+    /* 추가: 헤더의 높이 자체를 버튼에 맞게 최소화 */
+    align-items: flex-start; 
+}
+
+.header button {
+    /* 1. 폰트 설정 (이 부분에 Pretendard를 최우선으로) */
+    font-family: 'Pretendard', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: #005ADE;
+
+    /* 2. 텍스트 중앙 정렬의 핵심 (Flexbox) */
+    display: inline-flex;     /* 텍스트를 flex 박스 안의 아이템으로 취급 */
+    align-items: center;      /* 세로(수직) 중앙 정렬 */
+    justify-content: center;  /* 가로(수평) 중앙 정렬 */
+
+    /* 3. 높이와 여백 조절 */
+    height: 45px;             /* 높이를 고정하면 중앙 정렬이 훨씬 정확합니다 */
+    padding: 0 20px;          /* 상하 패딩은 0으로 두고, 좌우만 줍니다 */
+    
+    /* 4. 기존 디자인 속성 */
+    background-color: transparent;
+    border: 2px solid white;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    margin-top: -2px;         /* 천장에 붙이기 */
+    margin-right: 10px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: color 0.4s ease;
+}
+
+/* 마우스를 올렸을 때 살짝 변하는 효과 */
+.header button::before {
+    content: "";
+    position: absolute;
+    bottom: -100%;          /* 처음엔 버튼 아래에 숨김 */
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #005ADE; /* 채워질 색상 */
+    z-index: -1;            /* 글자 뒤로 배치 */
+    transition: bottom 0.4s ease; /* 위로 올라오는 속도 */
+}
+
+/* 마우스를 올렸을 때 */
+.header button:hover {
+    color: white;         /* 글자색을 배경색(파랑)이나 검정으로 변경 */
+}
+
+.header button:hover::before {
+    bottom: 0;              /* 아래에서 위로 '슥' 올라옴 */
+}
+
+.header-sub {
+    background-color: white;
+    color: #333;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 구분선 효과 */
+}
+.header-sub .nav-btn, .header-sub .logo {
+    color: #333;
+}
+
+/* 버튼 호버 효과도 다르게 줄 수 있습니다 */
+.header-sub .nav-btn:hover {
+    color: #007bff;
+}

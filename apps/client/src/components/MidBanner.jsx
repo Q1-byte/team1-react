@@ -1,4 +1,5 @@
 import React from 'react';
+import './MidBanner.css';
 
 export default function MidBanner() {
     return (

@@ -1,5 +1,5 @@
 .checkout-page-container {
-    padding: 50px 20px;
+    padding: 20px 20px;
     display: flex;
     justify-content: center;
     background-color: #f8f9fa;
@@ -48,20 +48,60 @@
     margin: 15px 0;
 }
 
-.method-item {
+.method-grid button {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     background: white;
     cursor: pointer;
-    text-align: center;
 }
 
-.method-item.active {
+.method-grid button.active {
     border-color: #007bff;
     background: #e7f1ff;
     color: #007bff;
     font-weight: bold;
+}
+/* 기본 아이템 스타일 */
+.method-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer; /* 마우스 올리면 손가락 모양으로 */
+    transition: all 0.2s ease; /* 부드러운 변화 효과 */
+    background-color: white;
+}
+
+/* 마우스를 올렸을 때 (Hover) */
+.method-item:hover {
+    background-color: #f8f9fa;
+    border-color: #ccc;
+    transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+}
+
+/* 선택되었을 때 (Active/Selected) - 현재 JS에서 'active' 클래스를 붙여주고 있음 */
+.method-item.active {
+    border: 2px solid #007bff; /* 파란색 테두리 */
+    background-color: #e7f1ff; /* 연한 파란색 배경 */
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* 강조 그림자 */
+}
+
+/* 클릭하는 순간의 느낌 (Pressed) */
+.method-item:active {
+    transform: scale(0.95); /* 눌리는 듯한 축소 효과 */
+}
+
+.method-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.method-name {
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .main-pay-btn {

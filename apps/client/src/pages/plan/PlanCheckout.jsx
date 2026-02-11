@@ -182,7 +182,10 @@ const PlanCheckout = () => {
                                 <div
                                     key={method.id}
                                     className={`method-item ${selectedMethod === method.id ? 'active' : ''}`}
-                                    onClick={() => setSelectedMethod(method.id)}
+                                    onClick={() => {
+                                        console.log("선택된 결제수단:", method.id);
+                                        setSelectedMethod(method.id);
+                                    }}
                                 >
                                     <span className="method-icon">{method.icon}</span>
                                     <span className="method-name">{method.name}</span>

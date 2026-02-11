@@ -1,0 +1,11 @@
+.travel-plan-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.plan-main-content {
+    flex: 1;
+    /* 여기서 패딩을 조절하면 개별 CSS가 씹히지 않고 잘 먹습니다 */
+    background-color: #f8f9fa; /* 배경색 통일 */
+}
