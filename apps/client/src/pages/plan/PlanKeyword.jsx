@@ -23,10 +23,10 @@ const PlanKeyword = () => {
     ];
 
     const categoryLabels = {
-        '성향': '🤸 어떤 활동을 즐기시나요?',
+        '성향': '🤸 나는 어떤 여행 스타일인가요?',
         '조건': '✅ 꼭 필요한 조건이 있나요?',
-        '테마': '📍 이번 여행의 테마는?',
-        '기타': '💡 이런 키워드도 있어요!'
+        '테마': '✨ 어떤 분위기의 여행을 원하시나요?',
+        '기타': '💡 놓치면 아쉬운 여행의 디테일'
     };
 
     const [filteredKeywords, setFilteredKeywords] = useState([]);
@@ -36,11 +36,9 @@ const PlanKeyword = () => {
         setFilteredKeywords(baseTheme);
     }, [main_category]);
 
-    // 💡 [수정됨] 객체가 아닌 '이름(문자열)'만 그룹화하도록 변경
     const groupedKeywords = filteredKeywords.reduce((acc, item) => {
         const category = item.category || '기타'; 
         if (!acc[category]) acc[category] = [];
-        // item(객체)이 아니라 item.name(문자열)을 넣어야 렌더링 에러가 안 납니다.
         acc[category].push(item.name); 
         return acc;
     }, {});
@@ -75,9 +73,10 @@ const PlanKeyword = () => {
                 </h2>
 
                 <div className="plan-keyword-container">
-                    <div className="setup-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '30px', marginBottom: '40px' }}>
-                        <div className="calendar-section">
-                            <label style={{ display: 'block', marginBottom: '10px', textAlign: 'left', fontWeight: '600' }}>📅 언제 떠나시나요?</label>
+                    {/* 1. 언제 떠나시나요? (가운데 정렬을 위한 setup-item 추가) */}
+                    <div className="setup-item calendar-section">
+                        <label className="item-label">📅 언제 떠나시나요?</label>
+                        <div className="calendar-wrapper">
                             <Calendar 
                                 onChange={(val) => handleConfigChange('travel_date', val)} 
                                 value={travel_date} 
@@ -85,28 +84,30 @@ const PlanKeyword = () => {
                                 minDate={new Date()} 
                             />
                         </div>
+                    </div>
 
-                        <div className="info-section">
-                            <div className="input-group">
-                                <label style={{ display: 'block', marginBottom: '10px', textAlign: 'left', fontWeight: '600' }}>👥 인원 선택</label>
-                                <select 
-                                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
-                                    value={people_count} 
-                                    onChange={(e) => handleConfigChange('people_count', parseInt(e.target.value))}
-                                >
-                                    {[1, 2, 3, 4, 5, 6].map(num => <option key={num} value={num}>{num}명</option>)}
-                                </select>
-                            </div>
+                    {/* 2. 인원 선택 (가운데 정렬을 위한 setup-item 추가) */}
+                    <div className="setup-item info-section">
+                        <div className="input-group">
+                            <label className="item-label">👥 인원 선택</label>
+                            <select 
+                                className="people-select"
+                                value={people_count} 
+                                onChange={(e) => handleConfigChange('people_count', parseInt(e.target.value))}
+                            >
+                                {[1, 2, 3, 4, 5, 6].map(num => <option key={num} value={num}>{num}명</option>)}
+                            </select>
                         </div>
                     </div>
 
+                    {/* 3. 당신의 취향은? (가운데 정렬을 위한 setup-item 추가) */}
                     {!fromGacha && (
-                        <div className="keyword-section">
-                            <h3 className="section-label" style={{ textAlign: 'left', fontWeight: '600', marginBottom: '15px' }}>당신의 취향은?</h3>
+                        <div className="setup-item keyword-section">
+                            <h3 className="section-label">📍 당신의 취향은?</h3>
                             
                             {Object.keys(groupedKeywords).map((category) => (
-                                <div key={category} className="category-group" style={{ marginBottom: '25px' }}>
-                                    <h4 style={{ textAlign: 'left', fontSize: '1rem', fontWeight: '700', marginBottom: '10px', color: '#333' }}>
+                                <div key={category} className="category-group">
+                                    <h4 className="category-title">
                                         {categoryLabels[category] || category}
                                     </h4>
                                     <div className="keyword-grid">
@@ -130,31 +131,11 @@ const PlanKeyword = () => {
                                     </div>
                                 </div>
                             ))}
-
-                            <div className="budget-group" style={{ marginTop: '40px', textAlign: 'left' }}>
-                                <label style={{ fontWeight: '600', display: 'block', marginBottom: '10px' }}>
-                                    💰 최대 예산: <strong style={{ color: '#005ADE' }}>
-                                        {(Number(planConfig.budget_range?.[1]) || 100000).toLocaleString()}원
-                                    </strong>
-                                </label>
-                                <input
-                                    type="range"
-                                    min="100000"
-                                    max="5000000"
-                                    step="50000"
-                                    style={{ width: '100%' }}
-                                    value={Number(planConfig.budget_range?.[1]) || 100000}
-                                    onChange={(e) => handleConfigChange('budget_range', [0, Number(e.target.value)])}
-                                />
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#999', marginTop: '5px' }}>
-                                    <span>10만원</span>
-                                    <span>500만원</span>
-                                </div>
-                            </div>
                         </div>
                     )}
 
-                    <div className="button-group">
+                    {/* 하단 버튼 그룹 */}
+                    <div className="setup-item button-group">
                         <button className="back-button" onClick={() => navigate(-1)}>이전으로</button>
                         <button className="submit-button" onClick={handleNext}>일정 생성하기</button>
                     </div>
