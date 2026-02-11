@@ -159,7 +159,7 @@ export const router = createBrowserRouter([
       { path: 'inquiry/write', element: <InquiryWrite /> },
 
       // Event 라우트
-      { path: 'event', element: <EventPage /> },
+      { path: 'events', element: <EventPage /> },
       { path: 'events/:id', element: <EventDetail /> },
 
       // Review 라우트

@@ -26,7 +26,7 @@ function InquiryList() {
   const fetchInquiries = async () => {
     try {
       setLoading(true);
-      const data = await getAdminInquiriesApi(page, 10, statusFilter);
+      const data = await getAdminInquiriesApi(page, 8, statusFilter);
       setInquiries(data.content || []);
       setTotalPages(data.totalPages || 0);
     } catch (error) {

@@ -4,6 +4,8 @@ import api from '../../../api';
 function ReviewList() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const fetchReviews = () => {
     setLoading(true);
@@ -53,6 +55,12 @@ function ReviewList() {
     : '0.0';
   const totalViews = reviews.reduce((sum, r) => sum + (r.viewCount || 0), 0);
 
+  // 페이징 계산
+  const totalPages = Math.ceil(reviews.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = reviews.slice(indexOfFirstItem, indexOfLastItem);
+
   if (loading) {
     return <div>로딩 중...</div>;
   }
@@ -101,7 +109,7 @@ function ReviewList() {
             </tr>
           </thead>
           <tbody>
-            {reviews.map(review => (
+            {currentItems.map(review => (
               <tr key={review.id} style={review.isDeleted ? { opacity: 0.5, textDecoration: 'line-through' } : {}}>
                 <td>{review.id}</td>
                 <td>{review.authorAccountId}</td>
@@ -139,6 +147,34 @@ function ReviewList() {
             ))}
           </tbody>
         </table>
+
+        {totalPages > 1 && (
+          <div style={{ marginTop: '20px', textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '8px' }}>
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="btn btn-sm"
+            >
+              이전
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+              <button
+                key={num}
+                onClick={() => setCurrentPage(num)}
+                className={`btn btn-sm ${currentPage === num ? 'btn-primary' : ''}`}
+              >
+                {num}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="btn btn-sm"
+            >
+              다음
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

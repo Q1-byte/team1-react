@@ -8,7 +8,7 @@ export default function NavBar() {
     const menus = [
         { id: 1, title: '예약하기', img: '/banner/icon1.png', link: '/reserve' },
         { id: 2, title: '랜덤여행', img: '/banner/icon2.png', link: '/gacha' },
-        { id: 3, title: '여행정보', img: '/banner/icon3.png', link: '/event' },
+        { id: 3, title: '여행정보', img: '/banner/icon3.png', link: '/events' },
         { id: 4, title: '리뷰보기', img: '/banner/icon4.png', link: '/reviews' },
     ];
 

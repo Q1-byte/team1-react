@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './EventDetail.css'; // 분리된 CSS 연결
 
@@ -7,8 +7,8 @@ import api from '../../api'; // API 모듈 추가
 const EventDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [event, setEvent] = React.useState(null); // 실시간 데이터 상태
-    const [loading, setLoading] = React.useState(true);
+    const [event, setEvent] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setLoading(true);
