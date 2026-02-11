@@ -17,10 +17,10 @@ const EventList = () => {
     const itemsPerPage = 4; // 한 페이지에 보여줄 아이템 개수
     // ---------------------------------------------------------
 
-    // 2. 카테고리 종류 정의 (백엔드 분류와 일치시킴: 축제, 먹거리, 시즌테마, 일반행사)
-    const categories = ["전체", "축제", "먹거리", "시즌테마", "일반행사"];
+    // 카테고리 목록 (백엔드에서 한글로 제공)
+    const categories = ["전체", "축제", "일반행사", "시즌테마"];
 
-    // 3. 필터링 로직 (검색어 + 카테고리 동시 적용)
+    // 필터링 로직 (검색어 + 카테고리 동시 적용)
     const filteredEvents = events.filter(event => {
         const matchesSearch = event.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = selectedCategory === "전체" || event.category === selectedCategory;
@@ -45,8 +45,8 @@ const EventList = () => {
     // ---------------------------------------------------------
 
     useEffect(() => {
-        // [수정] 백엔드에서 페이징 객체(Page)를 주므로 res.data.content를 사용합니다.
-        api.get('/events')
+        // [수정] 전체 데이터를 가져오기 위해 size 파라미터 추가
+        api.get('/events', { params: { size: 100 } })
             .then(res => {
                 if (res.data && res.data.content) {
                     setEvents(res.data.content);
@@ -92,10 +92,8 @@ const EventList = () => {
                 {currentItems.length > 0 ? (
                     currentItems.map(event => (
                         <div key={event.id} className="event-card" onClick={() => navigate(`/events/${event.id}`)}>
-                            {/* [수정] url 필드명 사용 */}
                             <img src={event.url || "/event/default.jpg"} alt={event.name} />
                             <div className="card-content">
-                                {/* [수정] category 필드명 사용 */}
                                 <span className="category-tag">{event.category}</span>
                                 <h3>{event.name}</h3>
                                 {/* [수정] description 필드 사용 */}
