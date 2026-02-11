@@ -1,50 +1,49 @@
-.plan-main-content {
-    /* 헤더가 absolute이므로, 헤더 높이(약 100px) + 여백(20px)만큼 띄워줍니다 */
-    margin-top: 120px; 
-}
-/* 1. 전체 레이아웃 (중앙 정렬 유지) */
+/* 1. 전체 레이아웃: 배경색 및 상단 여백 설정 */
 .outer-layout {
     width: 100%;
-    min-height: calc(100vh - 80px); /* main 패딩만큼
+    min-height: 100vh;
     background-color: #f8f9fa;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: center !important; /* 이 속성은 그대로 유지합니다 */
+    justify-content: flex-start !important; 
     align-items: center !important;
-    /* 상단 패딩이 혹시 들어가 있다면 0으로 확실히 죽여줍니다 */
-    padding: 100px 20px 50px 20px;
+    padding: 100px 20px 50px 20px; /* 헤더 높이 고려 */
     box-sizing: border-box;
 }
 
-/* 2. 제목 스타일 수정 */
+/* 2. 제목 스타일: 카드 상단 중앙 배치 */
 .setup-title {
-    font-size: 32px;
-    font-weight: 600;
+    font-size: 2.2rem;
+    font-weight: 700;
     color: #1a2a3a;
     text-align: center;
     width: 100%;
-
-    /* 핵심: 마이너스 마진으로 제목을 위로 끌어올립니다. */
-    /* 숫자를 더 키울수록(예: -50px) 더 위로 올라갑니다. */
-    margin-top: -40px; 
-    
-    /* 제목과 카드 사이의 간격도 과하다면 여기서 줄이세요 */
-    margin-bottom: 30px; 
+    margin-top: 0;
+    margin-bottom: 40px;
 }
-/* 3. 메인 카드 상자: 가로 너비를 넉넉하게 확장 (800px) */
+
+/* 3. 메인 카드 상자: 모든 설정 요소를 감싸는 흰색 카드 */
 .plan-keyword-container {
     width: 100%;
     max-width: 800px; 
     background-color: #ffffff;
-    border-radius: 30px;
-    padding: 60px 50px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    border-radius: 25px;
+    padding: 50px; 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* 섹션(달력, 인원, 취향) 간의 간격 */
+}
+
+/* 4. 공통 섹션 아이템 구조 (너비 100% 유지) */
+.setup-item {
+    width: 100%;
     box-sizing: border-box;
 }
 
-/* 4. 섹션 레이블 스타일 */
-.calendar-section label, 
-.input-group label, 
+/* 5. 섹션 레이블 스타일 (📅 언제 떠나시나요? 등) */
+.item-label, 
 .section-label {
     display: block;
     font-size: 1.2rem;
@@ -54,158 +53,115 @@
     text-align: left;
 }
 
-/* 5. 캘린더 커스텀 (가로 너비에 맞춰 확장) */
+/* 6. 캘린더 커스텀: 카드 너비에 맞춰 확장 */
+.calendar-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
 .react-calendar {
     width: 100% !important;
     border: 1px solid #eee !important;
     border-radius: 15px;
-    padding: 10px;
+    padding: 15px;
     font-family: 'Pretendard', sans-serif;
 }
 
-/* 6. 인원 선택 셀렉트 박스 */
-.input-group select {
+/* 7. 인원 선택 셀렉트 박스 */
+.people-select {
     width: 100%;
     padding: 15px;
     border-radius: 12px;
     border: 1px solid #ddd;
     font-size: 1rem;
     outline: none;
+    background-color: #fff;
+    transition: border-color 0.2s;
 }
 
-/* 7. 키워드 그리드 및 아이템 (호버 기능 추가) */
+.people-select:focus {
+    border-color: #007bff;
+}
+
+/* 8. 취향 선택 카테고리별 회색 박스 (추가된 부분) */
+.category-group {
+    background-color: #f8f9fa; /* 요청하신 연한 회색 배경 */
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #f1f3f5;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.category-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+/* 9. 키워드 그리드 및 아이템 */
 .keyword-grid {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start; /* 왼쪽 정렬로 일관성 유지 */
     gap: 12px;
-    margin-top: 10px;
 }
 
 .keyword-item {
-    padding: 12px 24px;
+    padding: 10px 20px;
     border: 1.5px solid #eee;
     border-radius: 50px;
     background-color: #fff;
     color: #666;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.3s ease; /* 부드러운 전환 효과 */
+    transition: all 0.2s ease;
+    font-weight: 500;
 }
 
-/* [추가] 키워드 호버 시 파란색 테두리와 글자색으로 변경 */
 .keyword-item:hover {
     border-color: #007bff;
     color: #007bff;
-    background-color: #f0f7ff; /* 연한 파란색 배경 */
-    transform: translateY(-2px); /* 살짝 떠오르는 효과 */
+    background-color: #f0f7ff;
+    transform: translateY(-2px);
 }
 
-/* 선택된 상태의 키워드 */
 .keyword-item.active {
     background-color: #007bff !important;
     color: white !important;
     border-color: #007bff !important;
     font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
 }
 
-/* 8. 하단 버튼 그룹 */
-/* 8. 하단 버튼 그룹 */
-/* 1. 전체 레이아웃: 상단 공백 해결 및 중앙 정렬 */
-.outer-layout {
-    width: 100%;
-    min-height: 100vh;
-    background-color: #f8f9fa;
-    display: flex !important;
-    flex-direction: column !important;
-    /* justify-content를 flex-start로 바꾸고 패딩으로 조절해야 상단 여백 컨트롤이 쉽습니다. */
-    justify-content: flex-start !important; 
-    align-items: center !important;
-    padding: 50px 20px; /* 상단 여백 50px로 최적화 */
-    box-sizing: border-box;
-}
-
-/* 2. 제목 스타일: 상단 정렬 시 발생하는 마진 초기화 */
-.setup-title {
-    font-size: 2.2rem;   /* 크기를 살짝 조절하여 세련되게 변경 */
-    font-weight: 700;
-    color: #1a2a3a;
-    text-align: center;
-    width: 100%;
-    margin-top: 0;       /* 위쪽 여백 삭제 */
-    margin-bottom: 40px; /* 카드와의 간격 */
-}
-
-/* 3. 메인 카드 상자 */
-.plan-keyword-container {
-    width: 100%;
-    max-width: 800px; 
-    background-color: #ffffff;
-    border-radius: 25px; /* 버튼의 둥근 느낌과 통일 */
-    padding: 50px; 
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-    box-sizing: border-box;
-}
-
-/* 4. 하단 버튼 그룹: "일정 생성하기" 스타일 기준 통일 */
-/* 8. 하단 버튼 그룹: 두 버튼의 높이를 물리적으로 일치시킴 */
+/* 10. 하단 버튼 그룹: 높이 및 스타일 통일 */
 .button-group {
     display: flex;
     gap: 15px;
-    margin-top: 50px;
-    /* 핵심: 자식 버튼들이 부모의 높이에 맞춰 꽉 차게 설정 */
+    margin-top: 20px;
     align-items: stretch; 
     width: 100%;
 }
 
-/* 버튼 공통: "일정 생성하기"의 두툼하고 둥근 스타일로 통일 */
 .back-button, .submit-button {
-    flex: 1;                /* 가로 비율 1:1 */
-    padding: 18px 0;        /* 위아래 패딩을 동일하게 고정 (좌우는 0으로 줘도 flex-center로 정렬됨) */
-    border-radius: 15px;    /* 둥근 모서리 통일 */
+    flex: 1;
+    height: 56px; /* 물리적 높이 고정 */
+    border-radius: 12px;
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: none;           /* 테두리 두께 차이로 인한 높이 불균형 방지 */
-    
-    /* 추가: 텍스트 정중앙 배치 보장 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    line-height: 1;         /* 줄바꿈 간격 제거 */
-}
-
-/* 이전으로 버튼: 색상만 차분하게 변경, 크기는 동일함 */
-/* 8. 하단 버튼 그룹 */
-.button-group {
-    display: flex;
-    gap: 15px;
-    margin-top: 50px;
-    /* 중요: 자식 요소들이 부모 높이에 맞춰 동일하게 늘어나도록 설정 */
-    align-items: stretch; 
-    width: 100%;
-}
-
-/* 두 버튼 공통: 일정 생성하기 버튼의 '두툼함'을 기준으로 통일 */
-.back-button, .submit-button {
-    flex: 1;                /* 가로 너비 1:1 */
-    height: 56px;           /* 높이를 고정 수치로 지정 (이미지의 파란 버튼 높이 기준) */
-    border-radius: 12px;    /* 둥근 정도 통일 */
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none !important; /* 혹시 모를 상위 테두리 스타일 강제 제거 */
-    
-    /* 버튼 내부 텍스트를 정확히 중앙에 배치 */
+    border: none !important;
     display: flex;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
 }
 
-/* 이전으로 버튼: 색상만 다르고 크기는 파란 버튼과 동일 */
 .back-button {
     background-color: #f1f3f5 !important;
     color: #495057 !important;
@@ -215,55 +171,29 @@
     background-color: #e9ecef !important;
 }
 
-/* 일정 생성하기 버튼: 기준이 되는 메인 스타일 */
 .submit-button {
-    background-color: #007bff !important; /* 요청하신 파란색 */
+    background-color: #007bff !important;
     color: #ffffff !important;
 }
 
 .submit-button:hover {
-    background-color: #0069d9 !important; /* 호버 시 진해짐 */
+    background-color: #0069d9 !important;
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
-/* 클릭 시 진해지는 효과 */
 .submit-button:active {
-    background-color: #0056b3 !important;
-    transform: scale(0.98); /* 살짝 눌리는 시각 효과 */
+    transform: scale(0.98);
 }
 
 /* 모바일 대응 */
 @media (max-width: 768px) {
     .plan-keyword-container {
-        padding: 40px 20px;
+        padding: 30px 20px;
     }
     .setup-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
-}
-
-.selection-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.budget-group.full-width {
-    grid-column: span 2;
-}
-
-.budget-group input[type="range"] {
-    width: 100%;
-    accent-color: #007bff;
-    cursor: pointer;
-    accent-color: #007bff;
-}
-
-.budget-display {
-    text-align: right;
-    margin-top: 5px;
-    color: #007bff;
-    font-size: 1rem;
-    font-weight: 600;
+    .category-group {
+        padding: 20px;
+    }
 }

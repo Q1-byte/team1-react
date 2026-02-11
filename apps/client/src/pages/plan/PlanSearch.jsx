@@ -145,6 +145,28 @@ export default function PlanSearch() {
                                 ))}
                             </select>
                         </div>
+                        {/* 3. 예산 설정 (세 번째 줄 - 새로 추가됨!) */}
+                        <div className="input-group budget-section" style={{ marginTop: '10px' }}>
+                            <label style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span>💰 최대 예산</span>
+                                <span style={{ color: '#005ADE', fontWeight: 'bold' }}>
+                                    {(Number(planConfig.budget_range?.[1]) || 100000).toLocaleString()}원
+                                </span>
+                            </label>
+                            <input
+                                type="range"
+                                min="100000"
+                                max="5000000"
+                                step="50000"
+                                style={{ width: '100%', marginTop: '10px', cursor: 'pointer' }}
+                                value={Number(planConfig.budget_range?.[1]) || 100000}
+                                onChange={(e) => handleConfigChange('budget_range', [0, Number(e.target.value)])}
+                            />
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#999', marginTop: '5px' }}>
+                                <span>10만원</span>
+                                <span>500만원</span>
+                            </div>
+                        </div>
                     </div>
 
                     <button className="next-button" onClick={handleNext}>
