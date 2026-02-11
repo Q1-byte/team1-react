@@ -2,20 +2,18 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../../components/Header';
 
+
 export default function TravelPlan() {
     const [planConfig, setPlanConfig] = useState({
         region_id: null,
         region_name: "",
         sub_region: "",
         people_count: 1,
-        budget_range: [100000, 500000],
-        start_date: null,  // 추가
-        end_date: null,    // 추가
-        nights: 0,         // 추가
+        budget_range: [10, 50],
+        travel_date: null,
         keywords: [],
     });
 
-    // 필드 하나씩 업데이트하는 기존 방식 (유지)
     const handleConfigChange = (key, value) => {
         setPlanConfig((prev) => ({
             ...prev,
@@ -24,9 +22,10 @@ export default function TravelPlan() {
     };
 
     return (
-        <div className="travel-plan-container">
-            <Header />
-            <main style={{ paddingTop: '20px' }}>
+        /* 전체를 감싸는 최상위 부모에 'travel-plan-layout' 추가 */
+        <div className="travel-plan-layout">
+            
+            <main className="plan-main-content"> 
                 <Outlet context={{ planConfig, handleConfigChange }} />
             </main>
         </div>

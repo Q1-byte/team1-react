@@ -5,7 +5,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px 0;
+    padding: 0px 0;
     }
 
     .gacha-image-container img {
@@ -19,16 +19,14 @@
     50% { transform: rotate(-5deg); }
     75% { transform: rotate(5deg); }
     100% { transform: rotate(0deg); }
-    }
+}
 
     .shake {
+    display: inline-block !important; /* 💡 강제로 인라인 블록으로 설정 */
     animation: shake 0.2s infinite;
-    }
-
-    .difficulty-selector {
-    margin: 30px 0;
-    color: #333;
-    }
+    /* transform-origin을 설정하면 기계 중심을 기준으로 흔들립니다 */
+    transform-origin: center center; 
+}
 
     .draw-button {
     padding: 12px 40px;
@@ -38,4 +36,116 @@
     border-radius: 25px;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    } 
+    .machine-container {
+    display: inline-block;
+}
+
+.machine-container.shake {
+    animation: shake 0.2s infinite;
+}
+
+/* 3. 캡슐 팝업 애니메이션 */
+/* 1. 캡슐이 나타나는 컨테이너 */
+.capsule-pop {
+    margin-top: 20px;
+    text-align: center;
+    /* 팡 터지는 느낌을 위해 탄성을 더 강하게(cubic-bezier 수정) */
+    animation: popAndOpen 1s cubic-bezier(0.1, 0.9, 0.2, 1.3) forwards;
+}
+
+/* 2. 통통 튀는 애니메이션 상세 정의 */
+@keyframes popAndOpen {
+    0% { 
+        /* 1. 시작: 숨어있음 */
+        transform: scale(0) translateY(50px) rotate(-20deg); 
+        filter: brightness(1);
+        opacity: 0; 
     }
+    50% { 
+        /* 2. 팡! 터지는 시점: 최대 크기와 최대 밝기 */
+        transform: scale(1.4) translateY(-20px) rotate(10deg); 
+        filter: brightness(1.8); /* 번쩍이는 효과 */
+        opacity: 1; 
+    }
+    100% { 
+        /* 3. 안착: 원래 크기로 자연스럽게 정지 */
+        transform: scale(1) translateY(0) rotate(0deg); 
+        filter: brightness(1);
+        opacity: 1; 
+    }
+}
+
+/* 캡슐 텍스트: 터진 직후 팍! 하고 나타나게 */
+.capsule-text {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: yellow; /* 황금색으로 더 강조 */
+    margin-top: 15px;
+    opacity: 0;
+    animation: textPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation-delay: 0.6s; /* 팡 터지는 시점(60%)에 맞춰 등장 */
+}
+
+@keyframes textPop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* 4. 공통 버튼 스타일 (기존 btnStyle) */
+.gacha-btn {
+    padding: 15px 50px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    background-color: #fff;
+    border: 2px solid #007bff;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+/* 5. 다시 뽑기 버튼 전용 (투명 배경 + 호버) */
+/* GachaPage.css */
+
+.reset-button {
+    /* 중앙 정렬 및 간격 */
+    display: block;
+    margin: 30px auto 0;
+    
+    /* 버튼 모양 (기존 btnStyle 내용 반영) */
+    padding: 15px 50px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    
+    /* 색상 설정 */
+    background-color: transparent; /* 기본 투명 */
+    color: #fff;                  /* 기본 글자 흰색 */
+    border: 2px solid #fff;       /* 흰색 테두리 */
+    
+    /* 호버 애니메이션을 부드럽게 */
+    transition: all 0.3s ease;
+}
+
+.reset-button:hover {
+    background-color: #fff;       /* 마우스 올리면 배경 흰색 */
+    color: #007bff;              /* 마우스 올리면 글자 파란색 (배경색과 맞춤) */
+}
+
+/* 6. 결과 카드 스타일 */
+.result-card {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.3s;
+    margin-bottom: 20px;
+}
+
+.result-card:hover {
+    border-color: #007bff;
+}

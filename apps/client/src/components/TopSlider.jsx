@@ -1,5 +1,6 @@
 // apps/client/src/components/TopSlider.jsx
 import React, { useState, useEffect } from 'react';
+import './TopSlider.css';
 
 export default function TopSlider() {
     const [currentSlide, setCurrentSlide] = useState(0);

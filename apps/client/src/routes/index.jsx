@@ -120,7 +120,7 @@ export const router = createBrowserRouter([
           },
           {
             path: 'setup',
-            element: <PlanSetup />
+            element: <PlanKeyword />
           },
           {
             path: 'keyword',

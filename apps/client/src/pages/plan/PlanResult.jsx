@@ -79,7 +79,7 @@ const handleGoToCheckout = () => {
 
     if (loading) return (
         <>
-            <Header />
+            
             <div className="loading-container">
                 <div className="spinner"></div>
                 <p>🤖 AI가 {finalPlanData.region_name || '지역'} 맞춤형 일정을 구성 중입니다...</p>
@@ -88,8 +88,8 @@ const handleGoToCheckout = () => {
     );
 
     return (
-      <> 
-      <Header />
+    <> 
+    
         <div className="result-layout">
             {/* 왼쪽: 일차별 일정 리스트 영역 */}
             <div className="itinerary-section">
