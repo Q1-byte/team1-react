@@ -12,21 +12,22 @@ const PlanKeyword = () => {
     const { planConfig, handleConfigChange } = useOutletContext();
     const { region_id, region_name, sub_region, travel_date, people_count, main_category, keywords: selectedKeywords } = planConfig;
 
+    // PlanKeyword.jsx 내부 수정
     const themeKeywords = [
-        { id: 3, name: '액티비티', category: '성향' },
-        { id: 4, name: '성수맛집', category: '기타' }, 
-        { id: 9, name: '가족친화', category: '조건' },
-        { id: 10, name: '가성비', category: '조건' },
-        { id: 11, name: '조용한', category: '조건' },
-        { id: 12, name: '반려동물동반', category: '조건' },
-        { id: 15, name: '루프탑/야외', category: '조건' }
+        { id: 1, name: '힐링', category: '테마' },
+        { id: 2, name: '자연', category: '테마' },
+        { id: 3, name: '트래킹', category: '활동' },
+        { id: 4, name: '데이트', category: '활동' },
+        { id: 5, name: '스릴', category: '활동' },
+        { id: 6, name: '추억', category: '테마' },
+        { id: 7, name: '예술', category: '문화' },
+        { id: 8, name: '체험', category: '문화' }
     ];
 
     const categoryLabels = {
-        '성향': '🤸 나는 어떤 여행 스타일인가요?',
-        '조건': '✅ 꼭 필요한 조건이 있나요?',
         '테마': '✨ 어떤 분위기의 여행을 원하시나요?',
-        '기타': '💡 놓치면 아쉬운 여행의 디테일'
+        '활동': '🏃 활기찬 활동을 원하시나요?',
+        '문화': '🎨 새로운 경험을 해보고 싶나요?'
     };
 
     const [filteredKeywords, setFilteredKeywords] = useState([]);
