@@ -6,8 +6,10 @@ import Header from '../../components/Header';
 export default function TravelPlan() {
     const [planConfig, setPlanConfig] = useState({
         region_id: null,
+        parent_region_db_id: null,
         region_name: "",
         sub_region: "",
+        sub_region_id: null,
         people_count: 1,
         budget_range: [10, 50],
         travel_date: null,

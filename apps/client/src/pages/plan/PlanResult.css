@@ -1,17 +1,20 @@
-/* 레이아웃 배치 조정 */
+/* ========== 전체 레이아웃 ========== */
 .result-layout {
     display: flex;
-    gap: 40px;          /* 왼쪽과 오른쪽 사이 간격 확보 */
+    flex-wrap: wrap;
+    gap: 30px;
     align-items: flex-start;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
 }
 
 .itinerary-section {
-    flex: 2; /* 왼쪽 일정이 더 넓게 */
+    flex: 1 1 550px;
+    min-width: 0;
 }
 
+/* ========== 일정 탭 ========== */
 .day-tabs {
     display: flex;
     gap: 10px;
@@ -32,6 +35,7 @@
     border-color: #007bff;
 }
 
+/* ========== 일정 카드 ========== */
 .itinerary-card {
     display: flex;
     justify-content: space-between;
@@ -48,127 +52,179 @@
     background: #f8f9fa;
 }
 
-.cost-summary-card {
-    flex: 0 0 320px;    /* 너비 고정 */
-    position: sticky;
-    top: 150px;         /* 스크롤 시 따라오는 위치 */
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 30px 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
-    border: 1px solid #f0f0f0;
-}
-
-.cost-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-}
-
-.cost-row.total {
-    border-top: 2px solid #333;
-    padding-top: 15px;
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.book-btn {
-    width: 100%;
-    padding: 15px;
-    background: #007bff;
-    color: white;
-    border: none;
+.place-image img {
+    width: 80px;
+    height: 80px;
     border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 20px;
+    object-fit: cover;
 }
 
-.loading-container {
-    display: flex;
-    flex-direction: column; /* 요소들을 세로로 배치 */
-    align-items: center;    /* 수평 중앙 정렬 */
-    justify-content: center; /* 수직 중앙 정렬 */
-    height: calc(100vh - 100px); /* 헤더 높이를 제외한 전체 화면 높이 */
-    text-align: center;      /* 텍스트 중앙 정렬 */
+.place-info {
+    flex: 1;
+    margin-left: 16px;
 }
 
-.loading-container p {
-    margin-top: 20px;       /* 스피너와의 간격 */
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #333;
-}
-summary-ticket-effect h3 {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #333;
-    margin-bottom: 20px;
-    letter-spacing: 1px;
+.item-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: #007bff;
+    background: #f0f7ff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 4px;
 }
 
-/* 티켓 구분선 효과 */
-.ticket-divider {
-    height: 1px;
-    background: #eee;
-    margin-bottom: 20px;
+.place-info h4 {
+    margin: 4px 0;
 }
 
-.ticket-divider-dashed {
-    border-top: 1px dashed #ddd;
-    margin: 20px 0;
-}
-
-/* 정보 요약 행 */
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 0.95rem;
-    color: #666;
-}
-
-.info-row strong {
-    color: #000;
-}
-
-/* 금액 강조 */
-.cost-row.total-only {
-    text-align: center;
-    padding: 10px 0;
-}
-
-.cost-row.total-only .label {
-    display: block;
-    font-size: 0.9rem;
+.place-info .address {
+    font-size: 0.85rem;
     color: #888;
-    margin-bottom: 8px;
 }
 
-.cost-row.total-only .total-price {
-    font-size: 1.8rem;
-    font-weight: 800;
+.item-right-side {
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.price-tag {
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.toggle-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.toggle-btn.remove {
+    background: #fee;
+    color: #d33;
+}
+
+.toggle-btn.add {
+    background: #eef6ff;
     color: #007bff;
 }
 
-/* 하단 알림 및 버튼 */
-.summary-notice {
-    margin: 20px 0;
-    text-align: center;
-    font-size: 0.85rem;
+/* ========== 오른쪽 상품 섹션 ========== */
+.product-section {
+    flex: 0 0 340px;
+    position: sticky;
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+}
+
+.product-label {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #007bff;
+    background: #f0f7ff;
+}
+
+.product-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.product-body {
+    padding: 14px 16px;
+}
+
+.product-type {
+    display: inline-block;
+    font-size: 0.7rem;
+    color: #fff;
+    background: #007bff;
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+
+.product-body h4 {
+    margin: 4px 0;
+    font-size: 1rem;
+}
+
+.product-desc {
+    font-size: 0.82rem;
+    color: #888;
+    margin: 4px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-duration {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 2px;
+}
+
+.product-price {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #333;
+    margin-top: 8px;
+}
+
+.product-price small {
+    font-weight: 400;
     color: #999;
-    line-height: 1.4;
+}
+
+/* ========== 하단 요약 ========== */
+.product-summary {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.summary-row.total {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #000;
+    margin-bottom: 14px;
 }
 
 .book-btn {
     width: 100%;
-    height: 60px;
+    height: 52px;
     background: #007bff;
     color: #fff;
     border: none;
     border-radius: 12px;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s, background 0.2s;
@@ -176,5 +232,49 @@ summary-ticket-effect h3 {
 
 .book-btn:hover {
     background: #0056b3;
-    transform: translateY(-2px); /* 살짝 떠오르는 효과 */
+    transform: translateY(-2px);
+}
+
+/* ========== 로딩 / 없음 ========== */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 100px);
+    text-align: center;
+}
+
+.loading-container p {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.no-data {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.back-btn {
+    margin-top: 16px;
+    padding: 10px 24px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* ========== 반응형 ========== */
+@media (max-width: 900px) {
+    .result-layout {
+        flex-direction: column;
+    }
+
+    .product-section {
+        position: static;
+        flex: 1 1 auto;
+        width: 100%;
+    }
 }
