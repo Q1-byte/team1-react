@@ -1,82 +1,118 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import api from '../../api/axiosConfig';
 import KoreaMap from "../../components/KoreaMap";
 import './PlanSearch.css';
 
-// 1. 매핑 테이블: 지도의 class명과 드롭박스의 value를 모두 한글로 변환
-const REGION_CLASS_MAP = {
-    Seoul: "서울특별시", Busan: "부산광역시", Daegu: "대구광역시", Incheon: "인천광역시",
-    Gwangju: "광주광역시", Daejeon: "대전광역시", Ulsan: "울산광역시", Sejong: "세종특별자치시",
-    Gyeonggi: "경기도", Gangwon: "강원특별자치도", Jeju: "제주특별자치도",
-    // 긴 이름과 짧은 이름 모두 대응 가능하도록 등록
-    Chungcheongbukdo: "충청북도", Chungbuk: "충청북도",
-    Chungcheongnamdo: "충청남도", Chungnam: "충청남도",
-    Jeollabukdo: "전라북도", Jeonbuk: "전라북도",
-    Jeollanamdo: "전라남도", Jeonnam: "전라남도",
-    Gyeongsangbukdo: "경상북도", Gyeongbuk: "경상북도",
-    Gyeongsangnamdo: "경상남도", Gyeongnam: "경상남도"
+// 지도 SVG class명 → 백엔드 region name 매핑
+const MAP_TO_REGION_NAME = {
+    Seoul: "서울", Busan: "부산", Daegu: "대구", Incheon: "인천",
+    Gwangju: "광주", Daejeon: "대전", Ulsan: "울산", Sejong: "세종",
+    Gyeonggi: "경기", Gangwon: "강원", Jeju: "제주",
+    Chungcheongbukdo: "충북", Chungbuk: "충북",
+    Chungcheongnamdo: "충남", Chungnam: "충남",
+    Jeollabukdo: "전북", Jeonbuk: "전북",
+    Jeollanamdo: "전남", Jeonnam: "전남",
+    Gyeongsangbukdo: "경북", Gyeongbuk: "경북",
+    Gyeongsangnamdo: "경남", Gyeongnam: "경남"
 };
 
-// 2. 지역 데이터: Key값을 지도(SVG)에서 넘어오는 긴 이름으로 통일
-const REGION_DATA = {
-    Seoul: { name: "서울특별시", sub: ["강남구", "종로구", "마포구", "용산구"] },
-    Gyeonggi: { name: "경기도", sub: ["수원시", "용인시", "성남시"] },
-    Gangwon: { name: "강원특별자치도", sub: ["춘천시", "강릉시"] },
-    Chungcheongbukdo: { name: "충청북도", sub: ["청주시", "충주시"] },
-    Chungcheongnamdo: { name: "충청남도", sub: ["천안시", "아산시"] },
-    Jeollabukdo: { name: "전라북도", sub: ["전주시", "군산시"] },
-    Jeollanamdo: { name: "전라남도", sub: ["여수시", "순천시"] },
-    Gyeongsangbukdo: { name: "경상북도", sub: ["포항시", "경주시"] },
-    Gyeongsangnamdo: { name: "경상남도", sub: ["창원시", "진주시"] },
-    Busan: { name: "부산광역시", sub: ["해운대구", "기장군"] },
-    Jeju: { name: "제주특별자치도", sub: ["제주시", "서귀포시"] },
-    Incheon: { name: "인천광역시", sub: ["중구", "남동구"] },
-    Ulsan: { name: "울산광역시", sub: ["남구", "북구"] },
-    Daegu: { name: "대구광역시", sub: ["중구", "수성구"] },
-    Daejeon: { name: "대전광역시", sub: ["서구", "유성구"] },
-    Gwangju: { name: "광주광역시", sub: ["동구", "남구"] },
-    Sejong: { name: "세종특별자치시", sub: ["세종시"] }
+// 백엔드 region name → 지도 표시용 정식 명칭
+const DISPLAY_NAME = {
+    "서울": "서울특별시", "부산": "부산광역시", "대구": "대구광역시",
+    "인천": "인천광역시", "광주": "광주광역시", "대전": "대전광역시",
+    "울산": "울산광역시", "세종": "세종특별자치시", "경기": "경기도",
+    "강원": "강원특별자치도", "충북": "충청북도", "충남": "충청남도",
+    "전북": "전라북도", "전남": "전라남도", "경북": "경상북도",
+    "경남": "경상남도", "제주": "제주특별자치도"
 };
 
 export default function PlanSearch() {
     const { planConfig, handleConfigChange } = useOutletContext();
     const navigate = useNavigate();
 
-    // 통합 업데이트 함수: 지도를 클릭하든 드롭박스를 바꾸든 이 함수를 거침
-    const updateRegionState = (id) => {
-        if (!id) return;
-        
-        // 첫 글자만 대문자로 (혹시 소문자로 들어올 경우 대비)
-        const formattedId = id.charAt(0).toUpperCase() + id.slice(1);
-        
-        // 1. 한글 정식 명칭 가져오기
-        const fullName = REGION_CLASS_MAP[formattedId] || (REGION_DATA[formattedId]?.name || formattedId);
+    const [parentRegions, setParentRegions] = useState([]);
+    const [subRegions, setSubRegions] = useState([]);
 
-        // 2. 부모 상태 업데이트
+    // 시/도 목록 로드
+    useEffect(() => {
+        api.get('/api/regions').then(res => {
+            setParentRegions(res.data);
+        });
+    }, []);
+
+    // 선택된 시/도가 바뀌면 시/군/구 로드
+    useEffect(() => {
+        if (planConfig.region_id) {
+            const parent = parentRegions.find(r => r.name === planConfig.region_name_short);
+            if (parent) {
+                api.get(`/api/regions/${parent.id}/sub`).then(res => {
+                    setSubRegions(res.data);
+                });
+            }
+        } else {
+            setSubRegions([]);
+        }
+    }, [planConfig.region_name_short, parentRegions]);
+
+    // 지역 선택 통합 함수
+    const updateRegionState = (mapId) => {
+        if (!mapId) return;
+        const formattedId = mapId.charAt(0).toUpperCase() + mapId.slice(1);
+        const regionName = MAP_TO_REGION_NAME[formattedId];
+        if (!regionName) return;
+
+        const fullName = DISPLAY_NAME[regionName] || regionName;
+
+        const parentRegion = parentRegions.find(r => r.name === regionName);
         handleConfigChange("region_id", formattedId);
+        handleConfigChange("parent_region_db_id", parentRegion?.id || null);
         handleConfigChange("region_name", fullName);
-        handleConfigChange("sub_region", ""); // 지역 변경 시 상세지역 초기화
+        handleConfigChange("region_name_short", regionName);
+        handleConfigChange("sub_region", "");
+        handleConfigChange("sub_region_id", null);
     };
 
-    // 지도의 path 클릭 시 실행 (이게 없으면 지도를 클릭해도 오른쪽이 안 바뀜)
+    // 드롭다운에서 시/도 선택
+    const handleParentSelect = (e) => {
+        const selectedId = Number(e.target.value);
+        if (!selectedId) {
+            handleConfigChange("region_id", "");
+            handleConfigChange("parent_region_db_id", null);
+            handleConfigChange("region_name", "");
+            handleConfigChange("region_name_short", "");
+            handleConfigChange("sub_region", "");
+            handleConfigChange("sub_region_id", null);
+            return;
+        }
+        const region = parentRegions.find(r => r.id === selectedId);
+        if (!region) return;
+
+        // region.name(서울)에 대응하는 mapId 찾기
+        const mapId = Object.entries(MAP_TO_REGION_NAME).find(([, name]) => name === region.name)?.[0];
+        const fullName = DISPLAY_NAME[region.name] || region.name;
+
+        handleConfigChange("region_id", mapId || String(selectedId));
+        handleConfigChange("parent_region_db_id", selectedId);
+        handleConfigChange("region_name", fullName);
+        handleConfigChange("region_name_short", region.name);
+        handleConfigChange("sub_region", "");
+        handleConfigChange("sub_region_id", null);
+    };
+
+    // 지도 클릭
     const handlePathClick = (e) => {
-    // 1. 클릭된 요소부터 상위로 올라가며 path나 g 태그를 찾습니다.
-    const target = e.target.closest('path, g');
-    if (!target) return;
+        const target = e.target.closest('path, g');
+        if (!target) return;
+        const regionId =
+            target.getAttribute('class')?.split(' ')[0] ||
+            target.parentElement?.getAttribute('class')?.split(' ')[0] ||
+            target.id;
+        if (regionId) {
+            updateRegionState(regionId);
+        }
+    };
 
-    // 2. 그룹(g)이나 패스(path) 중 클래스명이 있는 요소를 찾습니다.
-    // 만약 클릭한 path에 클래스가 없으면 부모인 g 태그의 클래스를 확인합니다.
-    const regionId = 
-        target.getAttribute('class')?.split(' ' )[0] || 
-        target.parentElement?.getAttribute('class')?.split(' ')[0] ||
-        target.id; // 혹시 id로 되어있을 경우 대비
-
-    console.log("클릭된 ID 확인:", regionId); // 디버깅용: 인천/경북 클릭 시 콘솔을 확인해보세요!
-
-    if (regionId) {
-        updateRegionState(regionId);
-    }
-};
     const handleNext = () => {
         if (!planConfig.region_id || !planConfig.sub_region) {
             alert("지역과 세부 지역을 선택해주세요!");
@@ -85,12 +121,14 @@ export default function PlanSearch() {
         navigate('/reserve/setup');
     };
 
+    // 현재 선택된 부모 region의 DB id (드롭다운 value용)
+    const selectedParentDbId = parentRegions.find(r => r.name === planConfig.region_name_short)?.id || "";
+
     return (
     <div className="plan-search-container">
         <h2 className="search-title">어디로 떠나시나요?</h2>
 
         <div className="plan-search-layout">
-            {/* 왼쪽: 지도 섹션 (지도만 깔끔하게 나오도록 유지) */}
             <div className="layout-left" onClick={handlePathClick}>
                 <div className="map-card">
                     <div className="map-wrapper">
@@ -99,35 +137,34 @@ export default function PlanSearch() {
                 </div>
             </div>
 
-            {/* 오른쪽: 설정 카드 섹션 */}
             <div className="layout-right">
                 <div className="search-main-card">
-                    
-                    {/* ✅ 오른쪽 카드 내부 상단에만 파란 점선 문구 배치 */}
+
                     <div className="info-box-card">
                         {planConfig.region_id ? (
-        <p className="main-info-text">
-            {/* CSS와 동일하게 region-name-highlight로 클래스명 고정 */}
-            <span className="region-name-highlight" style={{ color: '#005ADE', fontWeight: 'bold' }}>
-                {REGION_CLASS_MAP[planConfig.region_id] || planConfig.region_name}
-            </span>
-            {" "} 지역 세부선택을 완료해주세요! 
-        </p>
-    ) : (
-        <p className="main-info-text default">🗺️ 어디로 떠나고 싶으신가요?</p>
-    )}
+                            <p className="main-info-text">
+                                <span className="region-name-highlight" style={{ color: '#005ADE', fontWeight: 'bold' }}>
+                                    {planConfig.region_name}
+                                </span>
+                                {" "} 지역 세부선택을 완료해주세요!
+                            </p>
+                        ) : (
+                            <p className="main-info-text default">🗺️ 어디로 떠나고 싶으신가요?</p>
+                        )}
                     </div>
 
                     <div className="selection-grid">
                         <div className="input-group">
                             <label>📍 지역 선택</label>
                             <select
-                                value={planConfig.region_id || ""}
-                                onChange={(e) => updateRegionState(e.target.value)}
+                                value={selectedParentDbId}
+                                onChange={handleParentSelect}
                             >
                                 <option value="">지역 선택</option>
-                                {Object.entries(REGION_DATA).map(([key, v]) => (
-                                    <option key={key} value={key}>{v.name}</option>
+                                {parentRegions.map(r => (
+                                    <option key={r.id} value={r.id}>
+                                        {DISPLAY_NAME[r.name] || r.name}
+                                    </option>
                                 ))}
                             </select>
                         </div>
@@ -137,15 +174,19 @@ export default function PlanSearch() {
                             <select
                                 value={planConfig.sub_region || ""}
                                 disabled={!planConfig.region_id}
-                                onChange={(e) => handleConfigChange("sub_region", e.target.value)}
+                                onChange={(e) => {
+                                    const selectedSub = subRegions.find(r => r.name === e.target.value);
+                                    handleConfigChange("sub_region", e.target.value);
+                                    handleConfigChange("sub_region_id", selectedSub?.id || null);
+                                }}
                             >
                                 <option value="">상세 지역 선택</option>
-                                {planConfig.region_id && REGION_DATA[planConfig.region_id]?.sub.map(name => (
-                                    <option key={name} value={name}>{name}</option>
+                                {subRegions.map(r => (
+                                    <option key={r.id} value={r.name}>{r.name}</option>
                                 ))}
                             </select>
                         </div>
-                        {/* 3. 예산 설정 (세 번째 줄 - 새로 추가됨!) */}
+
                         <div className="input-group budget-section" style={{ marginTop: '10px' }}>
                             <label style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <span>💰 최대 예산</span>
