@@ -45,25 +45,33 @@ const PlanKeyword = () => {
     }, {});
 
     const handleNext = () => {
-        if (!travel_date || travel_date.length < 2) { 
-            alert("여행 기간을 선택해주세요!"); 
-            return; 
-        }
-        if (!fromGacha && selectedKeywords.length === 0) { 
-            alert("키워드를 최소 1개 선택해주세요!"); 
-            return; 
-        }
-        navigate('/reserve/result', { 
-            state: { 
-                finalPlanData: {
-                    ...planConfig,
-                    start_date: travel_date[0].toLocaleDateString(),
-                    end_date: travel_date[1].toLocaleDateString(),
-                    fromGacha: fromGacha 
-                } 
+    if (!travel_date || travel_date.length < 2) { 
+        alert("여행 기간을 선택해주세요!"); 
+        return; 
+    }
+    if (!fromGacha && selectedKeywords.length === 0) { 
+        alert("키워드를 최소 1개 선택해주세요!"); 
+        return; 
+    }
+
+    // 💡 가챠에서 온 데이터가 있다면 그걸 사용하고, 없으면 planConfig 값을 사용합니다.
+    const gachaData = location.state?.gachaResult || {};
+
+    navigate('/reserve/result', { 
+        state: { 
+            finalPlanData: {
+                ...planConfig, // 기존 설정값들
+                // 💡 중요: 가챠에서 넘어온 지역 정보를 명시적으로 덮어씌웁니다.
+                region_id: fromGacha ? gachaData.region_id : region_id,
+                region_name: fromGacha ? gachaData.region_name : region_name,
+                keywords: fromGacha ? gachaData.keywords : selectedKeywords,
+                start_date: travel_date[0].toLocaleDateString(),
+                end_date: travel_date[1].toLocaleDateString(),
+                fromGacha: fromGacha 
             } 
-        }); 
-    };
+        } 
+    }); 
+};
 
     return (
         <div className="outer-layout">

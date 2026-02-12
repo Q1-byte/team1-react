@@ -12,9 +12,9 @@ const PlanResult = () => {
 
     const finalPlanData = location.state?.finalPlanData || {};
     const selectedKeywords = finalPlanData.keywords || ["#힐링"];
-    const regionName = finalPlanData.region_name || "Busan";
+    const regionName = finalPlanData.region_name || finalPlanData.regionName || "지역미정";
+    const parentRegionDbId = finalPlanData.region_id || finalPlanData.regionId || null;
     const subRegion = finalPlanData.sub_region || "";
-    const parentRegionDbId = finalPlanData.parent_region_db_id || null;
 
     const [details, setDetails] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,23 +27,15 @@ const PlanResult = () => {
 
     // 일정 데이터 로드
     useEffect(() => {
-        const fetchRealPlan = async () => {
-            try {
-                const regionMap = {
-                    "Busan": "부산", "Seoul": "서울", "Jeju": "제주",
-                    "Incheon": "인천", "Gangneung": "강릉"
-                };
-                const searchRegion = subRegion || regionMap[regionName] || regionName;
+    const fetchRealPlan = async () => {
+        try {
+            // 한글 이름이 직접 넘어온다면 굳이 Map을 거칠 필요가 없습니다.
+            const searchRegion = subRegion || regionName; 
 
-                const response = await axios.post(`${API_BASE}/api/plans/recommend`, {
-                    keyword: selectedKeywords,
-                    region: searchRegion
-                });
-
-                if (!response.data.schedule || Object.keys(response.data.schedule).length === 0) {
-                    setDetails([]);
-                    return;
-                }
+            const response = await axios.post(`${API_BASE}/api/plans/recommend`, {
+                keyword: selectedKeywords,
+                region: searchRegion // 이제 "충청북도"가 그대로 전달됩니다!
+            });
 
                 const scheduleMap = response.data.schedule;
                 const formattedDetails = [];
