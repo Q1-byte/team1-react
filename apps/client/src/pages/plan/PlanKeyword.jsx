@@ -63,6 +63,7 @@ const PlanKeyword = () => {
                 ...planConfig, // 기존 설정값들
                 // 💡 중요: 가챠에서 넘어온 지역 정보를 명시적으로 덮어씌웁니다.
                 region_id: fromGacha ? gachaData.region_id : region_id,
+                parent_region_db_id: fromGacha ? gachaData.region_id : planConfig.parent_region_db_id,
                 region_name: fromGacha ? gachaData.region_name : region_name,
                 keywords: fromGacha ? gachaData.keywords : selectedKeywords,
                 start_date: travel_date[0].toLocaleDateString(),

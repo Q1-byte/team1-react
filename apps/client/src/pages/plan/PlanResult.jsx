@@ -13,7 +13,7 @@ const PlanResult = () => {
     const finalPlanData = location.state?.finalPlanData || {};
     const selectedKeywords = finalPlanData.keywords || ["#힐링"];
     const regionName = finalPlanData.region_name || finalPlanData.regionName || "지역미정";
-    const parentRegionDbId = finalPlanData.region_id || finalPlanData.regionId || null;
+    const parentRegionDbId = finalPlanData.parent_region_db_id || null;
     const subRegion = finalPlanData.sub_region || "";
 
     const [details, setDetails] = useState([]);
@@ -29,8 +29,18 @@ const PlanResult = () => {
     useEffect(() => {
     const fetchRealPlan = async () => {
         try {
-            // 한글 이름이 직접 넘어온다면 굳이 Map을 거칠 필요가 없습니다.
-            const searchRegion = subRegion || regionName; 
+            // 짧은 지역명 → 주소 매칭용 정식 이름 변환
+            const SHORT_TO_FULL = {
+                "서울": "서울", "부산": "부산", "대구": "대구", "인천": "인천",
+                "광주": "광주", "대전": "대전", "울산": "울산", "세종": "세종",
+                "경기": "경기", "강원": "강원",
+                "충북": "충청북도", "충남": "충청남도",
+                "전북": "전라북도", "전남": "전라남도",
+                "경북": "경상북도", "경남": "경상남도",
+                "제주": "제주"
+            };
+            const resolvedRegion = SHORT_TO_FULL[regionName] || regionName;
+            const searchRegion = subRegion || resolvedRegion;
 
             const response = await axios.post(`${API_BASE}/api/plans/recommend`, {
                 keyword: selectedKeywords,
@@ -51,7 +61,7 @@ const PlanResult = () => {
                                 name: spot.name,
                                 address: spot.address,
                                 price: 0,
-                                imageUrl: spot.imageUrl || 'https://via.placeholder.com/150?text=No+Image',
+                                imageUrl: spot.imageUrl || "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27150%27 height=%27150%27%3E%3Crect width=%27150%27 height=%27150%27 fill=%27%23ddd%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27%23999%27 font-size=%2714%27%3ENo Image%3C/text%3E%3C/svg%3E",
                                 is_required: false,
                                 is_selected: true
                             });
@@ -223,7 +233,7 @@ const PlanResult = () => {
                         <div className="product-label">숙소</div>
                         <img
                             className="product-img"
-                            src={accommodation.imageUrl || 'https://via.placeholder.com/300x180?text=No+Image'}
+                            src={accommodation.imageUrl || "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27300%27 height=%27180%27%3E%3Crect width=%27300%27 height=%27180%27 fill=%27%23ddd%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27%23999%27 font-size=%2714%27%3ENo Image%3C/text%3E%3C/svg%3E"}
                             alt={accommodation.name}
                         />
                         <div className="product-body">
@@ -242,7 +252,7 @@ const PlanResult = () => {
                         <div className="product-label">액티비티</div>
                         <img
                             className="product-img"
-                            src={activity.imageUrl || 'https://via.placeholder.com/300x180?text=No+Image'}
+                            src={activity.imageUrl || "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27300%27 height=%27180%27%3E%3Crect width=%27300%27 height=%27180%27 fill=%27%23ddd%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27%23999%27 font-size=%2714%27%3ENo Image%3C/text%3E%3C/svg%3E"}
                             alt={activity.name}
                         />
                         <div className="product-body">
@@ -262,7 +272,7 @@ const PlanResult = () => {
                         <div className="product-label">티켓</div>
                         <img
                             className="product-img"
-                            src={ticket.imageUrl || 'https://via.placeholder.com/300x180?text=No+Image'}
+                            src={ticket.imageUrl || "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27300%27 height=%27180%27%3E%3Crect width=%27300%27 height=%27180%27 fill=%27%23ddd%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27%23999%27 font-size=%2714%27%3ENo Image%3C/text%3E%3C/svg%3E"}
                             alt={ticket.name}
                         />
                         <div className="product-body">

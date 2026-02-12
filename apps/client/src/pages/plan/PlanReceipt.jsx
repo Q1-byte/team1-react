@@ -4,27 +4,20 @@ import './PlanReceipt.css';
 
 const PlanReceipt = () => {
     const navigate = useNavigate();
-    // 💡 부모(TravelPlan)로부터 실시간 계획 데이터를 가져옵니다.
     const { planConfig } = useOutletContext();
 
-    // 💰 결제 완료된 최종 금액 계산 로직
-    const calculatePrices = () => {
-        const { people_count = 1, nights = 0 } = planConfig;
-        
-        // 가상의 계산 로직 (기획에 맞게 유지)
-        const stay = nights * 100000; // 1박당 10만원
-        const food = (nights + 1) * people_count * 30000; // 1인 1식 기준
-        const activity = people_count * 50000; // 인당 체험비
-        
-        return {
-            stay,
-            food,
-            activity,
-            total: stay + food + activity
-        };
-    };
+    // localStorage에서 결제 데이터 가져오기
+    const savedPlanData = JSON.parse(localStorage.getItem('temp_plan_data') || '{}');
 
-    const prices = calculatePrices();
+    const accommodation = savedPlanData.selected_accommodation;
+    const activity = savedPlanData.selected_activity;
+    const ticket = savedPlanData.selected_ticket;
+    const peopleCount = savedPlanData.people_count || planConfig.people_count || 1;
+
+    const accomTotal = (accommodation?.pricePerNight || 0) * 2;
+    const activityTotal = (activity?.price || 0) * peopleCount;
+    const ticketTotal = (ticket?.price || 0) * peopleCount;
+    const totalPrice = savedPlanData.total_amount || (accomTotal + activityTotal + ticketTotal);
 
     return (
         <div className="receipt-container">
@@ -67,21 +60,31 @@ const PlanReceipt = () => {
 
                 <section className="receipt-section price-detail">
                     <h3>[ 결제 금액 명세 ]</h3>
-                    <div className="receipt-row">
-                        <span>숙박 서비스</span>
-                        <span>{prices.stay.toLocaleString()}원</span>
-                    </div>
-                    <div className="receipt-row">
-                        <span>액티비티 체험권</span>
-                        <span>{prices.activity.toLocaleString()}원</span>
-                    </div>
+                    {accommodation && (
+                        <div className="receipt-row">
+                            <span>숙소 - {accommodation.name}</span>
+                            <span>{accomTotal.toLocaleString()}원 (1실 x 2박)</span>
+                        </div>
+                    )}
+                    {activity && (
+                        <div className="receipt-row">
+                            <span>액티비티 - {activity.name}</span>
+                            <span>{activityTotal.toLocaleString()}원 ({peopleCount}명)</span>
+                        </div>
+                    )}
+                    {ticket && (
+                        <div className="receipt-row">
+                            <span>티켓 - {ticket.name}</span>
+                            <span>{ticketTotal.toLocaleString()}원 ({peopleCount}명)</span>
+                        </div>
+                    )}
                 </section>
 
                 <hr className="double-line" />
 
                 <div className="receipt-row total-amount-row">
                     <span>최종 결제 합계</span>
-                    <span className="total-price">{prices.total.toLocaleString()}원</span>
+                    <span className="total-price">{totalPrice.toLocaleString()}원</span>
                 </div>
 
                 <footer className="receipt-footer">

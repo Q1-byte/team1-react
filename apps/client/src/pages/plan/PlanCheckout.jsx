@@ -17,6 +17,15 @@ const PlanCheckout = () => {
     const totalPrice = finalPlanData?.total_amount || 0;
     const displayDetails = confirmedDetails; // 기존 코드와의 호환성을 위해 유지
 
+    // 숙소 / 액티비티 / 티켓
+    const accommodation = finalPlanData?.selected_accommodation;
+    const activity = finalPlanData?.selected_activity;
+    const ticket = finalPlanData?.selected_ticket;
+    const peopleCount = finalPlanData?.people_count || 1;
+    const accomTotal = (accommodation?.pricePerNight || 0) * 2;
+    const activityTotal = (activity?.price || 0) * peopleCount;
+    const ticketTotal = (ticket?.price || 0) * peopleCount;
+
     const [selectedMethod, setSelectedMethod] = useState('kakaopay');
 
     // 💡 1. 데이터를 일차(day)별로 그룹화하는 함수 (첫 번째 코드 기능 유지)
@@ -165,6 +174,37 @@ const PlanCheckout = () => {
                                 ))
                             ) : (
                                 <p className="empty-msg">선택된 일정이 없습니다.</p>
+                            )}
+                        </div>
+
+                        {/* 숙소 / 액티비티 / 티켓 */}
+                        <div className="product-price-list">
+                            {accommodation && (
+                                <div className="selected-item-row">
+                                    <div className="item-info">
+                                        <span className="item-type">[숙소]</span>
+                                        <span className="item-name">{accommodation.name}</span>
+                                    </div>
+                                    <span className="item-price">{accomTotal.toLocaleString()}원 <small>(1실 x 2박)</small></span>
+                                </div>
+                            )}
+                            {activity && (
+                                <div className="selected-item-row">
+                                    <div className="item-info">
+                                        <span className="item-type">[액티비티]</span>
+                                        <span className="item-name">{activity.name}</span>
+                                    </div>
+                                    <span className="item-price">{activityTotal.toLocaleString()}원 <small>({peopleCount}명)</small></span>
+                                </div>
+                            )}
+                            {ticket && (
+                                <div className="selected-item-row">
+                                    <div className="item-info">
+                                        <span className="item-type">[티켓]</span>
+                                        <span className="item-name">{ticket.name}</span>
+                                    </div>
+                                    <span className="item-price">{ticketTotal.toLocaleString()}원 <small>({peopleCount}명)</small></span>
+                                </div>
                             )}
                         </div>
 
