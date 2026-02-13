@@ -5,7 +5,7 @@
     justify-content: center;   /* 아이템들을 가로 가운데로 */
     align-items: flex-start;
     gap: 60px;                /* 아이템 사이 간격 */
-    padding: 100px 20px;
+    padding: 80px 20px;
     background-color: #fff;
     width: 100%;
     box-sizing: border-box;
@@ -25,8 +25,8 @@
 
 /* 3. 원형 이미지 배경 (기본 크기 조절) */
 .icon-circle {
-    width: 350px;            /* 350px에서 220px로 조정 (가로 배치를 위해) */
-    height: 350px;
+    width: 250px;            /* 350px에서 220px로 조정 (가로 배치를 위해) */
+    height: 250px;
     border-radius: 50%;
     overflow: hidden;
     display: flex;

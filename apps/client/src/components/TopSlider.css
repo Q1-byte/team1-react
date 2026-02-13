@@ -2,7 +2,7 @@
 .topbanner-section {
     position: relative;
     width: 100%;
-    height: 800px;
+    height: 700px;
     background-color: #DBE2E8; /* 이미지가 로드되기 전 기본 배경색 */
     overflow: hidden;
 }
@@ -36,16 +36,16 @@
 /* 3. 텍스트 이미지 슬라이더 (위층) */
 .banner-content-wrapper {
     position: absolute;
-    top: 0;
+    /* bottom: 0; 기존 코드 */
+    top: 0px; /* 바닥에서 20px 띄움 */
     left: 50%;
-    transform: translateX(-50%); /* 가로 정중앙 고정 */
+    transform: translateX(-50%);
     width: 100%;
-    max-width: 1700px; /* 요청하신 가로 1200px */
+    max-width: 1300px;
     height: 100%;
-    z-index: 10; /* 배경보다 확실히 위 */
-    pointer-events: none; /* 클릭 방해 금지 */
+    z-index: 10;
+    pointer-events: none;
 }
-
 .banner-content {
     position: relative;
     width: 100%;

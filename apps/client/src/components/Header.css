@@ -25,18 +25,24 @@
     height: 150px; 
     width: auto;
     border-radius: 50%;
-    margin-top: 20px;
+    margin-top: 150px;
     transition: all 0.3s ease;
 }
 
-/* 4. 오른쪽 영역 레이아웃 */
-.header-right, .user-zone, .header-auth-zone {
+/* 4. 오른쪽 영역 레이아웃 수정 */
+/* 4. 오른쪽 영역 레이아웃 - 막대 베이스 */
+.header-right {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* 버튼들이 위쪽 막대에 붙도록 설정 */
+    position: relative;
+    padding-top: 30px; /* 천장에서 막대가 떨어질 거리 */
+    margin-right: 80px;
 }
 
+
+
 .user-greeting {
-    margin-right: 30px;
+    margin-right: 10px;
     margin-top: 15px;
     white-space: nowrap;
     font-family: 'Pretendard', sans-serif;
@@ -44,6 +50,7 @@
 }
 
 /* 5. 버튼 스타일 (기존 디자인 + 큼직한 크기) */
+/* 5. 버튼 스타일 (기존 디자인 유지 + 색상 가변형으로 수정) */
 .nav-btn {
     font-family: 'Pretendard', sans-serif;
     font-size: 22px; 
@@ -52,12 +59,14 @@
     align-items: center;
     justify-content: center;
     
-    height: 60px;   /* 높이를 더 키웠습니다 */
-    padding: 0 35px; 
+    height: 40px;
+    padding: 0 15px; 
     
     background-color: transparent;
-    border: 2px solid white;
-    border-top: none;
+    /* 수정된 부분: border 색상을 white로 고정하지 않고 두께와 모양만 정의 */
+    border-width: 0 2px 2px 2px; 
+    border-style: solid;
+    
     border-radius: 0 0 10px 10px;
     margin-top: -2px; 
     margin-left: 15px;
@@ -65,7 +74,7 @@
     position: relative;
     overflow: hidden;
     z-index: 1;
-    transition: color 0.4s ease;
+    transition: all 0.3s ease; /* 색상 변화를 부드럽게 함 */
 }
 
 /* 호버 효과 유지 */
