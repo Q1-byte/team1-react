@@ -7,9 +7,9 @@ import './Auth.css';
 
 // 여행 성향 키워드 목록
 const TRAVEL_KEYWORDS = [
-  '힐링', '액티비티', '맛집', '카페', '문화예술',
-  '자연', '사진', '쇼핑', '역사', '축제',
-  '체험', '야경'
+  '힐링', '자연', '스릴',
+  '추억', '예술', '체험',
+  '데이트', '트레킹'
 ];
 
 function Register() {
@@ -18,6 +18,7 @@ function Register() {
 
   const [formData, setFormData] = useState({
     username: '',
+    nickname: '',
     password: '',
     passwordConfirm: '',
     email: '',
@@ -49,7 +50,7 @@ function Register() {
 
   const validateForm = () => {
     // 필수 항목 검사
-    if (!formData.username || !formData.password || !formData.email) {
+    if (!formData.username || !formData.nickname || !formData.password || !formData.email) {
       return '필수 항목을 모두 입력해주세요.';
     }
 
@@ -100,6 +101,7 @@ function Register() {
     try {
       const userData = {
         username: formData.username,
+        nickname: formData.nickname,
         password: formData.password,
         passwordConfirm: formData.passwordConfirm,
         email: formData.email,
@@ -140,6 +142,19 @@ function Register() {
               value={formData.username}
               onChange={handleChange}
               placeholder="4자 이상 입력하세요"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="nickname">닉네임 *</label>
+            <input
+              type="text"
+              id="nickname"
+              name="nickname"
+              value={formData.nickname}
+              onChange={handleChange}
+              placeholder="닉네임을 입력하세요"
               disabled={loading}
             />
           </div>

@@ -62,7 +62,7 @@ export default function Header() {
                         <div className="user-zone" style={{ display: 'flex', alignItems: 'center' }}>
                             {/* 💡 color를 dynamicColor로 변경 */}
                             <span className="user-greeting" style={{ marginRight: '20px', whiteSpace: 'nowrap', color: dynamicColor, fontWeight: '500' }}>
-                                <strong>{user?.id}</strong>님 안녕하세요
+                                <strong>{user?.nickname}</strong>님 안녕하세요
                                 {isAdmin && (
                                     <span style={{ color: '#ff4d4f', fontWeight: '900', marginLeft: '8px' }}>(관리자)</span>
                                 )}
