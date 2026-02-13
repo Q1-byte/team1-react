@@ -1,0 +1,179 @@
+.review-section {
+    width: 100%;
+    max-width: 1600px; /* 너무 좁았다면 이 수치를 키우세요 */
+    margin: 0 auto;
+    padding: 80px 0;
+    overflow: hidden;
+}
+
+.review-title-tag {
+    color: #005ADE;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.review-main-title {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 60px;
+}
+
+/* 1. 최외곽: 화면 꽉 채우기 */
+.slider-outer-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 50px; /* 버튼이 들어갈 자리 */
+}
+
+/* 2. 뷰포트 */
+.slider-inner-view {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+/* 3. 스크롤 컨테이너 */
+.review-container {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 30px;              /* 카드 사이의 간격 */
+    overflow-x: auto;       /* 가로 스크롤 허용 */
+    padding: 20px 0;
+    scroll-behavior: smooth;
+    
+    /* 스크롤바 숨기기 (선택 사항) */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+.review-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+/* 4. 카드 디자인: 넙데데한 3:2 비율 및 큰 사이즈 */
+.review-card-wrapper {
+    flex: 0 0 400px; /* 카드의 너비를 400px로 고정 (줄어들지 않음) */
+    aspect-ratio: 1.5 / 1; 
+    min-width: 280px; 
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    margin: 20px;
+    
+}
+
+/* 호버 효과 */
+.review-card-wrapper::before {
+    content: "";
+    position: absolute;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #005ADE;
+    z-index: -1;
+    transition: bottom 0.4s ease;
+}
+.review-card-wrapper:hover { color: white; transform: translateY(-10px); }
+.review-card-wrapper:hover::before { bottom: 0; }
+
+/* 별점 및 텍스트 */
+.stars {
+    color: #FFD700 !important;
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+.review-text {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    font-weight: 500;
+    word-break: keep-all;
+}
+
+/* 5. 버튼: 양 끝에 시원하게 배치 */
+.slide-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #ddd;
+    color: #005ADE;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 10;
+    transition: all 0.2s;
+}
+.slide-btn:hover { background: #005ADE; color: white; }
+
+/* 6. 오버레이 */
+.edge-overlay {
+    position: absolute;
+    top: 0;
+    width: 80px;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+}
+.left-side { left: 0; background: linear-gradient(to right, #f8f9fa, rgba(248, 249, 250, 0)); }
+.right-side { right: 0; background: linear-gradient(to left, #f8f9fa, rgba(248, 249, 250, 0)); }
+
+/* ------------------------------------------------ */
+/* 📱 반응형 추가 (사이즈 보존형) */
+
+/* ... 상단 데스크탑용 스타일은 동일하게 유지 ... */
+
+/* 📱 반응형: 화면이 좁아지면 세로 한 줄로 전환 */
+@media (max-width: 768px) {
+    /* 1. 슬라이더 기능을 끄고 세로 배치로 변경 */
+    .slider-outer-container {
+        flex-direction: column; 
+        padding: 0 20px;
+    }
+
+    /* 2. 버튼 숨기기 (세로형에서는 버튼이 필요 없으므로) */
+    .slide-btn {
+        display: none;
+    }
+
+    /* 3. 컨테이너를 세로 방향으로 변경 */
+    .review-container {
+        flex-direction: column; /* 세로 정렬 */
+        overflow-x: visible;    /* 가로 스크롤 해제 */
+        gap: 25px;              /* 카드 사이 간격 */
+        padding: 20px 0;
+        align-items: center;    /* 중앙 정렬 */
+    }
+
+    /* 4. 카드 너비를 화면에 맞게 꽉 채움 */
+    .review-card-wrapper {
+        flex: 0 0 auto;         /* 크기 고정 해제 */
+        width: 100%;            /* 가로 꽉 채우기 */
+        max-width: 450px;       /* 너무 커지지 않게 제한 */
+        aspect-ratio: 1.5 / 1;  /* 기존 비율 유지 */
+        
+        
+        /* 세로로 쌓였을 때도 애니메이션이 잘 보이도록 설정 */
+        opacity: 1;
+        transform: none; 
+    }
+
+    /* 5. 양 끝 흐릿한 효과 제거 (세로형에서는 어색함) */
+    .edge-overlay {
+        display: none;
+    }
+}
