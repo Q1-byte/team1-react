@@ -51,42 +51,39 @@ export default function Header() {
         left: 0
     }}
         >
-            <div className="header-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: '100%', padding: '20px 40px', boxSizing: 'border-box' }}>
-                
-                <div className="header-left">
-                    <img src="/banner/logo.jpg" alt="Logo" onClick={() => navigate('/')} style={{ cursor: 'pointer', height: '100px', width: 'auto', borderRadius: '50%' , marginLeft: '80px'}} />
-                </div>
-                
-                <div className="header-right" style={{ display: 'flex', alignItems: 'center' }}>
-                    {isAuthenticated ? (
-                        <div className="user-zone" style={{ display: 'flex', alignItems: 'center' }}>
-                            {/* 💡 color를 dynamicColor로 변경 */}
-                            <span className="user-greeting" style={{ marginRight: '20px', whiteSpace: 'nowrap', color: dynamicColor, fontWeight: '500' }}>
-                                <strong>{user?.id}</strong>님 안녕하세요
-                                {isAdmin && (
-                                    <span style={{ color: '#ff4d4f', fontWeight: '900', marginLeft: '8px' }}>(관리자)</span>
-                                )}
-                            </span>
-
-                            {/* 💡 버튼들의 글자색도 dynamicColor 적용 */}
-                            <button onClick={handleMyPage} className="header-btn" style={{ color: dynamicColor }}>MYPAGE</button>
-
-                            {isAdmin && (
-                                <button onClick={handleAdminPage} className="header-btn admin-btn" style={{ color: dynamicColor }}>ADMIN</button>
-                            )}
-
-                            <button onClick={handleLogout} className="header-btn" style={{ color: dynamicColor }}>LOGOUT</button>
-                        </div>
-                    ) : (
-                        !isLoginPage && (
-                            <div className="header-auth-zone">
-                                <button onClick={handleLogin} className="header-btn" style={{ color: dynamicColor }}>LOGIN</button>
-                                <button onClick={handleJoin} className="header-btn" style={{ color: dynamicColor }}>JOIN</button>
-                            </div>
-                        )
+        <div className="header-inner">
+        <div className="header-left">
+            <img 
+                src="/banner/logo.jpg" 
+                alt="Logo" 
+                onClick={() => navigate('/')} 
+                className="main-logo" 
+            />
+        </div>
+        
+        <div className="header-right">
+            {isAuthenticated ? (
+                <div className="user-zone">
+                    <span className="user-greeting" style={{ color: dynamicColor }}>
+                        <strong>{user?.id}</strong>님 안녕하세요
+                        {isAdmin && <span className="admin-tag">(관리자)</span>}
+                    </span>
+                    <button onClick={handleMyPage} className="nav-btn" style={{ color: dynamicColor }}>MYPAGE</button>
+                    {isAdmin && (
+                        <button onClick={handleAdminPage} className="nav-btn admin-btn" style={{ color: dynamicColor }}>ADMIN</button>
                     )}
+                    <button onClick={handleLogout} className="nav-btn" style={{ color: dynamicColor }}>LOGOUT</button>
                 </div>
-            </div>
+            ) : (
+                !isLoginPage && (
+                    <div className="header-auth-zone">
+                        <button onClick={handleLogin} className="nav-btn" style={{ color: dynamicColor }}>LOGIN</button>
+                        <button onClick={handleJoin} className="nav-btn" style={{ color: dynamicColor }}>JOIN</button>
+                    </div>
+                )
+            )}
+        </div>
+    </div>
         </header>
     );
 }
