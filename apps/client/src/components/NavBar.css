@@ -1,44 +1,79 @@
- /* 4. 아이콘 네비게이션 (이미지 배경 꽉 차게) */
-    .nav-bar {
-    display: flex;
-    justify-content: center;
-    gap: 100px;
-    padding: 60px 20px;
+/* 1. 최외곽 및 가로 정렬 컨테이너 */
+.nav-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center;   /* 아이템들을 가로 가운데로 */
+    align-items: flex-start;
+    gap: 60px;                /* 아이템 사이 간격 */
+    padding: 100px 20px;
     background-color: #fff;
-    }
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: nowrap;        /* 화면이 좁아도 아래로 떨어지지 않게 설정 */
+    overflow-x: auto;         /* 모바일에서 넘치면 스크롤 허용 */
+}
 
-    .nav-item {
+/* 2. 개별 아이템 스타일 */
+.nav-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    }
+    flex-shrink: 0;           /* 원형 크기 유지 */
+    transition: transform 0.3s ease;
+}
 
-    .icon-circle {
-    width: 250px; /* 크기 유지 */
-    height: 250px;
+/* 3. 원형 이미지 배경 (기본 크기 조절) */
+.icon-circle {
+    width: 350px;            /* 350px에서 220px로 조정 (가로 배치를 위해) */
+    height: 350px;
     border-radius: 50%;
-    overflow: hidden; /* 이미지가 원형 밖으로 안 나가게 */
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #f8f9fa;
+    border: 1px solid #eee;
     transition: all 0.3s ease;
-    background-color: #f0f0f0;
-    }
+}
 
-    .icon-circle img {
-    width: 100%;      /* 이미지 배경으로 쓰기 위해 100% */
+.icon-circle img {
+    width: 100%;
     height: 100%;
-    object-fit: cover; /* 원형에 꽉 차게 */
-    }
+    object-fit: cover;
+}
 
-    .nav-item:hover .icon-circle {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-
-    .nav-item span {
-    margin-top: 15px;
-    font-size: 18px;
+/* 4. 텍스트 스타일 (React의 span 태그 타겟팅) */
+.nav-item span {
+    margin-top: 18px;
+    font-size: 30px;
     font-weight: 600;
+    color: #333;
+    white-space: nowrap;      /* 텍스트 줄바꿈 방지 */
+}
+
+/* ✨ 호버 효과 */
+.nav-item:hover .icon-circle {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+}
+
+.nav-item:hover span {
+    color: #007bff;          /* 호버 시 글자색 변경(선택사항) */
+}
+
+/* 📱 반응형 (화면이 작아질 때 크기 자동 조절) */
+@media (max-width: 1024px) {
+    .nav-bar { gap: 30px; }
+    .icon-circle { width: 160px; height: 160px; }
+    .nav-item span { font-size: 18px; }
+}
+
+@media (max-width: 768px) {
+    .nav-bar { 
+        gap: 15px; 
+        padding: 40px 10px;
     }
+    .icon-circle { width: 100px; height: 100px; }
+    .nav-item span { font-size: 15px; }
+}

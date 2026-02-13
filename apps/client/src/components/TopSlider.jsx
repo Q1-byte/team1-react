@@ -20,13 +20,27 @@ export default function TopSlider() {
     return (
         <section className="topbanner-section" style={{ position: 'relative' }}>
             <div className="slider-container">
-                {[0, 1, 2].map((idx) => (
-                    <div
-                        key={idx}
-                        className={`slide-item ${currentSlide === idx ? 'active' : ''}`}
-                        style={{ backgroundImage: `url('/banner/Topbanner${idx + 1}.png')` }}
-                    />
-                ))}
+        {[0, 1, 2].map((idx) => (
+            <div
+                key={`bg-${idx}`}
+                className={`slide-item ${currentSlide === idx ? 'active' : ''}`}
+                style={{ backgroundImage: `url('/banner/Topbannerbg${idx + 1}.png')` }}
+            />
+        ))}
+            </div>
+
+            {/* 2. 텍스트 이미지 슬라이더 (가로 1200px 고정 영역) */}
+            <div className="banner-content-wrapper">
+                <div className="banner-content">
+                    {[0, 1, 2].map((idx) => (
+                        <img
+                            key={`tx-${idx}`}
+                            src={`/banner/Topbannertx${idx + 1}.png`}
+                            alt="banner text"
+                            className={`text-slide ${currentSlide === idx ? 'active' : ''}`}
+                        />
+                    ))}
+                </div>
             </div>
 
             {/* 좌우 버튼: 반투명 스타일 적용 */}
