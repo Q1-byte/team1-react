@@ -1,0 +1,106 @@
+/* 1. 헤더 전체 컨테이너 */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: transparent;
+}
+
+/* 2. 내부 레이아웃 (가운데 몰림 해결) */
+.header-inner {
+    display: flex;
+    justify-content: space-between; /* 양 끝으로 밀어내기 */
+    align-items: flex-start;
+    width: 100%;
+    /* 1200px 제한을 풀고 좌우 여백만 줍니다 */
+    padding: 0 5%; 
+    box-sizing: border-box;
+}
+
+/* 3. 로고 (큼직하게 유지) */
+.main-logo {
+    cursor: pointer;
+    height: 150px; 
+    width: auto;
+    border-radius: 50%;
+    margin-top: 150px;
+    transition: all 0.3s ease;
+}
+
+/* 4. 오른쪽 영역 레이아웃 수정 */
+/* 4. 오른쪽 영역 레이아웃 - 막대 베이스 */
+.header-right {
+    display: flex;
+    align-items: flex-start; /* 버튼들이 위쪽 막대에 붙도록 설정 */
+    position: relative;
+    padding-top: 30px; /* 천장에서 막대가 떨어질 거리 */
+    margin-right: 80px;
+}
+
+
+
+.user-greeting {
+    margin-right: 10px;
+    margin-top: 15px;
+    white-space: nowrap;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 18px;
+}
+
+/* 5. 버튼 스타일 (기존 디자인 + 큼직한 크기) */
+/* 5. 버튼 스타일 (기존 디자인 유지 + 색상 가변형으로 수정) */
+.nav-btn {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 22px; 
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    height: 40px;
+    padding: 0 15px; 
+    
+    background-color: transparent;
+    /* 수정된 부분: border 색상을 white로 고정하지 않고 두께와 모양만 정의 */
+    border-width: 0 2px 2px 2px; 
+    border-style: solid;
+    
+    border-radius: 0 0 10px 10px;
+    margin-top: -2px; 
+    margin-left: 15px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.3s ease; /* 색상 변화를 부드럽게 함 */
+}
+
+/* 호버 효과 유지 */
+.nav-btn::before {
+    content: "";
+    position: absolute;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #005ADE;
+    z-index: -1;
+    transition: bottom 0.4s ease;
+}
+
+.nav-btn:hover {
+    color: white !important;
+}
+
+.nav-btn:hover::before {
+    bottom: 0;
+}
+
+/* 📱 반응형: 화면이 아주 작아질 때만 여백 조정 */
+@media (max-width: 1024px) {
+    .header-inner { padding: 0 30px; }
+    .main-logo { height: 50px; }
+    .nav-btn { font-size: 18px; height: 50px; padding: 0 20px; }
+}

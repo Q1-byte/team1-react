@@ -1,84 +1,135 @@
+/* ========== 전체 레이아웃 (배경색 추가로 카드 부각) ========== */
 .result-layout {
     display: flex;
-    gap: 30px;
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 20px;
-    align-items: flex-start;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    padding-bottom: 40px;
 }
 
-.itinerary-section {
-    flex: 2; /* 왼쪽 일정이 더 넓게 */
-}
-
-.day-tabs {
+/* 헤더와 20px 띄우고 중앙 정렬 */
+.result-main-container {
+    max-width: 1200px;
+    width: 95%;
+    margin: 20px auto 50px auto; /* 상단 20px 여백 */
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    flex-direction: column;
 }
 
-.day-tabs button {
-    padding: 10px 25px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 20px;
-    cursor: pointer;
+/* ========== 통합 흰색 카드 ========== */
+.combined-result-card {
+    display: flex;
+    background: #ffffff;
+    border-radius: 20px 20px 0 0; /* 위쪽만 라운드 */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+    min-height: 600px;
+    margin-top: 100px;
 }
 
-.day-tabs button.active {
-    background: #007bff;
-    color: white;
-    border-color: #007bff;
+/* 왼쪽 섹션 (통합카드 내부) */
+.itinerary-section {
+    flex: 1.2;
+    padding: 30px;
+    border-right: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
 }
 
-.itinerary-card {
+/* 오른쪽 섹션 (통합카드 내부) */
+.product-section {
+    flex: 0.8;
+    padding: 30px;
+    background: #eeeeee;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 각각의 내부 스크롤 설정 (슬라이드바가 헤더를 침범하지 않음) */
+.itinerary-list, .product-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-top: 15px;
+}
+
+/* ========== 하단 결제 바 (카드와 너비 동일) ========== */
+.bottom-checkout-bar {
+    background: #ffffff;
+    border-radius: 0 0 20px 20px; /* 아래쪽 라운드 */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    padding: 25px 40px;
+    border-top: 1px solid #eee;
+}
+
+.checkout-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    margin-bottom: 15px;
 }
 
-.itinerary-card.removed {
-    opacity: 0.5;
-    background: #f8f9fa;
-}
+/* 기존 세부 스타일 (유지) */
+.day-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+.day-tabs button { padding: 10px 20px; border-radius: 20px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+.day-tabs button.active { background: #007bff; color: #fff; border-color: #007bff; }
 
-.cost-summary-card {
-    flex: 1; /* 오른쪽 요약 카드는 좁게 */
-    position: sticky;
-    top: 20px;
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
+.itinerary-card { display: flex; align-items: center; padding: 15px; border-radius: 12px; background: #fff; border: 1px solid #f0f0f0; margin-bottom: 15px; }
+.place-image img { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; }
+.place-info { flex: 1; margin-left: 15px; }
+.item-tag { font-size: 0.75rem; color: #007bff; background: #f0f7ff; padding: 2px 8px; border-radius: 10px; }
 
-.cost-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-}
+.product-card { background: #fff; border-radius: 12px; border: 1px solid #eee; margin-bottom: 15px; overflow: hidden; }
+.product-img { width: 100%; height: 140px; object-fit: cover; }
+.product-body { padding: 12px; }
+.product-label { padding: 4px 12px; font-size: 0.75rem; font-weight: bold; color: #007bff; background: #f0f7ff; }
 
-.cost-row.total {
-    border-top: 2px solid #333;
-    padding-top: 15px;
-    font-weight: bold;
-    font-size: 1.2rem;
-}
+/* 금액 및 버튼 스타일 */
+.total-price-info .label { font-size: 0.9rem; color: #666;  margin-right: 15px;}
+.total-price-info .price { font-size: 1.8rem; font-weight: 800; color: #007bff; vertical-align: middle;}
+.final-book-btn { padding: 15px 40px; background: #007bff; color: #fff; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
 
-.book-btn {
-    width: 100%;
-    padding: 15px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
+/* 스크롤바 디자인 */
+.itinerary-list::-webkit-scrollbar, .product-scroll-area::-webkit-scrollbar { width: 5px; }
+.itinerary-list::-webkit-scrollbar-thumb, .product-scroll-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+
+/* 일정 제거/추가 버튼 공통 스타일 */
+.toggle-btn {
+    padding: 8px 16px;
+    border-radius: 8px; /* 다른 카드들과 어울리는 부드러운 곡선 */
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
-    margin-top: 20px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    outline: none;
+}
+
+/* 일정 제거 버튼: 깔끔한 Outlined 스타일 (카드 디자인을 해치지 않음) */
+.toggle-btn.remove {
+    background-color: #fff;
+    color: #ff4d4f; /* 경고 의미의 레드 */
+    border-color: #ff4d4f;
+}
+
+.toggle-btn.remove:hover {
+    background-color: #fff1f0; /* 살짝 붉은 기가 도는 배경 */
+    box-shadow: 0 2px 4px rgba(255, 77, 79, 0.1);
+}
+
+/* 일정 추가 버튼: 메인 테마인 블루 스타일 */
+.toggle-btn.add {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.toggle-btn.add:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+/* 카드가 'removed' 상태일 때의 버튼 미세 조정 */
+.itinerary-card.removed .toggle-btn.add {
+    opacity: 1; /* 비활성화된 카드에서도 버튼은 뚜렷하게 */
 }

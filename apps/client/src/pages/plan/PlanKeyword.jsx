@@ -1,131 +1,155 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useOutletContext, useLocation } from 'react-router-dom';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import './PlanKeyword.css';
 
 const PlanKeyword = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    
-    // PlanSearch에서 넘어온 데이터 (데이터가 없을 경우를 대비한 방어 코드 포함)
-    const searchData = location.state || { 
-        main_category: 'relaxed', 
-        region_id: 'seoul', 
-        region_name: '서울특별시', 
-        sub_region: 'all' 
-    };
-    const { main_category, region_id, region_name, sub_region } = searchData;
+    const fromGacha = location.state?.fromGacha || false;
 
-    // 1. 테마별 기본 키워드 데이터베이스
+    const { planConfig, handleConfigChange } = useOutletContext();
+    const { region_id, region_name, sub_region, travel_date, people_count, main_category, keywords: selectedKeywords } = planConfig;
+
+    // PlanKeyword.jsx 내부 수정
     const themeKeywords = [
-        { id: 1, name: '호캉스', category: 'relaxed' },
-        { id: 2, name: '산책/명상', category: 'relaxed' },
-        { id: 3, name: '미술관/전시', category: 'relaxed' },
-        { id: 4, name: '온천/스파', category: 'relaxed' },
-        { id: 5, name: '북카페', category: 'relaxed' },
-        { id: 6, name: '액티비티', category: 'active' },
-        { id: 7, name: '등산/트레킹', category: 'active' },
-        { id: 8, name: '테마파크', category: 'active' },
-        { id: 9, name: '수상레저', category: 'active' },
-        { id: 10, name: '번지점프', category: 'active' },
-        { id: 11, name: '무료전시', category: 'cost-effective' },
-        { id: 12, name: '로컬맛집', category: 'cost-effective' },
-        { id: 13, name: '전통시장', category: 'cost-effective' },
-        { id: 14, name: '공원피크닉', category: 'cost-effective' },
-        { id: 15, name: '게스트하우스', category: 'cost-effective' },
-        { id: 100, name: '맛집탐방', category: 'all' },
-        { id: 101, name: '사진맛집', category: 'all' },
-        { id: 102, name: '야경감상', category: 'all' }
+        { id: 1, name: '힐링', category: '테마' },
+        { id: 2, name: '자연', category: '테마' },
+        { id: 3, name: '트래킹', category: '활동' },
+        { id: 4, name: '데이트', category: '활동' },
+        { id: 5, name: '스릴', category: '활동' },
+        { id: 6, name: '추억', category: '테마' },
+        { id: 7, name: '예술', category: '문화' },
+        { id: 8, name: '체험', category: '문화' }
     ];
 
-    // 2. 지역별 특화 키워드
-    const regionalSpecialty = {
-        seoul: ["한강피크닉", "고궁투어", "남산타워", "쇼핑"],
-        busan: ["바다전망", "자갈치시장", "요트투어", "감천문화마을"],
-        gangwon: ["양떼목장", "강원도대게", "서핑", "오션뷰카페"],
-        jeju: ["오름", "감귤체험", "해안도로드라이브", "한라산"],
-        gyeongbuk: ["황리단길", "한옥스테이", "유적지순례"],
-        default: ["지역 핫플레이스", "현지인 추천"]
+    const categoryLabels = {
+        '테마': '✨ 어떤 분위기의 여행을 원하시나요?',
+        '활동': '🏃 활기찬 활동을 원하시나요?',
+        '문화': '🎨 새로운 경험을 해보고 싶나요?'
     };
 
     const [filteredKeywords, setFilteredKeywords] = useState([]);
-    const [selectedKeywords, setSelectedKeywords] = useState([]);
 
-    // 분위기 + 지역 키워드 병합 로직
     useEffect(() => {
-        const baseTheme = themeKeywords.filter(
-            kw => kw.category === main_category || kw.category === 'all'
-        ).map(kw => kw.name);
+        const baseTheme = themeKeywords.filter(kw => !main_category || kw.category === main_category || kw.category === 'all'); 
+        setFilteredKeywords(baseTheme);
+    }, [main_category]);
 
-        const regionalAddons = regionalSpecialty[region_id] || regionalSpecialty.default;
-        const combined = [...new Set([...baseTheme, ...regionalAddons])];
-        setFilteredKeywords(combined);
-    }, [main_category, region_id]);
+    const groupedKeywords = filteredKeywords.reduce((acc, item) => {
+        const category = item.category || '기타'; 
+        if (!acc[category]) acc[category] = [];
+        acc[category].push(item.name); 
+        return acc;
+    }, {});
 
-    const toggleKeyword = (name) => {
-        setSelectedKeywords(prev =>
-            prev.includes(name) ? prev.filter(k => k !== name) : [...prev, name]
-        );
-    };
-
-    // [수정 핵심] 결제창이 아닌 '일정 결과' 페이지로 먼저 이동하도록 수정
     const handleNext = () => {
-        if (selectedKeywords.length === 0) {
-            alert("상세 키워드를 하나 이상 선택해주세요!");
-            return;
-        }
+    if (!travel_date || travel_date.length < 2) { 
+        alert("여행 기간을 선택해주세요!"); 
+        return; 
+    }
+    if (!fromGacha && selectedKeywords.length === 0) { 
+        alert("키워드를 최소 1개 선택해주세요!"); 
+        return; 
+    }
 
-        const finalPlanData = {
-            ...searchData,
-            keywords: selectedKeywords,
-            // 금액은 결과 페이지나 체크아웃 페이지에서 정의하는 것이 좋습니다.
-        };
+    // 💡 가챠에서 온 데이터가 있다면 그걸 사용하고, 없으면 planConfig 값을 사용합니다.
+    const gachaData = location.state?.gachaResult || {};
 
-        // '/checkout'이 아니라 '/result'로 목적지 변경
-        navigate('/result', { state: { finalPlanData } });
-    };
-
-    const getTitle = () => {
-        const subRegionText = sub_region === 'all' ? '전체' : sub_region;
-        const regionTitle = `${region_name} ${subRegionText}`;
-        
-        switch(main_category) {
-            case 'relaxed': return `🧘 ${regionTitle} 힐링 여행`;
-            case 'active': return `🏃 ${regionTitle} 에너지 여행`;
-            case 'cost-effective': return `💰 ${regionTitle} 가성비 여행`;
-            default: return `✨ ${regionTitle} 맞춤 여행`;
-        }
-    };
+    navigate('/reserve/result', { 
+        state: { 
+            finalPlanData: {
+                ...planConfig, // 기존 설정값들
+                // 💡 중요: 가챠에서 넘어온 지역 정보를 명시적으로 덮어씌웁니다.
+                region_id: fromGacha ? gachaData.region_id : region_id,
+                parent_region_db_id: fromGacha ? gachaData.region_id : planConfig.parent_region_db_id,
+                region_name: fromGacha ? gachaData.region_name : region_name,
+                keywords: fromGacha ? gachaData.keywords : selectedKeywords,
+                start_date: travel_date[0].toLocaleDateString(),
+                end_date: travel_date[1].toLocaleDateString(),
+                fromGacha: fromGacha 
+            } 
+        } 
+    }); 
+};
 
     return (
-        <div className="plan-keyword-container">
-            <div className="keyword-header">
-                <h2>{getTitle()}</h2>
-                <p>선택하신 지역과 테마에 딱 맞는 키워드들입니다!</p>
-            </div>
+        <div className="outer-layout">
+            <div className="setup-container">
+                <h2 className="setup-title">
+                    <span style={{ color: '#005ADE' }}>{region_name}</span> 
+                    <span style={{ color: '#005ADE' }}> {sub_region}</span> 여행 상세 설정
+                </h2>
 
-            <div className="keyword-grid">
-                {filteredKeywords.map((name, index) => (
-                    <div
-                        key={index}
-                        className={`keyword-item ${selectedKeywords.includes(name) ? 'active' : ''}`}
-                        onClick={() => toggleKeyword(name)}
-                    >
-                        #{name}
+                <div className="plan-keyword-container">
+                    {/* 1. 언제 떠나시나요? (가운데 정렬을 위한 setup-item 추가) */}
+                    <div className="setup-item calendar-section">
+                        <label className="item-label">📅 언제 떠나시나요?</label>
+                        <div className="calendar-wrapper">
+                            <Calendar 
+                                onChange={(val) => handleConfigChange('travel_date', val)} 
+                                value={travel_date} 
+                                selectRange={true} 
+                                minDate={new Date()} 
+                            />
+                        </div>
                     </div>
-                ))}
-            </div>
 
-            <div className="button-group">
-                <button className="back-button" onClick={() => navigate(-1)}>
-                    이전으로
-                </button>
-                <button 
-                    className="submit-button" 
-                    onClick={handleNext}
-                    disabled={selectedKeywords.length === 0}
-                >
-                    AI 일정 생성하기
-                </button>
+                    {/* 2. 인원 선택 (가운데 정렬을 위한 setup-item 추가) */}
+                    <div className="setup-item info-section">
+                        <div className="input-group">
+                            <label className="item-label">👥 인원 선택</label>
+                            <select 
+                                className="people-select"
+                                value={people_count} 
+                                onChange={(e) => handleConfigChange('people_count', parseInt(e.target.value))}
+                            >
+                                {[1, 2, 3, 4, 5, 6].map(num => <option key={num} value={num}>{num}명</option>)}
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* 3. 당신의 취향은? (가운데 정렬을 위한 setup-item 추가) */}
+                    {!fromGacha && (
+                        <div className="setup-item keyword-section">
+                            <h3 className="section-label">📍 당신의 취향은?</h3>
+                            
+                            {Object.keys(groupedKeywords).map((category) => (
+                                <div key={category} className="category-group">
+                                    <h4 className="category-title">
+                                        {categoryLabels[category] || category}
+                                    </h4>
+                                    <div className="keyword-grid">
+                                        {groupedKeywords[category].map((name, index) => {
+                                            const isActive = selectedKeywords.includes(name);
+                                            return (
+                                                <div 
+                                                    key={`${name}-${index}`} 
+                                                    className={`keyword-item ${isActive ? 'active' : ''}`} 
+                                                    onClick={() => {
+                                                        const newKws = isActive 
+                                                            ? selectedKeywords.filter(k => k !== name) 
+                                                            : [...selectedKeywords, name];
+                                                        handleConfigChange('keywords', newKws);
+                                                    }}
+                                                >
+                                                    #{name}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* 하단 버튼 그룹 */}
+                    <div className="setup-item button-group">
+                        <button className="back-button" onClick={() => navigate(-1)}>이전으로</button>
+                        <button className="submit-button" onClick={handleNext}>일정 생성하기</button>
+                    </div>
+                </div>
             </div>
         </div>
     );

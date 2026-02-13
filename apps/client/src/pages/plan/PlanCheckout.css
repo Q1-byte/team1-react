@@ -1,165 +1,235 @@
-/* src/pages/SemiAutoPlan/PlanCheckout.css */
-.checkout-container {
+.checkout-page-container {
+    padding: 100px 20px;
+    display: flex;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+.checkout-box {
+    width: 100%;
     max-width: 500px;
-    margin: 60px auto;
-    padding: 40px 30px;
-    background: #fff;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
-.checkout-title {
-    text-align: center;
-    border-bottom: 2px solid #f8f9fa;
-    padding-bottom: 25px;
-    margin-bottom: 30px;
-}
-
-.checkout-title h2 {
-    font-size: 1.6rem;
-    color: #212529;
-    margin-bottom: 8px;
-}
-
-.checkout-title p {
-    color: #868e96;
-    font-size: 0.9rem;
-}
-
-/* 요약 정보 박스 */
-.summary-info-box {
-    background: #f8f9fa;
+.receipt-section {
+    border: 1px solid #eee;
     padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    background: #fafafa;
 }
 
-.info-row {
+.receipt-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #666;
 }
 
-.info-row span {
-    color: #495057;
-    font-size: 0.95rem;
-}
-
-.keyword-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: flex-end;
-}
-
-.mini-tag {
-    background: #e9ecef;
-    color: #495057;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-}
-
-/* 총 결제 금액 박스 */
-.total-price-box {
+.receipt-footer {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px dashed #ddd;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    border-top: 1px dashed #dee2e6;
-    margin-bottom: 30px;
-}
-
-.total-price-box span:first-child {
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-
-.price-amount {
-    font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: bold;
+    font-size: 18px;
     color: #007bff;
-}
-
-/* 결제 수단 선택 섹션 */
-.method-section h3 {
-    font-size: 1rem;
-    margin-bottom: 15px;
-    color: #343a40;
 }
 
 .method-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 35px;
+    gap: 10px;
+    margin: 15px 0;
 }
 
+.method-grid button {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+}
+
+.method-grid button.active {
+    border-color: #007bff;
+    background: #e7f1ff;
+    color: #007bff;
+    font-weight: bold;
+}
+/* 기본 아이템 스타일 */
 .method-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
     padding: 15px;
-    border: 2px solid #f1f3f5;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer; /* 마우스 올리면 손가락 모양으로 */
+    transition: all 0.2s ease; /* 부드러운 변화 효과 */
+    background-color: white;
 }
 
+/* 마우스를 올렸을 때 (Hover) */
 .method-item:hover {
-    border-color: #dee2e6;
+    background-color: #f8f9fa;
+    border-color: #ccc;
+    transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
 }
 
+/* 선택되었을 때 (Active/Selected) - 현재 JS에서 'active' 클래스를 붙여주고 있음 */
 .method-item.active {
-    border-color: #007bff;
-    background-color: #f0f7ff;
+    border: 2px solid #007bff; /* 파란색 테두리 */
+    background-color: #e7f1ff; /* 연한 파란색 배경 */
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* 강조 그림자 */
+}
+
+/* 클릭하는 순간의 느낌 (Pressed) */
+.method-item:active {
+    transform: scale(0.95); /* 눌리는 듯한 축소 효과 */
 }
 
 .method-icon {
-    font-size: 1.2rem;
+    font-size: 24px;
+    margin-bottom: 8px;
 }
 
 .method-name {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #495057;
+    font-size: 14px;
+    font-weight: 500;
 }
 
-.method-item.active .method-name {
-    color: #007bff;
-}
-
-/* 하단 버튼 그룹 */
-.pay-submit-btn {
+.main-pay-btn {
     width: 100%;
-    padding: 18px;
-    background: #007bff; /* 카카오페이/토스 통합 색상으로 블루 계열 추천 */
+    padding: 15px;
+    background: #007bff;
     color: white;
     border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
+    border-radius: 8px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
-    margin-bottom: 12px;
+    margin-top: 20px;
 }
 
-.pay-submit-btn:hover {
-    background: #0056b3;
-}
-
-.back-btn {
+.back-link {
+    display: block;
     width: 100%;
+    margin-top: 15px;
     background: none;
     border: none;
-    color: #adb5bd;
-    font-size: 0.9rem;
-    cursor: pointer;
+    color: #888;
     text-decoration: underline;
+    cursor: pointer;
+}
+
+.checkout-actions {
+    display: flex;
+    flex-direction: column; /* 위아래로 배치 (나란히 배치를 원하시면 row로 변경) */
+    gap: 12px;              /* 버튼 사이 간격 */
+    margin-top: 25px;
+}
+
+/* 두 버튼 공통 스타일 */
+.main-pay-btn, .back-btn {
+    width: 100%;
+    height: 55px;          /* 높이 통일 */
+    border-radius: 10px;    /* 둥근 모서리 통일 */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+/* 결제하기 버튼 (메인 컬러) */
+.main-pay-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.main-pay-btn:hover {
+    background-color: #0056b3;
+}
+
+/* 일정 수정하러 가기 버튼 (서브 컬러) */
+.back-btn {
+    background-color: #e9ecef; /* 연한 회색 톤 */
+    color: #495057;           /* 진한 회색 글자 */
 }
 
 .back-btn:hover {
-    color: #868e96;
+    background-color: #dee2e6;
+}
+
+/* 기존 스타일 아래에 추가 */
+.selected-items-list {
+    margin: 15px 0;
+    padding: 10px 0;
+    max-height: 180px; /* 💡 항목이 많으면 카드 안에서 스크롤 생성 */
+    overflow-y: auto;
+    border-top: 1px solid #f0f0f0;
+}
+
+.selected-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 0.95rem;
+}
+
+.item-type {
+    color: #007bff;
+    font-size: 0.8rem;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.item-name {
+    color: #333;
+}
+
+.item-price {
+    font-weight: 500;
+    color: #666;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #999;
+    padding: 20px 0;
+}
+
+/* 스크롤바 디자인 (선택) */
+.selected-items-list::-webkit-scrollbar {
+    width: 4px;
+}
+.selected-items-list::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 10px;
+}
+
+/* 일차별 그룹 스타일 */
+.day-group {
+    margin-bottom: 20px;
+}
+
+.day-title {
+    font-size: 0.9rem;
+    color: #007bff;
+    border-bottom: 1px solid #e7f1ff;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* 기존 selected-item-row 내부 여백 살짝 조정 */
+.selected-item-row {
+    padding: 5px 0 5px 10px; /* 왼쪽에 살짝 들여쓰기 */
 }

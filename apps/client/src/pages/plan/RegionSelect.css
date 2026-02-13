@@ -1,0 +1,31 @@
+.region-select-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+.selection-header { text-align: center; margin-bottom: 40px; }
+
+.selection-content { display: flex; gap: 50px; align-items: flex-start; }
+
+/* 지도 영역 */
+.map-section { flex: 1; background: #f9f9f9; border-radius: 20px; padding: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); }
+.region-group { cursor: pointer; transition: 0.3s; }
+.region-dot { fill: #ccc; stroke: white; stroke-width: 2; transition: 0.3s; }
+.region-group:hover .region-dot { fill: #007bff; }
+.region-group.active .region-dot { fill: #007bff; r: 18; }
+.region-label { font-size: 14px; font-weight: bold; fill: #555; }
+
+/* 성향 버튼 영역 */
+.personality-section { flex: 1.2; opacity: 0; transform: translateX(20px); transition: 0.5s; }
+.personality-section.visible { opacity: 1; transform: translateX(0); }
+
+.personality-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+
+.personality-card {
+    background: white; border: 2px solid #eee; border-radius: 15px; padding: 15px;
+    text-align: left; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 5px;
+}
+
+.personality-card:hover { border-color: #007bff; background: #f0f7ff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+.card-tag { font-weight: bold; color: #007bff; font-size: 13px; }
+.card-theme { font-size: 16px; font-weight: bold; color: #333; }
+.card-example { font-size: 12px; color: #777; line-height: 1.4; }
+
+.empty-selection { height: 400px; display: flex; align-items: center; justify-content: center; color: #aaa; border: 2px dashed #ddd; border-radius: 20px; }

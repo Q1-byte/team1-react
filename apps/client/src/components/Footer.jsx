@@ -1,22 +1,78 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Footer.css';
 
 export default function Footer() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+    const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <footer className="footer">
         <div className="footer-links">
-            <button onClick={() => alert('고객상담')}>고객상담</button>
+            <button onClick={() => setIsServiceModalOpen(true)}>고객상담</button>
             <span className="divider">|</span>
-            <button onClick={() => alert('문의하기')}>문의하기</button>
+            <button onClick={() => navigate('/inquiry')}>문의하기</button>
             <span className="divider">|</span>
             {/* 누르면 팝업이 뜨도록 상태 변경 */}
-            <button onClick={() => setIsModalOpen(true)}>개인정보보호안내</button>
+            <button onClick={() => setIsPrivacyModalOpen(true)}>개인정보보호안내</button>
         </div>
         <p className="copyright">© 2026 Team1-React. All rights reserved.</p>
 
-        {/* 팝업창 (모달) */}
-        {isModalOpen && (
+        {/* 고객상담 모달 */}
+        {isServiceModalOpen && (
+            <div className="modal-overlay">
+            <div className="modal-content">
+                <h2>고객상담 안내</h2>
+                <p>언제든지 편하게 문의해 주세요!</p>
+                
+                <div className="scroll-box">
+                    <div className="policy-text">
+                        
+                        <h3>상담원 연결</h3>
+                        <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
+                            <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: '0 0 5px 0' }}>
+                                1588-1234
+                            </p>
+                            <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
+                                (유료) 휴대폰, 일반전화 모두 이용 가능
+                            </p>
+                        </div>
+
+                        <hr style={{ margin: '15px 0', border: '0', borderTop: '1px solid #eee' }} />
+
+                        <h3>응대 시간</h3>
+                        <ul style={{ paddingLeft: '20px', marginBottom: '15px', lineHeight: '1.8' }}>
+                            <li><strong>평일:</strong> 오전 10:00 ~ 오후 6:00</li>
+                            <li><strong>점심시간:</strong> 오후 12:00 ~ 오후 1:00</li>
+                            <li><strong>토/일/공휴일:</strong> 휴무</li>
+                        </ul>
+
+                        <hr style={{ margin: '15px 0', border: '0', borderTop: '1px solid #eee' }} />
+
+                        <h3>기타 문의 방법</h3>
+                        <ul style={{ paddingLeft: '20px', marginBottom: '15px', lineHeight: '1.8' }}>
+                            <li><strong>이메일:</strong> ptrip@team1.com</li>
+                            <li><strong>카카오톡:</strong> @ptrip</li>
+                            <li><strong>1:1 문의:</strong> 홈페이지 문의하기 이용</li>
+                        </ul>
+
+                        <hr style={{ margin: '15px 0', border: '0', borderTop: '1px solid #eee' }} />
+
+                        <h3>오시는 길</h3>
+                        <p style={{ marginBottom: '10px' }}>서울특별시 강남구 테헤란로 123, 12층</p>
+                        <p style={{ fontSize: '13px', color: '#888' }}>
+                            * 방문 상담은 사전 예약 후 가능합니다.
+                        </p>
+                    </div>
+                </div>
+                <button className="modal-confirm-btn" onClick={() => setIsServiceModalOpen(false)}>확인</button>
+            </div>
+            </div>
+        )}
+
+        {/* 개인정보보호안내 모달 */}
+        {isPrivacyModalOpen && (
             <div className="modal-overlay">
             <div className="modal-content">
                 <h2>개인정보보호안내</h2>
@@ -53,7 +109,7 @@ export default function Footer() {
                         </ul>
                     </div>
                     </div>
-                     <button className="modal-confirm-btn" onClick={() => setIsModalOpen(false)}>확인</button>
+                     <button className="modal-confirm-btn" onClick={() => setIsPrivacyModalOpen(false)}>확인</button>
                 </div>
                 
             </div>

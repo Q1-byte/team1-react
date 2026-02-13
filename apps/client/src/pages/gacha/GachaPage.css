@@ -1,41 +1,193 @@
+/* 1. 기본 레이아웃 */
 .gacha-screen {
-    background-color: #99b9d9; /* 요청하신 그 배경색 */
-    min-height: 80vh; /* 헤더/푸터 제외 영역 꽉 채움 */
+    background-color: #9DBFF5;
+    min-height: 80vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px 0;
-    }
+    padding: 50px 0;
+}
 
-    .gacha-image-container img {
-    width: 200px; /* 아이콘 크기 조절 */
-    }
+/* 2. 기계 및 애니메이션 */
+.machine-container {
+    display: inline-block;
+    margin-bottom: 20px;
+}
 
-    /* 흔들기 애니메이션 */
-    @keyframes shake {
+.gacha-image-container img {
+    width: 450px; /* 아이콘 크기를 기계에 맞게 조정 (원래 200px에서 변경) */
+}
+
+@keyframes shake {
     0% { transform: rotate(0deg); }
     25% { transform: rotate(5deg); }
     50% { transform: rotate(-5deg); }
     75% { transform: rotate(5deg); }
     100% { transform: rotate(0deg); }
-    }
+}
 
-    .shake {
+.shake {
+    display: inline-block !important;
     animation: shake 0.2s infinite;
-    }
+    transform-origin: center center;
+}
 
-    .difficulty-selector {
-    margin: 30px 0;
-    color: #333;
-    }
-
-    .draw-button {
+/* 3. 버튼 스타일 */
+/* 3. 버튼 스타일 */
+.draw-button {
+    display: block;
+    margin: 20px auto;
     padding: 12px 40px;
     font-size: 18px;
     background-color: #fff;
-    border: none;
+    color: #333; /* 기본 글자색 */
+    border: 2px solid transparent; /* 호버 시 테두리가 생길 때 덜컹거림 방지 */
     border-radius: 25px;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
+    font-weight: bold;
+    transition: all 0.3s ease; /* 모든 변화를 부드럽게 */
+}
+
+/* 랜덤여행 뽑기 버튼 호버 효과 */
+.draw-button:hover:not(:disabled) {
+    transform: scale(1.05);       /* 1.05배 확대 */
+    background-color: #4169E1;    /* 이미지에 적어주신 로얄 블루 색상 */
+    color: #ffffff;               /* 글자색 흰색으로 변경 */
+    border: 2px solid #ffffff;    /* 흰색 테두리 추가 */
+    box-shadow: 0 6px 15px rgba(65, 105, 225, 0.4); /* 버튼색에 맞춘 그림자 */
+}
+
+/* 다시 뽑기 버튼 호버 효과 (이미지 내용 반영) */
+.reset-button:hover {
+    background-color: #4169E1;    /* 배경을 로얄 블루로 */
+    color: #ffffff;               /* 글자색 흰색으로 */
+    border-color: #4169E1;        /* 테두리도 같은 색으로 */
+}
+
+/* 버튼 비활성화 상태 (흔들리는 중일 때) */
+.draw-button:disabled {
+    cursor: not-allowed;
+    background-color: #ccc;
+    color: #666;
+}
+
+/* 버튼을 감싸는 섹션도 중앙 정렬 확인 */
+.controls-section {
+    text-align: center;       /* 내부 인라인 요소들 중앙 정렬 */
+    width: 100%;              /* 부모 너비 꽉 채우기 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;      /* 내부 flex 아이템들 중앙 정렬 */
+}
+.reset-button {
+    display: block;
+    margin: 30px auto 0;
+    padding: 15px 50px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    transition: all 0.3s ease;
+}
+
+.reset-button:hover {
+    background-color: #fff;
+    color: #007bff;
+}
+
+/* 4. 난이도 선택 UI */
+.level-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.level-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.level-options {
+    display: flex;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: #001F3F;
+}
+
+.level-item {
+    margin: 0 10px;
+    cursor: pointer;
+    color: #ccc;
+    font-size: 1.2rem;
+}
+
+.level-item.active {
+    color: #ffcc00;
+}
+
+/* 5. 캡슐 및 결과 카드 */
+.capsule-pop {
+    margin-top: 20px;
+    text-align: center;
+    animation: pop-up 0.8s cubic-bezier(0.1, 0.9, 0.2, 1.3) forwards;
+}
+
+@keyframes pop-up {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.capsule-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    animation: blink 1s infinite alternate;
+}
+
+.result-card {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.3s;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.result-card:hover {
+    border-color: #007bff;
+    transform: translateY(-5px);
+}
+
+.keyword-container {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f1f3f5;
+    border-radius: 10px;
+}
+
+.keyword-tag {
+    margin-right: 10px;
+    color: #002f87;
+    font-weight: bold;
+}
+
+.list-fade-in {
+    animation: slide-up 0.8s ease-out;
+}
+
+@keyframes slide-up {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

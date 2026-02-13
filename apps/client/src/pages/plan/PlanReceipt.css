@@ -1,0 +1,206 @@
+/* 전체 컨테이너: 영수증과 버튼을 중앙에 정렬 */
+.receipt-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    min-height: 100vh;
+    box-sizing: border-box;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+}
+
+/* 영수증 종이 스타일 */
+.receipt-paper {
+    background: white;
+    width: 100%;
+    max-width: 400px; 
+    padding: 40px 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border-radius: 4px; /* 조금 더 영수증 같은 느낌을 위해 곡률 조정 */
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* 영수증 헤더 */
+.receipt-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.receipt-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+    color: #222;
+    letter-spacing: 1px;
+}
+
+.receipt-status-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border: 1px solid #007bff; /* 배경 대신 테두리로 깔끔하게 */
+    color: #007bff;
+    border-radius: 2px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.receipt-date {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* 구분선 스타일 */
+.dashed-line {
+    border: none;
+    border-top: 1.5px dashed #eee;
+    margin: 20px 0;
+}
+
+.double-line {
+    border: none;
+    border-top: 3px double #333;
+    margin: 20px 0;
+}
+
+/* 각 항목 행 (텍스트 배치 보정) */
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.receipt-row span:last-child {
+    text-align: right;
+    font-weight: 500;
+    color: #222;
+    word-break: keep-all;
+}
+
+.total-amount-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-weight: 800;
+    font-size: 1.25rem;
+}
+
+.total-price {
+    color: #007bff;
+}
+
+/* 키워드 태그 */
+.keyword-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.receipt-tag {
+    font-size: 0.8rem;
+    color: #666;
+    background: #f4f4f4;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+/* 🧾 하단 푸터 (줄바꿈 및 간격 핵심 수정) */
+.receipt-footer {
+    text-align: center;
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column; /* 자식 요소들을 세로로 정렬 */
+    align-items: center;
+    gap: 8px; /* 문장 사이의 간격을 일정하게 부여 */
+}
+
+.receipt-footer p {
+    margin: 0; /* 기본 마진 제거 후 gap으로 조절 */
+    font-size: 0.85rem;
+    color: #777;
+    line-height: 1.5;
+    word-break: keep-all; /* 단어 단위 줄바꿈으로 깔끔하게 */
+    width: 100%;
+}
+
+/* 두 번째 문구(감사 인사)를 좀 더 강조 */
+.receipt-footer p:nth-of-type(2) {
+    font-weight: 600;
+    color: #444;
+    margin-top: 4px;
+}
+
+/* 바코드 스타일 보정 */
+.barcode {
+    margin: 30px auto 10px;
+    width: 250px;       /* 바코드 가로 길이 */
+    height: 60px;       /* 바코드 세로 높이 */
+    /* 🚀 핵심: 다양한 굵기의 검은 선을 그래디언트로 생성 */
+    background: repeating-linear-gradient(
+        90deg,
+        #000,
+        #000 2px,    /* 얇은 선 */
+        #fff 2px,
+        #fff 4px,    /* 간격 */
+        #000 4px,
+        #000 7px,    /* 굵은 선 */
+        #fff 7px,
+        #fff 9px
+    );
+    opacity: 0.9;
+    position: relative;
+}
+
+/* 바코드 아래에 임의의 숫자 번호 추가 (디테일) */
+.barcode::after {
+    content: "8 801234 567890";
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #333;
+}
+
+/* 🚀 버튼 영역 */
+.receipt-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+.home-btn, .mypage-link-btn {
+    flex: 1;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.home-btn {
+    background-color: #eee;
+    color: #555;
+}
+
+.mypage-link-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.home-btn:hover { background-color: #e2e2e2; }
+.mypage-link-btn:hover { background-color: #0056b3; }

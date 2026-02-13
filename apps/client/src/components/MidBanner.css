@@ -1,0 +1,40 @@
+/* 5. 중간 파란색 배너 (높이 250px로 축소) */
+    /* 5. 중간 파란색 배너 섹션 */
+    .mid-banner {
+    width: 100%;
+    height: 450px;             /* 탑배너의 2/3 높이 */
+    background-color: #E1F1FF; 
+    margin: 1px 0;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    /* <img> 태그에 부여한 클래스 이름과 동일하게 작성 */
+    .mid-illust {
+    width: 100%;               /* 가로 전체 채우기 */
+    height: 100%;              /* 세로 전체 채우기 */
+    object-fit: cover;         /* 비율 유지하며 꽉 채우기 */
+    opacity: 0.3;
+    display: block;            /* 하단 미세한 공백 제거 */
+    }
+
+    /* 텍스트가 있다면 위치 조절용 */
+    .mid-banner-content {
+    text-align: center;
+    position: absolute;        /* 이미지 위에 글자를 띄우고 싶을 때 사용 */
+    z-index: 5; /* 이미지 쌓인 순서*/
+    }
+    .mid-banner-content h2 {
+    font-size: 3.0rem;
+    font-weight: 700;
+    margin: 20px 0 20px;
+    }
+
+    .mid-banner-content p {
+    font-size: 2.0rem;
+    font-weight: 500;
+    margin: 20px 0 20px;
+    }

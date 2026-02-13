@@ -1,159 +1,220 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import api from '../../api/axiosConfig';
+import KoreaMap from "../../components/KoreaMap";
 import './PlanSearch.css';
 
-// 1. 전국 광역자치단체 및 세부 시·군·구 데이터
-const REGION_DATA = {
-    "seoul": { name: "서울특별시", sub: ["강남구", "종로구", "마포구", "송파구", "용산구"] },
-    "busan": { name: "부산광역시", sub: ["해운대구", "기장군", "영도구", "수영구", "부산진구"] },
-    "daegu": { name: "대구광역시", sub: ["중구", "수성구", "달성군", "동구"] },
-    "incheon": { name: "인천광역시", sub: ["중구(차이나타운)", "강화군", "옹진군", "연수구(송도)"] },
-    "gwangju": { name: "광주광역시", sub: ["동구", "남구", "북구", "광산구"] },
-    "daejeon": { name: "대전광역시", sub: ["유성구", "서구", "중구", "동구"] },
-    "ulsan": { name: "울산광역시", sub: ["남구", "동구", "울주군"] },
-    "sejong": { name: "세종특별자치시", sub: ["세종시"] },
-    "gyeonggi": { name: "경기도", sub: ["수원시", "용인시", "파주시", "가평군", "양평군", "포천시"] },
-    "gangwon": { name: "강원특별자치도", sub: ["강릉시", "속초시", "춘천시", "양양군", "평창군", "정선군"] },
-    "chungbuk": { name: "충청북도", sub: ["청주시", "충주시", "제천시", "단양군", "괴산군"] },
-    "chungnam": { name: "충청남도", sub: ["천안시", "아산시", "태안군", "보령시", "부여군", "공주시"] },
-    "jeonbuk": { name: "전북특별자치도", sub: ["전주시", "군산시", "익산시", "남원시", "부안군"] },
-    "jeonnam": { name: "전라남도", sub: ["여수시", "순천시", "목포시", "담양군", "보성군", "완도군"] },
-    "gyeongbuk": { name: "경상북도", sub: ["경주시", "포항시", "안동시", "울릉군", "문경시"] },
-    "gyeongnam": { name: "경상남도", sub: ["창원시", "통영시", "거제시", "남해군", "하동군"] },
-    "jeju": { name: "제주특별자치도", sub: ["제주시", "서귀포시", "우도"] },
+// 지도 SVG class명 → 백엔드 region name 매핑
+const MAP_TO_REGION_NAME = {
+    Seoul: "서울", Busan: "부산", Daegu: "대구", Incheon: "인천",
+    Gwangju: "광주", Daejeon: "대전", Ulsan: "울산", Sejong: "세종",
+    Gyeonggi: "경기", Gangwon: "강원", Jeju: "제주",
+    Chungcheongbukdo: "충북", Chungbuk: "충북",
+    Chungcheongnamdo: "충남", Chungnam: "충남",
+    Jeollabukdo: "전북", Jeonbuk: "전북",
+    Jeollanamdo: "전남", Jeonnam: "전남",
+    Gyeongsangbukdo: "경북", Gyeongbuk: "경북",
+    Gyeongsangnamdo: "경남", Gyeongnam: "경남"
 };
 
-const PlanSearch = () => {
-    const navigate = useNavigate();
-    const [dateRange, setDateRange] = useState(null); 
-    const [searchData, setSearchData] = useState({
-        people_count: 1,
-        region_id: "",
-        sub_region: "",
-        main_category: "", 
-        budget_range: 500000
-    });
+// 백엔드 region name → 지도 표시용 정식 명칭
+const DISPLAY_NAME = {
+    "서울": "서울특별시", "부산": "부산광역시", "대구": "대구광역시",
+    "인천": "인천광역시", "광주": "광주광역시", "대전": "대전광역시",
+    "울산": "울산광역시", "세종": "세종특별자치시", "경기": "경기도",
+    "강원": "강원특별자치도", "충북": "충청북도", "충남": "충청남도",
+    "전북": "전라북도", "전남": "전라남도", "경북": "경상북도",
+    "경남": "경상남도", "제주": "제주특별자치도"
+};
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        if (name === "region_id") {
-            // 지역(시·도) 변경 시 세부 지역 초기화
-            setSearchData(prev => ({ ...prev, region_id: value, sub_region: "" }));
+export default function PlanSearch() {
+    const { planConfig, handleConfigChange } = useOutletContext();
+    const navigate = useNavigate();
+
+    const [parentRegions, setParentRegions] = useState([]);
+    const [subRegions, setSubRegions] = useState([]);
+
+    // 시/도 목록 로드
+    useEffect(() => {
+        api.get('/api/regions').then(res => {
+            setParentRegions(res.data);
+        });
+    }, []);
+
+    // 선택된 시/도가 바뀌면 시/군/구 로드
+    useEffect(() => {
+        if (planConfig.region_id) {
+            const parent = parentRegions.find(r => r.name === planConfig.region_name_short);
+            if (parent) {
+                api.get(`/api/regions/${parent.id}/sub`).then(res => {
+                    setSubRegions(res.data);
+                });
+            }
         } else {
-            setSearchData(prev => ({ ...prev, [name]: value }));
+            setSubRegions([]);
+        }
+    }, [planConfig.region_name_short, parentRegions]);
+
+    // 지역 선택 통합 함수
+    const updateRegionState = (mapId) => {
+        if (!mapId) return;
+        const formattedId = mapId.charAt(0).toUpperCase() + mapId.slice(1);
+        const regionName = MAP_TO_REGION_NAME[formattedId];
+        if (!regionName) return;
+
+        const fullName = DISPLAY_NAME[regionName] || regionName;
+
+        const parentRegion = parentRegions.find(r => r.name === regionName);
+        handleConfigChange("region_id", formattedId);
+        handleConfigChange("parent_region_db_id", parentRegion?.id || null);
+        handleConfigChange("region_name", fullName);
+        handleConfigChange("region_name_short", regionName);
+        handleConfigChange("sub_region", "");
+        handleConfigChange("sub_region_id", null);
+    };
+
+    // 드롭다운에서 시/도 선택
+    const handleParentSelect = (e) => {
+        const selectedId = Number(e.target.value);
+        if (!selectedId) {
+            handleConfigChange("region_id", "");
+            handleConfigChange("parent_region_db_id", null);
+            handleConfigChange("region_name", "");
+            handleConfigChange("region_name_short", "");
+            handleConfigChange("sub_region", "");
+            handleConfigChange("sub_region_id", null);
+            return;
+        }
+        const region = parentRegions.find(r => r.id === selectedId);
+        if (!region) return;
+
+        // region.name(서울)에 대응하는 mapId 찾기
+        const mapId = Object.entries(MAP_TO_REGION_NAME).find(([, name]) => name === region.name)?.[0];
+        const fullName = DISPLAY_NAME[region.name] || region.name;
+
+        handleConfigChange("region_id", mapId || String(selectedId));
+        handleConfigChange("parent_region_db_id", selectedId);
+        handleConfigChange("region_name", fullName);
+        handleConfigChange("region_name_short", region.name);
+        handleConfigChange("sub_region", "");
+        handleConfigChange("sub_region_id", null);
+    };
+
+    // 지도 클릭
+    const handlePathClick = (e) => {
+        const target = e.target.closest('path, g');
+        if (!target) return;
+        const regionId =
+            target.getAttribute('class')?.split(' ')[0] ||
+            target.parentElement?.getAttribute('class')?.split(' ')[0] ||
+            target.id;
+        if (regionId) {
+            updateRegionState(regionId);
         }
     };
 
     const handleNext = () => {
-        if (!dateRange || !dateRange[0] || !dateRange[1]) {
-            alert("여행 기간을 선택해주세요!");
+        if (!planConfig.region_id || !planConfig.sub_region) {
+            alert("지역과 세부 지역을 선택해주세요!");
             return;
         }
-        if (!searchData.region_id || !searchData.sub_region || !searchData.main_category) {
-            alert("지역, 세부 지역, 테마를 모두 선택해주세요!");
-            return;
-        }
-
-        const startDate = dateRange[0].toISOString().split('T')[0];
-        const endDate = dateRange[1].toISOString().split('T')[0];
-
-        navigate('/keyword', { 
-            state: { 
-                ...searchData, 
-                start_date: startDate, 
-                end_date: endDate,
-                region_name: REGION_DATA[searchData.region_id].name 
-            } 
-        });
+        navigate('/reserve/setup');
     };
 
+    // 현재 선택된 부모 region의 DB id (드롭다운 value용)
+    const selectedParentDbId = parentRegions.find(r => r.name === planConfig.region_name_short)?.id || "";
+
     return (
-        <div className="plan-search-container">
-            <h2>어디로 떠나시나요?</h2>
-            <div className="search-main-card">
-                <div className="calendar-section">
-                    <label>📅 여행 기간</label>
-                    <div className="calendar-wrapper">
-                        <Calendar 
-                            onChange={setDateRange} 
-                            value={dateRange} 
-                            selectRange={true} 
-                            minDate={new Date()}
-                            formatDay={(locale, date) => date.toLocaleString("en", {day: "numeric"})}
-                        />
+    <div className="plan-search-container">
+        <h2 className="search-title">어디로 떠나시나요?</h2>
+
+        <div className="plan-search-layout">
+            <div className="layout-left" onClick={handlePathClick}>
+                <div className="map-card">
+                    <div className="map-wrapper">
+                        <KoreaMap planConfig={planConfig} />
                     </div>
                 </div>
+            </div>
 
-                <div className="selection-grid">
-                    <div className="input-group">
-                        <label>👥 인원</label>
-                        <select name="people_count" value={searchData.people_count} onChange={handleChange}>
-                            {[1, 2, 3, 4, 5, 6, 7, 8].map(num => <option key={num} value={num}>{num}명</option>)}
-                        </select>
-                    </div>
+            <div className="layout-right">
+                <div className="search-main-card">
 
-                    <div className="input-group">
-                        <label>✨ 여행 테마</label>
-                        <select name="main_category" value={searchData.main_category} onChange={handleChange}>
-                            <option value="">테마 선택</option>
-                            <option value="relaxed">여유로운 힐링</option>
-                            <option value="active">활동적인 액티비티</option>
-                            <option value="cost-effective">가성비 위주</option>
-                            <option value="luxury">럭셔리 호캉스</option>
-                        </select>
+                    <div className="info-box-card">
+                        {planConfig.region_id ? (
+                            <p className="main-info-text">
+                                <span className="region-name-highlight" style={{ color: '#005ADE', fontWeight: 'bold' }}>
+                                    {planConfig.region_name}
+                                </span>
+                                {" "} 지역 세부선택을 완료해주세요!
+                            </p>
+                        ) : (
+                            <p className="main-info-text default">🗺️ 어디로 떠나고 싶으신가요?</p>
+                        )}
                     </div>
 
-                    <div className="input-group">
-                        <label>📍 지역 (시·도)</label>
-                        <select name="region_id" value={searchData.region_id} onChange={handleChange}>
-                            <option value="">지역 선택</option>
-                            {Object.keys(REGION_DATA).map(key => (
-                                <option key={key} value={key}>{REGION_DATA[key].name}</option>
-                            ))}
-                        </select>
+                    <div className="selection-grid">
+                        <div className="input-group">
+                            <label>📍 지역 선택</label>
+                            <select
+                                value={selectedParentDbId}
+                                onChange={handleParentSelect}
+                            >
+                                <option value="">지역 선택</option>
+                                {parentRegions.map(r => (
+                                    <option key={r.id} value={r.id}>
+                                        {DISPLAY_NAME[r.name] || r.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="input-group">
+                            <label>🗺️ 세부 지역 선택</label>
+                            <select
+                                value={planConfig.sub_region || ""}
+                                disabled={!planConfig.region_id}
+                                onChange={(e) => {
+                                    const selectedSub = subRegions.find(r => r.name === e.target.value);
+                                    handleConfigChange("sub_region", e.target.value);
+                                    handleConfigChange("sub_region_id", selectedSub?.id || null);
+                                }}
+                            >
+                                <option value="">상세 지역 선택</option>
+                                {subRegions.map(r => (
+                                    <option key={r.id} value={r.name}>{r.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="input-group budget-section" style={{ marginTop: '10px' }}>
+                            <label style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span>💰 최대 예산</span>
+                                <span style={{ color: '#005ADE', fontWeight: 'bold' }}>
+                                    {(Number(planConfig.budget_range?.[1]) || 100000).toLocaleString()}원
+                                </span>
+                            </label>
+                            <input
+                                type="range"
+                                min="100000"
+                                max="5000000"
+                                step="50000"
+                                style={{ width: '100%', marginTop: '10px', cursor: 'pointer' }}
+                                value={Number(planConfig.budget_range?.[1]) || 100000}
+                                onChange={(e) => handleConfigChange('budget_range', [0, Number(e.target.value)])}
+                            />
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#999', marginTop: '5px' }}>
+                                <span>10만원</span>
+                                <span>500만원</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="input-group">
-                        <label>🗺️ 세부 지역</label>
-                        <select 
-                            name="sub_region" 
-                            value={searchData.sub_region} 
-                            onChange={handleChange}
-                            disabled={!searchData.region_id}
-                        >
-                            <option value="">상세 지역 선택</option>
-                            {searchData.region_id && (
-                                <>
-                                    {/* 상위 지역 명칭을 활용한 '전체' 옵션 추가 */}
-                                    <option value="all">{REGION_DATA[searchData.region_id].name} 전체</option>
-                                    {REGION_DATA[searchData.region_id].sub.map(name => (
-                                        <option key={name} value={name}>{name}</option>
-                                    ))}
-                                </>
-                            )}
-                        </select>
-                    </div>
-                    
-                    <div className="input-group budget-group">
-                        <label>💰 최대 예산: <strong>{Number(searchData.budget_range).toLocaleString()}원</strong></label>
-                        <input 
-                            type="range" 
-                            name="budget_range" 
-                            min="100000" 
-                            max="5000000" 
-                            step="10000" 
-                            value={searchData.budget_range} 
-                            onChange={handleChange} 
-                        />
-                    </div>
+                    <button className="next-button" onClick={handleNext}>
+                        날짜 및 인원 설정하기
+                    </button>
                 </div>
-
-                <button className="next-button" onClick={handleNext}>상세 키워드 선택하러 가기</button>
             </div>
         </div>
-    );
-};
-
-export default PlanSearch;
+    </div>
+);}

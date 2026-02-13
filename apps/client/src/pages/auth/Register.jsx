@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
 import './Auth.css';
 
 // 여행 성향 키워드 목록
 const TRAVEL_KEYWORDS = [
-  '힐링', '액티비티', '맛집', '카페', '문화예술',
-  '자연', '사진', '쇼핑', '역사', '축제',
-  '체험', '야경'
+  '힐링', '자연', '스릴',
+  '추억', '예술', '체험',
+  '데이트', '트레킹'
 ];
 
 function Register() {
@@ -16,6 +18,7 @@ function Register() {
 
   const [formData, setFormData] = useState({
     username: '',
+    nickname: '',
     password: '',
     passwordConfirm: '',
     email: '',
@@ -47,7 +50,7 @@ function Register() {
 
   const validateForm = () => {
     // 필수 항목 검사
-    if (!formData.username || !formData.password || !formData.email) {
+    if (!formData.username || !formData.nickname || !formData.password || !formData.email) {
       return '필수 항목을 모두 입력해주세요.';
     }
 
@@ -98,7 +101,9 @@ function Register() {
     try {
       const userData = {
         username: formData.username,
+        nickname: formData.nickname,
         password: formData.password,
+        passwordConfirm: formData.passwordConfirm,
         email: formData.email,
         phone: formData.phone || null,
         keyword_pref: formData.keywords.join(',') // 쉼표로 구분
@@ -114,7 +119,9 @@ function Register() {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-page-wrapper">
+      <Header />
+      <div className="auth-container">
       <div className="auth-box">
         <h1 className="auth-title">회원가입</h1>
         <p className="auth-subtitle">여행의 시작을 함께하세요</p>
@@ -135,6 +142,19 @@ function Register() {
               value={formData.username}
               onChange={handleChange}
               placeholder="4자 이상 입력하세요"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="nickname">닉네임 *</label>
+            <input
+              type="text"
+              id="nickname"
+              name="nickname"
+              value={formData.nickname}
+              onChange={handleChange}
+              placeholder="닉네임을 입력하세요"
               disabled={loading}
             />
           </div>
@@ -221,6 +241,8 @@ function Register() {
           <Link to="/login" className="link">로그인</Link>
         </div>
       </div>
+    </div>
+      <Footer />
     </div>
   );
 }

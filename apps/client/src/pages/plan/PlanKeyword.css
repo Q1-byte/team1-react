@@ -1,97 +1,199 @@
-/* 전체 컨테이너 */
-.plan-keyword-container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 40px 30px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+/* 1. 전체 레이아웃: 배경색 및 상단 여백 설정 */
+.outer-layout {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important; 
+    align-items: center !important;
+    padding: 100px 20px 50px 20px; /* 헤더 높이 고려 */
+    box-sizing: border-box;
+}
+
+/* 2. 제목 스타일: 카드 상단 중앙 배치 */
+.setup-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a2a3a;
     text-align: center;
-}
-
-/* 헤더 영역 */
-.keyword-header h2 {
-    font-size: 1.8rem;
-    color: #333;
-    margin-bottom: 12px;
-}
-
-.keyword-header p {
-    color: #888;
-    font-size: 0.95rem;
+    width: 100%;
+    margin-top: 0;
     margin-bottom: 40px;
 }
 
-/* 키워드 그리드 레이아웃 */
-.keyword-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 15px;
-    margin-bottom: 50px;
+/* 3. 메인 카드 상자: 모든 설정 요소를 감싸는 흰색 카드 */
+.plan-keyword-container {
+    width: 100%;
+    max-width: 800px; 
+    background-color: #ffffff;
+    border-radius: 25px;
+    padding: 50px; 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* 섹션(달력, 인원, 취향) 간의 간격 */
 }
 
-/* 각 키워드 아이템 */
-.keyword-item {
-    padding: 18px 10px;
-    border: 2px solid #f0f0f0;
-    border-radius: 14px;
-    background: #fff;
-    color: #555;
+/* 4. 공통 섹션 아이템 구조 (너비 100% 유지) */
+.setup-item {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 5. 섹션 레이블 스타일 (📅 언제 떠나시나요? 등) */
+.item-label, 
+.section-label {
+    display: block;
+    font-size: 1.2rem;
     font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: left;
+}
+
+/* 6. 캘린더 커스텀: 카드 너비에 맞춰 확장 */
+.calendar-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.react-calendar {
+    width: 100% !important;
+    border: 1px solid #eee !important;
+    border-radius: 15px;
+    padding: 15px;
+    font-family: 'Pretendard', sans-serif;
+}
+
+/* 7. 인원 선택 셀렉트 박스 */
+.people-select {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
     font-size: 1rem;
+    outline: none;
+    background-color: #fff;
+    transition: border-color 0.2s;
+}
+
+.people-select:focus {
+    border-color: #007bff;
+}
+
+/* 8. 취향 선택 카테고리별 회색 박스 (추가된 부분) */
+.category-group {
+    background-color: #f8f9fa; /* 요청하신 연한 회색 배경 */
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #f1f3f5;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.category-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+/* 9. 키워드 그리드 및 아이템 */
+.keyword-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* 왼쪽 정렬로 일관성 유지 */
+    gap: 12px;
+}
+
+.keyword-item {
+    padding: 10px 20px;
+    border: 1.5px solid #eee;
+    border-radius: 50px;
+    background-color: #fff;
+    color: #666;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-weight: 500;
 }
 
 .keyword-item:hover {
     border-color: #007bff;
-    background: #f8fbff;
+    color: #007bff;
+    background-color: #f0f7ff;
+    transform: translateY(-2px);
 }
 
-/* 활성화(선택) 상태 */
 .keyword-item.active {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: white;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    background-color: #007bff !important;
+    color: white !important;
+    border-color: #007bff !important;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
 }
 
-/* 하단 버튼 그룹 */
+/* 10. 하단 버튼 그룹: 높이 및 스타일 통일 */
 .button-group {
     display: flex;
     gap: 15px;
+    margin-top: 20px;
+    align-items: stretch; 
+    width: 100%;
 }
 
 .back-button, .submit-button {
     flex: 1;
-    padding: 18px;
+    height: 56px; /* 물리적 높이 고정 */
     border-radius: 12px;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 700;
     cursor: pointer;
-    border: none;
-    transition: background 0.3s;
+    transition: all 0.2s ease;
+    border: none !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
 }
 
 .back-button {
-    background-color: #f1f3f5;
-    color: #495057;
+    background-color: #f1f3f5 !important;
+    color: #495057 !important;
 }
 
 .back-button:hover {
-    background-color: #e9ecef;
+    background-color: #e9ecef !important;
 }
 
 .submit-button {
-    background-color: #007bff;
-    color: white;
+    background-color: #007bff !important;
+    color: #ffffff !important;
 }
 
 .submit-button:hover {
-    background-color: #0056b3;
+    background-color: #0069d9 !important;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
-.submit-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+.submit-button:active {
+    transform: scale(0.98);
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .plan-keyword-container {
+        padding: 30px 20px;
+    }
+    .setup-title {
+        font-size: 1.6rem;
+    }
+    .category-group {
+        padding: 20px;
+    }
 }

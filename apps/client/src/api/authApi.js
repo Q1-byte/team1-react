@@ -1,75 +1,97 @@
-// Mock API - 나중에 실제 백엔드 API로 교체
+// 백엔드 API 연동
 
-// Mock 사용자 데이터 (localStorage에 저장)
-const USERS_KEY = 'mock_users';
+const API_BASE_URL = 'http://localhost:8080/api/user';
 
-// 초기 Mock 사용자 데이터
+// 백엔드 연결 여부 (false면 임시 데이터 사용)
+const USE_MOCK = false;
+
+// 임시 사용자 데이터 (테스트용)
+const MOCK_USERS = [
+  {
+    id: 1,
+    username: 'admin',
+    password: 'admin123',
+    email: 'admin@test.com',
+    phone: '010-1234-5678',
+    role: 'ADMIN',
+    point: 10000,
+    keywordPref: '힐링,맛집,문화예술'
+  },
+  {
+    id: 2,
+    username: 'user1',
+    password: 'user123',
+    email: 'user1@test.com',
+    phone: '010-2222-3333',
+    role: 'USER',
+    point: 5000,
+    keywordPref: '액티비티,자연,사진'
+  },
+  {
+    id: 3,
+    username: 'test',
+    password: 'test123',
+    email: 'test@test.com',
+    phone: '010-9999-8888',
+    role: 'USER',
+    point: 3000,
+    keywordPref: '카페,쇼핑'
+  }
+];
+
+// localStorage에 mock_users 초기화
 const initMockUsers = () => {
-  if (!localStorage.getItem(USERS_KEY)) {
-    const initialUsers = [
-      {
-        id: 1,
-        username: 'admin',
-        password: 'admin123',
-        email: 'admin@trip.com',
-        phone: '010-1234-5678',
-        role: 'ADMIN',
-        keyword_pref: '힐링,맛집,자연',
-        point: 5000,
-        created_at: new Date().toISOString()
-      },
-      {
-        id: 2,
-        username: 'user1',
-        password: 'user123',
-        email: 'user1@trip.com',
-        phone: '010-9876-5432',
-        role: 'USER',
-        keyword_pref: '액티비티,체험,축제',
-        point: 1000,
-        created_at: new Date().toISOString()
-      }
-    ];
-    localStorage.setItem(USERS_KEY, JSON.stringify(initialUsers));
+  if (!localStorage.getItem('mock_users')) {
+    localStorage.setItem('mock_users', JSON.stringify(MOCK_USERS));
   }
 };
-
-// Mock 지연 함수 (실제 API 호출처럼 보이게)
-const delay = (ms = 500) => new Promise(resolve => setTimeout(resolve, ms));
-
-// 사용자 목록 가져오기
-const getUsers = () => {
-  initMockUsers();
-  const users = localStorage.getItem(USERS_KEY);
-  return users ? JSON.parse(users) : [];
-};
-
-// 사용자 저장하기
-const saveUsers = (users) => {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-};
+initMockUsers();
 
 /**
  * 로그인 API
  */
 export const loginApi = async (username, password) => {
-  await delay();
+  // 임시 데이터 사용 시
+  if (USE_MOCK) {
+    const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+    const user = users.find(u => u.username === username && u.password === password);
+    
+    if (!user) {
+      throw new Error('아이디 또는 비밀번호가 일치하지 않습니다.');
+    }
 
-  const users = getUsers();
-  const user = users.find(u => u.username === username);
+    // 비밀번호 제외한 사용자 정보
+    const { password: _, ...userWithoutPassword } = user;
 
-  if (!user) {
-    throw new Error('존재하지 않는 아이디입니다.');
+    const token = btoa(JSON.stringify({
+      userId: user.id,
+      username: user.username,
+      role: user.role,
+      exp: Date.now() + 24 * 60 * 60 * 1000
+    }));
+
+    return { user: userWithoutPassword, token };
   }
 
-  if (user.password !== password) {
-    throw new Error('비밀번호가 일치하지 않습니다.');
+  // 백엔드 API 사용 시
+  const response = await fetch(`${API_BASE_URL}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',  // 세션 쿠키 저장/전송을 위해 필수
+    body: JSON.stringify({ username, password }),
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.message || '로그인에 실패했습니다.');
   }
 
-  // 비밀번호 제외하고 반환
-  const { password: _, ...userWithoutPassword } = user;
+  const user = result.data;
 
-  // Mock JWT 토큰
+  // 임시 토큰 생성 (나중에 백엔드 JWT로 교체)
   const token = btoa(JSON.stringify({
     userId: user.id,
     username: user.username,
@@ -78,7 +100,7 @@ export const loginApi = async (username, password) => {
   }));
 
   return {
-    user: userWithoutPassword,
+    user,
     token
   };
 };
@@ -87,37 +109,65 @@ export const loginApi = async (username, password) => {
  * 회원가입 API
  */
 export const registerApi = async (userData) => {
-  await delay();
+  // 임시 데이터 사용 시
+  if (USE_MOCK) {
+    const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+    
+    // 아이디 중복 체크
+    if (users.find(u => u.username === userData.username)) {
+      throw new Error('이미 사용 중인 아이디입니다.');
+    }
+    
+    // 이메일 중복 체크
+    if (users.find(u => u.email === userData.email)) {
+      throw new Error('이미 사용 중인 이메일입니다.');
+    }
 
-  const users = getUsers();
+    const newUser = {
+      id: users.length + 1,
+      username: userData.username,
+      password: userData.password,
+      email: userData.email,
+      phone: userData.phone || '',
+      role: 'USER',
+      point: 1000, // 신규 가입 포인트
+      keywordPref: userData.keyword_pref || userData.keywordPref || ''
+    };
 
-  // 중복 체크
-  if (users.find(u => u.username === userData.username)) {
-    throw new Error('이미 존재하는 아이디입니다.');
+    users.push(newUser);
+    localStorage.setItem('mock_users', JSON.stringify(users));
+
+    const { password: _, ...userWithoutPassword } = newUser;
+    return { user: userWithoutPassword, message: '회원가입이 완료되었습니다.' };
   }
 
-  if (users.find(u => u.email === userData.email)) {
-    throw new Error('이미 존재하는 이메일입니다.');
+  // 백엔드 API 사용 시
+  const response = await fetch(`${API_BASE_URL}/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({
+      username: userData.username,
+      nickname: userData.nickname,
+      password: userData.password,
+      passwordConfirm: userData.passwordConfirm || userData.password_confirm || userData.password,
+      email: userData.email,
+      phone: userData.phone,
+      keywordPref: userData.keyword_pref || userData.keywordPref,
+    }),
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.message || '회원가입에 실패했습니다.');
   }
-
-  // 새 사용자 생성
-  const newUser = {
-    id: users.length + 1,
-    ...userData,
-    role: 'USER',
-    point: 0,
-    created_at: new Date().toISOString()
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-
-  // 비밀번호 제외하고 반환
-  const { password, ...userWithoutPassword } = newUser;
 
   return {
-    user: userWithoutPassword,
-    message: '회원가입이 완료되었습니다.'
+    user: result.data,
+    message: result.message
   };
 };
 
@@ -125,8 +175,6 @@ export const registerApi = async (userData) => {
  * 토큰으로 사용자 정보 조회 (자동 로그인용)
  */
 export const getUserByTokenApi = async (token) => {
-  await delay(200);
-
   try {
     const decoded = JSON.parse(atob(token));
 
@@ -135,16 +183,64 @@ export const getUserByTokenApi = async (token) => {
       throw new Error('토큰이 만료되었습니다.');
     }
 
-    const users = getUsers();
-    const user = users.find(u => u.id === decoded.userId);
+    // 임시 데이터 사용 시
+    if (USE_MOCK) {
+      const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+      const user = users.find(u => u.id === decoded.userId);
+      
+      if (!user) {
+        throw new Error('사용자를 찾을 수 없습니다.');
+      }
 
-    if (!user) {
-      throw new Error('사용자를 찾을 수 없습니다.');
+      const { password: _, ...userWithoutPassword } = user;
+      return userWithoutPassword;
     }
 
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    // 백엔드에서 사용자 정보 조회
+    const response = await fetch(`${API_BASE_URL}/${decoded.userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || '사용자 정보를 가져올 수 없습니다.');
+    }
+
+    return result.data;
   } catch (error) {
     throw new Error('유효하지 않은 토큰입니다.');
   }
+};
+
+/**
+ * 아이디 중복 체크 API
+ */
+export const checkUsernameApi = async (username) => {
+  if (USE_MOCK) {
+    const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+    return users.some(u => u.username === username);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/check-username?username=${encodeURIComponent(username)}`);
+  const result = await response.json();
+  return result.data;
+};
+
+/**
+ * 이메일 중복 체크 API
+ */
+export const checkEmailApi = async (email) => {
+  if (USE_MOCK) {
+    const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+    return users.some(u => u.email === email);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/check-email?email=${encodeURIComponent(email)}`);
+  const result = await response.json();
+  return result.data;
 };
