@@ -25,18 +25,23 @@
     height: 150px; 
     width: auto;
     border-radius: 50%;
-    margin-top: 20px;
+    margin-top: 50px;
     transition: all 0.3s ease;
 }
 
-/* 4. 오른쪽 영역 레이아웃 */
-.header-right, .user-zone, .header-auth-zone {
+/* 4. 오른쪽 영역 레이아웃 수정 */
+/* 4. 오른쪽 영역 레이아웃 - 막대 베이스 */
+.header-right {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* 버튼들이 위쪽 막대에 붙도록 설정 */
+    position: relative;
+    padding-top: 90px; /* 천장에서 막대가 떨어질 거리 */
 }
 
+
+
 .user-greeting {
-    margin-right: 30px;
+    margin-right: 10px;
     margin-top: 15px;
     white-space: nowrap;
     font-family: 'Pretendard', sans-serif;
@@ -52,8 +57,8 @@
     align-items: center;
     justify-content: center;
     
-    height: 60px;   /* 높이를 더 키웠습니다 */
-    padding: 0 35px; 
+    height: 40px;   /* 높이를 더 키웠습니다 */
+    padding: 0 15px; 
     
     background-color: transparent;
     border: 2px solid white;
