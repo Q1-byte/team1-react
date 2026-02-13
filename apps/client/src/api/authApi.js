@@ -150,6 +150,7 @@ export const registerApi = async (userData) => {
     credentials: 'include',
     body: JSON.stringify({
       username: userData.username,
+      nickname: userData.nickname,
       password: userData.password,
       passwordConfirm: userData.passwordConfirm || userData.password_confirm || userData.password,
       email: userData.email,
