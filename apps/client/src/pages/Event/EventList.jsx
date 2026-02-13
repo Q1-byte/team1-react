@@ -6,61 +6,61 @@ import './EventList.css'; // CSS 분리 완료!
 const EventList = () => {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
+    const [totalElements, setTotalElements] = useState(0); // 전체 데이터 개수
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("전체"); // 카테고리 상태
+    const [selectedCategory, setSelectedCategory] = useState("전체");
 
-    // ---------------------------------------------------------
-    // 추가: 페이징을 위한 상태(State)
-    // ---------------------------------------------------------
-    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
-    const itemsPerPage = 4; // 한 페이지에 보여줄 아이템 개수
-    // ---------------------------------------------------------
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8; // 한 페이지에 보여줄 개수 (조정 가능)
 
-    // 카테고리 목록 (백엔드에서 한글로 제공)
-    const categories = ["전체", "축제", "일반행사", "시즌테마"];
+    // 카테고리 맵핑 (프론트 한글명 -> 백엔드 Enum 명칭)
+    const categoryMapping = {
+        "축제": "FESTIVAL",
+        "먹거리": "FOOD",
+        "시즌테마": "SEASON",
+        "일반행사": "GENERAL"
+    };
 
-    // 필터링 로직 (검색어 + 카테고리 동시 적용)
-    const filteredEvents = events.filter(event => {
-        const matchesSearch = event.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = selectedCategory === "전체" || event.category === selectedCategory;
-        return matchesSearch && matchesCategory;
-    });
+    const categories = ["전체", "축제", "먹거리", "시즌테마", "일반행사"];
 
-    // ---------------------------------------------------------
-    // [2] 표시할 데이터 계산 로직 (여기에 추가!)
-    // ---------------------------------------------------------
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    // 데이터 가져오는 함수 분리
+    const fetchEvents = () => {
+        const params = {
+            page: currentPage - 1, // 백엔드는 0페이지부터 시작
+            size: itemsPerPage,
+            sort: "id,desc"
+        };
 
-    // 최종적으로 화면에 보여줄 "현재 페이지 데이터"
-    const currentItems = filteredEvents.slice(indexOfFirstItem, indexOfLastItem);
+        if (searchTerm) params.name = searchTerm;
+        if (selectedCategory !== "전체") params.type = categoryMapping[selectedCategory];
 
-    // 페이지 번호 배열 생성 (예: [1, 2])
-    const totalPages = Math.ceil(filteredEvents.length / itemsPerPage);
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-    }
-    // ---------------------------------------------------------
-
-    useEffect(() => {
-        // [수정] 전체 데이터를 가져오기 위해 size 파라미터 추가
-        api.get('/events', { params: { size: 100 } })
+        api.get('/events', { params })
             .then(res => {
                 if (res.data && res.data.content) {
                     setEvents(res.data.content);
-                } else {
-                    setEvents(res.data); // 배열로 올 경우 대응
+                    setTotalElements(res.data.totalElements);
+                } else if (Array.isArray(res.data)) {
+                    setEvents(res.data);
+                    setTotalElements(res.data.length);
                 }
             })
             .catch(err => console.error("백엔드 연동 실패: ", err));
-    }, []);
+    };
 
-    // [3] 검색이나 카테고리 변경 시 페이지를 1로 리셋
+    // 현재 페이지나 검색어, 카테고리가 바뀔 때마다 다시 가져옴
+    useEffect(() => {
+        fetchEvents();
+    }, [currentPage, searchTerm, selectedCategory]);
+
+    // 검색이나 카테고리 변경 시 페이지를 1로 리셋
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, selectedCategory]);
+
+    // 페이지 번호 계산
+    const totalPages = Math.ceil(totalElements / itemsPerPage);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     return (
         <div className="list-container">
@@ -89,14 +89,17 @@ const EventList = () => {
             </div>
 
             <div className="event-grid">
-                {currentItems.length > 0 ? (
-                    currentItems.map(event => (
+                {events.length > 0 ? (
+                    events.map(event => (
                         <div key={event.id} className="event-card" onClick={() => navigate(`/events/${event.id}`)}>
-                            <img src={event.url || "/event/default.jpg"} alt={event.name} />
+                            <img
+                                src={event.url || "https://placehold.co/600x400?text=No+Image"}
+                                alt={event.name}
+                                onError={(e) => { e.target.src = "https://placehold.co/600x400?text=No+Image"; }}
+                            />
                             <div className="card-content">
                                 <span className="category-tag">{event.category}</span>
                                 <h3>{event.name}</h3>
-                                {/* [수정] description 필드 사용 */}
                                 <p>{event.description || "상세 정보가 없습니다."}</p>
                                 <span className="card-date">{event.startDate} ~ {event.endDate}</span>
                             </div>
@@ -107,8 +110,8 @@ const EventList = () => {
                 )}
             </div>
 
-            {/* 페이징 UI */}
-            {filteredEvents.length > itemsPerPage && (
+            {/* 페이징 UI: 전체 개수가 페이지 당 개수보다 많을 때만 표시 */}
+            {totalElements > itemsPerPage && (
                 <div className="pagination">
                     {pageNumbers.map(number => (
                         <button

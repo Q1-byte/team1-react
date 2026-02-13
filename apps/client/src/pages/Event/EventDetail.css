@@ -87,6 +87,50 @@
     transition: background 0.2s;
 }
 
+
 .apply-button:hover {
     background: #0056b3;
+}
+
+/* 지도 영역 */
+.map-container {
+    width: 100%;
+    height: 350px;
+    background-color: #eee;
+    border-radius: 10px;
+}
+
+/* 카카오맵 바로가기 버튼 */
+.kakao-link-wrapper {
+    margin-top: 10px;
+    text-align: right;
+}
+
+.kakao-link-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #FEE500;
+    color: #191919;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: opacity 0.2s;
+}
+
+.kakao-link-btn:hover {
+    opacity: 0.9;
+}
+
+/* 위치 정보 없음 박스 */
+.no-location-box {
+    width: 100%;
+    height: 150px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    border: 1px solid #ddd;
 }
