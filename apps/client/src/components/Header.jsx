@@ -61,7 +61,7 @@ export default function Header() {
                     {isAuthenticated ? (
                         <div className="user-zone">
                             <span className="user-greeting" style={{ color: dynamicColor }}>
-                                <strong>{user?.id}</strong>님 안녕하세요
+                                <strong>{user?.nickname}</strong>님 안녕하세요
                                 {isAdmin && <span className="admin-tag">(관리자)</span>}
                             </span>
                             <button onClick={handleMyPage} className="nav-btn" style={{ color: dynamicColor }}>MYPAGE</button>
@@ -77,26 +77,6 @@ export default function Header() {
                                 <button onClick={handleJoin} className="nav-btn" style={{ color: dynamicColor }}>JOIN</button>
                             </div>
                         )
-        <div className="header-inner">
-        <div className="header-left">
-            <img
-                src="/banner/logo.jpg"
-                alt="Logo"
-                onClick={() => navigate('/')}
-                className="main-logo"
-            />
-        </div>
-
-        <div className="header-right">
-            {isAuthenticated ? (
-                <div className="user-zone">
-                    <span className="user-greeting" style={{ color: dynamicColor }}>
-                        <strong>{user?.nickname}</strong>님 안녕하세요
-                        {isAdmin && <span className="admin-tag">(관리자)</span>}
-                    </span>
-                    <button onClick={handleMyPage} className="nav-btn" style={{ color: dynamicColor }}>MYPAGE</button>
-                    {isAdmin && (
-                        <button onClick={handleAdminPage} className="nav-btn admin-btn" style={{ color: dynamicColor }}>ADMIN</button>
                     )}
                 </div>
             </div>
