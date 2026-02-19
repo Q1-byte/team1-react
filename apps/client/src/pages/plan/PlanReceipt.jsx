@@ -12,12 +12,20 @@ const PlanReceipt = () => {
     const accommodation = savedPlanData.selected_accommodation;
     const activity = savedPlanData.selected_activity;
     const ticket = savedPlanData.selected_ticket;
+    const confirmedDetails = savedPlanData.confirmed_details || [];
     const peopleCount = savedPlanData.people_count || planConfig.people_count || 1;
 
     const accomTotal = (accommodation?.pricePerNight || 0) * 2;
     const activityTotal = (activity?.price || 0) * peopleCount;
     const ticketTotal = (ticket?.price || 0) * peopleCount;
     const totalPrice = savedPlanData.total_amount || (accomTotal + activityTotal + ticketTotal);
+
+    // 일정을 일차별로 그룹화
+    const groupedDetails = confirmedDetails.reduce((acc, item) => {
+        if (!acc[item.day]) acc[item.day] = [];
+        acc[item.day].push(item);
+        return acc;
+    }, {});
 
     return (
         <div className="receipt-container">
@@ -55,6 +63,26 @@ const PlanReceipt = () => {
                         }
                     </div>
                 </section>
+
+                <hr className="dashed-line" />
+
+                {/* 확정 일정 */}
+                {Object.keys(groupedDetails).length > 0 && (
+                    <section className="receipt-section">
+                        <h3>[ 확정 여행 일정 ]</h3>
+                        {Object.keys(groupedDetails).sort((a, b) => a - b).map(day => (
+                            <div key={day} className="receipt-day-group">
+                                <p className="receipt-day-title">{day}일차</p>
+                                {groupedDetails[day].map(item => (
+                                    <div key={item.id} className="receipt-row">
+                                        <span>[{item.type}] {item.name}</span>
+                                        <span style={{ fontSize: '0.8rem', color: '#888' }}>{item.address}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+                    </section>
+                )}
 
                 <hr className="dashed-line" />
 

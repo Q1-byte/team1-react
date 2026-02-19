@@ -95,6 +95,20 @@
     color: #007bff;
 }
 
+/* 일정 그룹 */
+.receipt-day-group {
+    margin-bottom: 14px;
+}
+
+.receipt-day-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #007bff;
+    margin: 0 0 6px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #eee;
+}
+
 /* 키워드 태그 */
 .keyword-tags {
     display: flex;
