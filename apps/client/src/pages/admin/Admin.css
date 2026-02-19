@@ -80,6 +80,7 @@
 .stat-card.green { border-left: 4px solid #2C5F9E; }
 .stat-card.red { border-left: 4px solid #6495ED; }
 .stat-card.orange { border-left: 4px solid #007bff; }
+.stat-card.yellow { border-left: 4px solid #9b59b6; }
 
 /* 버튼 스타일 */
 .btn {
@@ -288,6 +289,69 @@
 
 .admin-table tr:hover td {
   background: #f8fafc;
+}
+
+/* 데이터 테이블 (SpotList 등 공통) */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table thead th {
+  background: #f0f4ff;
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: #2C5F9E;
+  border-bottom: 2px solid #dce8ff;
+  white-space: nowrap;
+}
+
+.data-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f2f4f7;
+  color: #333;
+  vertical-align: middle;
+}
+
+.data-table tbody tr:hover td {
+  background: #f8faff;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* 뱃지 */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge-success {
+  background: #e6f4ea;
+  color: #2e7d32;
+}
+
+/* 소형 버튼 */
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
 }
 
 /* 접근 거부 페이지 */
