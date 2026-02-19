@@ -305,7 +305,7 @@ function MyPage() {
               {myPlans.length === 0 ? (
                 <div className="empty-state">
                   <p>아직 여행 계획이 없습니다.</p>
-                  <button onClick={() => navigate('/plan/search')} className="btn-primary">
+                  <button onClick={() => navigate('/reserve')} className="btn-primary">
                     여행 계획 만들기
                   </button>
                 </div>
