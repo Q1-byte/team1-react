@@ -1,39 +1,54 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import ReviewCard from './ReviewCard';
+import ReviewSkeleton from './ReviewSkeleton'; // 아까 만든 스켈레톤 컴포넌트
 import './ReviewSection.css';
+
+// ... 상단 import 생략
 
 export default function ReviewSection() {
     const navigate = useNavigate();
     const scrollRef = useRef(null);
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const reviews = [
-        { id: 1, stars: 5, text: "정말 계획짜기가 어려운 P들에게 딱이에요!!" },
-        { id: 2, stars: 5, text: "예약 결제를 한군데서 다 할 수 있어서 너무 편해요!" },
-        { id: 3, stars: 5, text: "랜덤 계획에 있는 경로도 재밌어 보여요. 다음에 또 이용할게요." },
-        { id: 4, stars: 4, text: "가족 여행 때 이용했는데 부모님이 너무 좋아하셨어요!" },
-        { id: 5, stars: 5, text: "디자인이 깔끔해서 보기 편하고 예약도 빠르네요." },
-        { id: 6, stars: 5, text: "혼자 여행 갈 때 코스 짜기 막막했는데 큰 도움 됐습니다." },
-        { id: 7, stars: 4, text: "친구가 추천해줘서 써봤는데 숙소랑 맛집 동선이 예술이네요." },
-        { id: 8, stars: 5, text: "이런 서비스 기다렸어요! 결제 시스템이 정말 직관적입니다." },
-        { id: 9, stars: 5, text: "랜덤여행 기능으로 생각지도 못한 명소를 발견해서 행복했어요." },
-        { id: 10, stars: 4, text: "데이트 코스 고민될 때마다 들어와서 참고하고 있습니다." },
-        { id: 11, stars: 5, text: "전체적으로 인터페이스가 빠릿빠릿해서 사용감이 좋네요." },
-        { id: 12, stars: 5, text: "여행의 질이 달라졌습니다. 주변 지인들에게도 홍보 중이에요." },
-        { id: 13, stars: 3, text: "기능이 다양해서 좋아요. 더 많은 지역이 추가되면 좋겠네요." },
-        { id: 14, stars: 5, text: "리뷰 보고 믿고 예약했는데 역시 실패 없는 선택이었어요." },
-        { id: 15, stars: 5, text: "복잡한 예약 과정 없이 한 번에 해결되는 게 가장 큰 장점입니다." }
-    ];
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/api/reviews');
+                
+                const actualData = Array.isArray(response.data) 
+                    ? response.data 
+                    : (response.data.content || []);
+                
+                // 🚩 테스트 로그 추가: 브라우저 콘솔(F12)에서 확인하세요!
+                console.log("==============================");
+                console.log("1. 전체 데이터 구조:", actualData);
+                if (actualData.length > 0) {
+                    console.log("2. 첫 번째 리뷰의 별점(rating):", actualData[0].rating);
+                    console.log("3. 첫 번째 리뷰의 제목(title):", actualData[0].title);
+                }
+                console.log("==============================");
+
+                setReviews(actualData);
+            } catch (error) {
+                console.error("데이터 로드 실패:", error);
+                setReviews([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchReviews();
+    }, []);
 
     const scroll = (direction) => {
         if (scrollRef.current) {
-            // 현재 뷰포트 너비의 절반만큼씩 이동 (부드러운 전환)
-            const scrollAmount = scrollRef.current.clientWidth / 2; 
-            const scrollTo = direction === 'left' 
-                ? scrollRef.current.scrollLeft - scrollAmount 
-                : scrollRef.current.scrollLeft + scrollAmount;
-            
-            scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+            const scrollAmount = 400; // 카드 너비만큼 이동
+            scrollRef.current.scrollBy({ 
+                left: direction === 'left' ? -scrollAmount : scrollAmount, 
+                behavior: 'smooth' 
+            });
         }
     };
 
@@ -49,16 +64,27 @@ export default function ReviewSection() {
                     <div className="edge-overlay left-side"></div>
                     <div className="edge-overlay right-side"></div>
 
-                    <div className="review-container" ref={scrollRef}>
-                        {reviews.map((review) => (
-                            <div 
-                                key={review.id} 
-                                className="review-card-wrapper" 
-                                onClick={() => navigate('/reviews')}
-                            >
-                                <ReviewCard stars={review.stars} text={review.text} />
-                            </div>
-                        ))}
+                    {/* 💡 컨테이너는 여기 하나만 있어야 합니다! */}
+                                        <div className="review-container" ref={scrollRef}>
+                        {loading ? (
+                            [1, 2, 3, 4, 5].map((i) => <ReviewSkeleton key={i} />)
+                        ) : reviews.length > 0 ? (
+                            // 🚩 여기 중괄호 {} 를 빼고 바로 map을 돌려야 합니다.
+                            reviews.map((review) => (
+                                <div 
+                                    key={review.id} 
+                                    className="review-card-wrapper" 
+                                    onClick={() => navigate('/reviews')}
+                                >
+                                    <ReviewCard 
+                                        stars={review.rating} 
+                                        text={review.title} 
+                                    />
+                                </div>
+                            ))
+                        ) : (
+                            <p className="no-reviews">작성된 리뷰가 없습니다.</p>
+                        )}
                     </div>
                 </div>
 
