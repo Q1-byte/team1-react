@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -5,7 +6,18 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { getMyPageMain, getMyPlans, getMyPoints, updateProfile, changePassword } from '../../api/mypageApi';
 import { getMyInquiriesApi } from '../../api/inquiryApi';
+import api from '../../api';
 import './MyPage.css';
+
+const getRecentPlansApi = async (userId) => {
+  try {
+    const response = await api.get(`/plans/recent?userId=${userId}`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("최근 본 계획 로드 실패:", error);
+    return { success: false };
+  }
+};
 
 function MyPage() {
   const { user, logout, updateUser } = useAuth();
@@ -83,14 +95,19 @@ function MyPage() {
         } else if (activeTab === 'inquiries' && myInquiries.length === 0) {
           const data = await getMyInquiriesApi(0, 5);
           setMyInquiries(data.content || []);
+        }else if (activeTab === 'recent' && recentViews.length === 0) {
+          const response = await getRecentPlansApi(user.id);
+          if (response.success) {
+            setRecentViews(response.data || []);
+          }
         }
       } catch (err) {
         console.error('탭 데이터 로드 실패:', err);
       }
     };
-
+    
     fetchTabData();
-  }, [activeTab, user, myPlans.length, pointHistory.length, myInquiries.length]);
+  }, [activeTab, user, myPlans.length, pointHistory.length, myInquiries.length, recentViews.length]);
 
   // 프로필 수정 핸들러
   const handleProfileUpdate = async () => {
@@ -394,6 +411,7 @@ function MyPage() {
           )}
 
           {/* 최근 본 계획 */}
+          {/* 1. 이 부분을 찾으세요 (약 250~270라인 사이) */}
           {activeTab === 'recent' && (
             <div>
               <h3>최근 본 계획</h3>
@@ -406,17 +424,21 @@ function MyPage() {
                 </div>
               ) : (
                 <div className="recent-list">
-                  {recentViews.map(view => (
-                    <div key={view.id} className="recent-item">
-                      <div>
-                        <h4>{view.plan?.title || '제목 없음'}</h4>
-                        <p>🔖 {view.plan?.keyword}</p>
-                        <p>📅 {view.plan?.travelDate} ({view.plan?.durationDays}일)</p>
-                        <p>💰 {view.plan?.totalPrice?.toLocaleString()}원</p>
+                  {/* 2. 바로 여기! 기존 {recentViews.map(...)} 부분을 아래 코드로 교체하세요 */}
+                  {recentViews.map((view, index) => (
+                    <div key={index} className="recent-item">
+                      <div className="recent-info">
+                        <h4>{view.name || '제목 없음'}</h4> 
+                        <p>📍 {view.region || '지역 정보 없음'}</p>
+                        <small>조회: {view.viewedAt ? new Date(view.viewedAt).toLocaleString() : '-'}</small>
                       </div>
-                      <div className="recent-meta">
-                        <small>조회: {new Date(view.viewedAt).toLocaleString()}</small>
-                        {getStatusBadge(view.plan?.status)}
+                      <div className="recent-actions">
+                        <button 
+                          className="btn-primary btn-sm" 
+                          onClick={() => navigate(`/plan/${view.planId}`)}
+                        >
+                          보기
+                        </button>
                       </div>
                     </div>
                   ))}
