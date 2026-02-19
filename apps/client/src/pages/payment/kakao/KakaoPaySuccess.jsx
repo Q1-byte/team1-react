@@ -25,20 +25,23 @@ const KakaoPaySuccess = () => {
         const approvePayment = async () => {
             try {
                 // 2. 백엔드 카카오 결제 승인 API 호출
+                const planId = localStorage.getItem('plan_id');
                 const response = await api.post('/payment/approve', {
                     tid: tid,
-                    pg_token: pg_token
+                    pg_token: pg_token,
+                    plan_id: planId ? parseInt(planId, 10) : null
                 });
 
                 if (response.data) {
                     console.log("카카오 결제 승인 완료:", response.data);
-                    
+
                     // 성공 후 처리
                     setIsProcessing(false);
-                    
+
                     // 사용한 임시 데이터 삭제
                     localStorage.removeItem('kakao_tid');
                     localStorage.removeItem('temp_plan_data');
+                    localStorage.removeItem('plan_id');
                     
                     // 🧾 영수증 페이지로 이동 (중첩 라우트 경로)
                     // 유저가 완료 메시지를 인지할 수 있도록 1.5초 후 이동

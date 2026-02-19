@@ -63,6 +63,9 @@ const PlanCheckout = () => {
 
         // 공통 데이터 백업
         localStorage.setItem('temp_plan_data', JSON.stringify(finalPlanData));
+        if (finalPlanData?.plan_id) {
+            localStorage.setItem('plan_id', String(finalPlanData.plan_id));
+        }
 
         // --- [방식 1] 카카오페이 로직 (기존 유지) ---
         if (selectedMethod === 'kakaopay') {
@@ -79,7 +82,7 @@ const PlanCheckout = () => {
                     partner_order_id: `order_${new Date().getTime()}`,
                     partner_user_id: String(user.id),
                     user_id: user.id,
-                    plan_id: finalPlanData?.plan_id || finalPlanData?.id || 1,
+                    plan_id: finalPlanData?.plan_id,
                     plan_items: displayDetails
                 });
 

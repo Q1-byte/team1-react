@@ -109,6 +109,18 @@ function MyPage() {
     fetchTabData();
   }, [activeTab, user, myPlans.length, pointHistory.length, myInquiries.length, recentViews.length]);
 
+  // 여행 계획 삭제 핸들러
+  const handleDeletePlan = async (planId) => {
+    if (!window.confirm('이 여행 계획을 삭제할까요?')) return;
+    try {
+      await api.delete(`/plans/${planId}`);
+      setMyPlans(prev => prev.filter(p => p.id !== planId));
+    } catch (err) {
+      console.error('계획 삭제 실패:', err);
+      alert('삭제에 실패했습니다.');
+    }
+  };
+
   // 프로필 수정 핸들러
   const handleProfileUpdate = async () => {
     try {
@@ -339,12 +351,15 @@ function MyPage() {
                         <p>📅 {plan.travelDate} ({plan.durationDays}일)</p>
                         <p>👥 {plan.peopleCount}명</p>
                         <p>🔖 {plan.keyword}</p>
-                        <p className="plan-price">💰 {plan.totalPrice?.toLocaleString()}원</p>
+                        <p className="plan-price">💰 {plan.totalPrice ? `${plan.totalPrice.toLocaleString()}원` : '-'}</p>
                       </div>
                       <div className="plan-actions">
-                        <button className="btn-primary btn-sm">상세보기</button>
+                        <button className="btn-primary btn-sm" onClick={() => plan.status === 'PAID' ? navigate('/reserve/receipt', { state: { planData: plan } }) : navigate(`/reserve/${plan.id}`)}>상세보기</button>
                         {plan.status === 'READY' && (
-                          <button className="btn-success btn-sm">결제하기</button>
+                          <>
+                            <button className="btn-success btn-sm">결제하기</button>
+                            <button className="btn-danger btn-sm" onClick={() => handleDeletePlan(plan.id)}>삭제</button>
+                          </>
                         )}
                         {plan.status === 'DONE' && (
                           <button className="btn-secondary btn-sm" onClick={() => navigate('/reviews/write')}>
@@ -433,9 +448,9 @@ function MyPage() {
                         <small>조회: {view.viewedAt ? new Date(view.viewedAt).toLocaleString() : '-'}</small>
                       </div>
                       <div className="recent-actions">
-                        <button 
-                          className="btn-primary btn-sm" 
-                          onClick={() => navigate(`/plan/${view.planId}`)}
+                        <button
+                          className="btn-primary btn-sm"
+                          onClick={() => navigate(`/reserve/${view.planId}`)}
                         >
                           보기
                         </button>

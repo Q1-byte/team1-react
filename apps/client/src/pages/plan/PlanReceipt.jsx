@@ -1,24 +1,28 @@
 import React from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext, useLocation } from 'react-router-dom';
 import './PlanReceipt.css';
 
 const PlanReceipt = () => {
     const navigate = useNavigate();
     const { planConfig } = useOutletContext();
+    const location = useLocation();
 
-    // localStorage에서 결제 데이터 가져오기
+    // MyPage 상세보기로 온 경우 (결제완료 plan 데이터)
+    const planData = location.state?.planData;
+
+    // localStorage에서 결제 데이터 가져오기 (일반 결제 완료 흐름)
     const savedPlanData = JSON.parse(localStorage.getItem('temp_plan_data') || '{}');
 
     const accommodation = savedPlanData.selected_accommodation;
     const activity = savedPlanData.selected_activity;
     const ticket = savedPlanData.selected_ticket;
     const confirmedDetails = savedPlanData.confirmed_details || [];
-    const peopleCount = savedPlanData.people_count || planConfig.people_count || 1;
+    const peopleCount = planData?.peopleCount || savedPlanData.people_count || planConfig.people_count || 1;
 
     const accomTotal = (accommodation?.pricePerNight || 0) * 2;
     const activityTotal = (activity?.price || 0) * peopleCount;
     const ticketTotal = (ticket?.price || 0) * peopleCount;
-    const totalPrice = savedPlanData.total_amount || (accomTotal + activityTotal + ticketTotal);
+    const totalPrice = planData?.totalPrice || savedPlanData.total_amount || (accomTotal + activityTotal + ticketTotal);
 
     // 일정을 일차별로 그룹화
     const groupedDetails = confirmedDetails.reduce((acc, item) => {
@@ -42,15 +46,20 @@ const PlanReceipt = () => {
                     <h3>[ 여행 확정 정보 ]</h3>
                     <div className="receipt-row">
                         <span>목적지</span>
-                        <span>**{planConfig.region_name || "미지정"} ({planConfig.sub_region || "전체"})**</span>
+                        <span>{planData?.title || planConfig.region_name || "미지정"}</span>
                     </div>
                     <div className="receipt-row">
                         <span>여행 일정</span>
-                        <span>{planConfig.start_date || "미정"} ~ {planConfig.end_date || "미정"} ({planConfig.nights}박)</span>
+                        <span>
+                            {planData
+                                ? `${planData.travelDate || '미정'} (${planData.durationDays || '-'}일)`
+                                : `${planConfig.start_date || '미정'} ~ ${planConfig.end_date || '미정'} (${planConfig.nights}박)`
+                            }
+                        </span>
                     </div>
                     <div className="receipt-row">
                         <span>인원 수</span>
-                        <span>{planConfig.people_count}명</span>
+                        <span>{peopleCount}명</span>
                     </div>
                 </section>
 

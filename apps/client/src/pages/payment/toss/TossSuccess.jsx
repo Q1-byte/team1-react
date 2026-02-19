@@ -22,10 +22,12 @@ const TossSuccess = () => {
                 }
 
                 // 2. 백엔드 TossPaymentService.confirmPayment 호출
+                const planId = localStorage.getItem('plan_id');
                 const response = await api.post('/api/payment/toss/confirm', {
                     paymentKey,
                     orderId,
-                    amount: parseInt(amount, 10) // 숫자로 변환해서 전달
+                    amount: parseInt(amount, 10),
+                    planId: planId ? parseInt(planId, 10) : null
                 });
 
                 if (response.status === 200 || response.data) {
@@ -36,6 +38,7 @@ const TossSuccess = () => {
                     
                     // 로컬스토리지에 저장했던 임시 데이터가 있다면 여기서 삭제
                     localStorage.removeItem('temp_plan_data');
+                    localStorage.removeItem('plan_id');
 
                     // 🧾 영수증 페이지로 이동 (우리가 설정한 중첩 라우트 경로)
                     // 바로 이동하면 유저가 완료 메시지를 못 볼 수 있으니 살짝 지연 후 이동
