@@ -167,7 +167,6 @@ const PlanCheckout = () => {
                                                     <span className="item-type">[{item.type}]</span>
                                                     <span className="item-name">{item.name}</span>
                                                 </div>
-                                                <span className="item-price">{item.price.toLocaleString()}원</span>
                                             </div>
                                         ))}
                                     </div>

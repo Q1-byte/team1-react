@@ -173,7 +173,6 @@ const PlanResult = () => {
                                                 <p className="address">{item.address}</p>
                                             </div>
                                             <div className="item-right-side">
-                                                <div className="price-tag">{item.price.toLocaleString()} 원</div>
                                                 <button className={`toggle-btn ${item.is_selected ? 'remove' : 'add'}`} onClick={() => toggleItem(item.id)}>
                                                     {item.is_selected ? '일정 제거' : '일정 추가'}
                                                 </button>
