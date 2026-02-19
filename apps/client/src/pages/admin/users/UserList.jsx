@@ -1,48 +1,73 @@
 import { useState, useEffect } from 'react';
+import { getUsers, deleteUser, updateUserPoint } from '../../../api/userApi';
 
 function UserList() {
   const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [totalElements, setTotalElements] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  // Mock 사용자 데이터 가져오기
-  useEffect(() => {
-    const loadUsers = () => {
-      const usersData = localStorage.getItem('mock_users');
-      if (usersData) {
-        setUsers(JSON.parse(usersData));
-      }
-    };
-    loadUsers();
-  }, []);
+  const [keyword, setKeyword] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
 
-  // 검색 필터링
-  const filteredUsers = users.filter(user =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // 회원 삭제
-  const handleDelete = (userId) => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      const updatedUsers = users.filter(u => u.id !== userId);
-      setUsers(updatedUsers);
-      localStorage.setItem('mock_users', JSON.stringify(updatedUsers));
-      alert('삭제되었습니다.');
+  const fetchUsers = async (p = 0, kw = keyword, role = roleFilter) => {
+    try {
+      setLoading(true);
+      const data = await getUsers(p, 10, kw, role);
+      setUsers(data.content || []);
+      setTotalElements(data.totalElements || 0);
+      setTotalPages(data.totalPages || 0);
+    } catch (err) {
+      console.error('회원 목록 로드 실패:', err);
+      alert('데이터를 불러오지 못했습니다.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // 포인트 수정
-  const handleEditPoint = (userId) => {
-    const user = users.find(u => u.id === userId);
-    const newPoint = prompt(`${user.username}의 포인트를 수정하세요:`, user.point);
+  useEffect(() => {
+    fetchUsers(page, keyword, roleFilter);
+  }, [page]);
 
-    if (newPoint !== null && !isNaN(newPoint)) {
-      const updatedUsers = users.map(u =>
-        u.id === userId ? { ...u, point: parseInt(newPoint) } : u
-      );
-      setUsers(updatedUsers);
-      localStorage.setItem('mock_users', JSON.stringify(updatedUsers));
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(0);
+    fetchUsers(0, keyword, roleFilter);
+  };
+
+  const handleRoleFilter = (role) => {
+    const next = roleFilter === role ? '' : role;
+    setRoleFilter(next);
+    setPage(0);
+    fetchUsers(0, keyword, next);
+  };
+
+  const handleDelete = async (id, role) => {
+    if (role === 'ADMIN') return;
+    if (!window.confirm('정말로 이 회원을 삭제하시겠습니까?')) return;
+    try {
+      await deleteUser(id);
+      alert('삭제되었습니다.');
+      fetchUsers(page, keyword, roleFilter);
+    } catch (err) {
+      console.error('삭제 실패:', err);
+      alert('삭제에 실패했습니다.');
+    }
+  };
+
+  const handleEditPoint = async (user) => {
+    const input = prompt(`${user.username}의 포인트를 수정하세요:`, user.point);
+    if (input === null) return;
+    const point = parseInt(input);
+    if (isNaN(point)) { alert('올바른 숫자를 입력해주세요.'); return; }
+    try {
+      await updateUserPoint(user.id, point);
       alert('포인트가 수정되었습니다.');
+      fetchUsers(page, keyword, roleFilter);
+    } catch (err) {
+      console.error('포인트 수정 실패:', err);
+      alert('포인트 수정에 실패했습니다.');
     }
   };
 
@@ -53,93 +78,164 @@ function UserList() {
         <p>전체 회원 목록 및 관리</p>
       </div>
 
+      {/* 요약 카드 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div
+          className="card"
+          onClick={() => handleRoleFilter('')}
+          style={{ cursor: 'pointer', borderLeft: roleFilter === '' ? '4px solid #005ADE' : '4px solid transparent' }}
+        >
+          <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>전체 회원</h4>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{totalElements.toLocaleString()}명</p>
+        </div>
+        <div
+          className="card"
+          onClick={() => handleRoleFilter('USER')}
+          style={{ cursor: 'pointer', borderLeft: roleFilter === 'USER' ? '4px solid #2ecc71' : '4px solid transparent' }}
+        >
+          <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>일반 회원 필터</h4>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0, color: '#2ecc71' }}>
+            {roleFilter === 'USER' ? `${totalElements.toLocaleString()}명` : '-'}
+          </p>
+        </div>
+        <div
+          className="card"
+          onClick={() => handleRoleFilter('ADMIN')}
+          style={{ cursor: 'pointer', borderLeft: roleFilter === 'ADMIN' ? '4px solid #e74c3c' : '4px solid transparent' }}
+        >
+          <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>관리자 필터</h4>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0, color: '#e74c3c' }}>
+            {roleFilter === 'ADMIN' ? `${totalElements.toLocaleString()}명` : '-'}
+          </p>
+        </div>
+      </div>
+
       <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <input
-            type="text"
-            placeholder="🔍 아이디 또는 이메일로 검색..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              flex: 1,
-              padding: '10px 16px',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              fontSize: '14px',
-              maxWidth: '400px'
-            }}
-          />
-          <div style={{ color: '#7f8c8d' }}>
-            총 {filteredUsers.length}명
-          </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <form onSubmit={handleSearch} style={{ display: 'flex', gap: '8px' }}>
+            <input
+              type="text"
+              placeholder="🔍 아이디, 닉네임, 이메일로 검색..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              style={{
+                padding: '10px 16px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                width: '300px',
+                fontSize: '0.9rem'
+              }}
+            />
+            <button type="submit" className="btn btn-primary btn-sm">검색</button>
+            {keyword && (
+              <button
+                type="button"
+                className="btn btn-sm"
+                style={{ background: '#ddd', color: '#555' }}
+                onClick={() => { setKeyword(''); setPage(0); fetchUsers(0, '', roleFilter); }}
+              >
+                초기화
+              </button>
+            )}
+          </form>
+          <span style={{ color: '#7f8c8d', fontSize: '0.9rem' }}>총 {totalElements.toLocaleString()}명</span>
         </div>
 
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>아이디</th>
-              <th>이메일</th>
-              <th>연락처</th>
-              <th>권한</th>
-              <th>포인트</th>
-              <th>여행 성향</th>
-              <th>가입일</th>
-              <th>관리</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length === 0 ? (
-              <tr>
-                <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-                  검색 결과가 없습니다
-                </td>
-              </tr>
-            ) : (
-              filteredUsers.map(user => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td><strong>{user.username}</strong></td>
-                  <td>{user.email}</td>
-                  <td>{user.phone || '-'}</td>
-                  <td>
-                    <span className={`badge ${user.role === 'ADMIN' ? 'badge-danger' : 'badge-success'}`}>
-                      {user.role}
-                    </span>
-                  </td>
-                  <td>
-                    <strong>{user.point?.toLocaleString() || 0}P</strong>
-                  </td>
-                  <td>
-                    <span style={{ fontSize: '12px', color: '#7f8c8d' }}>
-                      {user.keyword_pref || '-'}
-                    </span>
-                  </td>
-                  <td>
-                    {user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button
-                        onClick={() => handleEditPoint(user.id)}
-                        className="btn btn-primary btn-sm"
-                      >
-                        포인트
-                      </button>
-                      <button
-                        onClick={() => handleDelete(user.id)}
-                        className="btn btn-danger btn-sm"
-                        disabled={user.role === 'ADMIN'}
-                      >
-                        삭제
-                      </button>
-                    </div>
-                  </td>
+        {loading ? (
+          <p style={{ textAlign: 'center', padding: '40px', color: '#999' }}>로딩 중...</p>
+        ) : (
+          <>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>아이디</th>
+                  <th>닉네임</th>
+                  <th>이메일</th>
+                  <th>연락처</th>
+                  <th>권한</th>
+                  <th>포인트</th>
+                  <th>여행 성향</th>
+                  <th>가입일</th>
+                  <th>관리</th>
                 </tr>
-              ))
+              </thead>
+              <tbody>
+                {users.length > 0 ? (
+                  users.map(user => (
+                    <tr key={user.id}>
+                      <td>{user.id}</td>
+                      <td><strong>{user.username}</strong></td>
+                      <td>{user.nickname || '-'}</td>
+                      <td>{user.email}</td>
+                      <td>{user.phone || '-'}</td>
+                      <td>
+                        <span
+                          className="badge"
+                          style={{
+                            background: user.role === 'ADMIN' ? '#fde8e8' : '#e6f4ea',
+                            color: user.role === 'ADMIN' ? '#c62828' : '#2e7d32'
+                          }}
+                        >
+                          {user.role}
+                        </span>
+                      </td>
+                      <td><strong>{user.point?.toLocaleString() || 0}P</strong></td>
+                      <td style={{ fontSize: '12px', color: '#7f8c8d' }}>{user.keywordPref || '-'}</td>
+                      <td>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}</td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button
+                            onClick={() => handleEditPoint(user)}
+                            className="btn btn-primary btn-sm"
+                          >
+                            포인트
+                          </button>
+                          <button
+                            onClick={() => handleDelete(user.id, user.role)}
+                            className="btn btn-sm"
+                            style={{ background: '#e74c3c', color: 'white' }}
+                            disabled={user.role === 'ADMIN'}
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="10" style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                      검색 결과가 없습니다.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+
+            {totalPages > 1 && (
+              <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                <button
+                  onClick={() => setPage(p => Math.max(0, p - 1))}
+                  disabled={page === 0}
+                  className="btn btn-sm"
+                  style={{ marginRight: '10px' }}
+                >
+                  이전
+                </button>
+                <span>{page + 1} / {totalPages}</span>
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                  disabled={page >= totalPages - 1}
+                  className="btn btn-sm"
+                  style={{ marginLeft: '10px' }}
+                >
+                  다음
+                </button>
+              </div>
             )}
-          </tbody>
-        </table>
+          </>
+        )}
       </div>
     </div>
   );
