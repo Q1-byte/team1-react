@@ -109,6 +109,7 @@ export const router = createBrowserRouter([
         path: 'gacha',
         element: <GachaPage />
       },
+      { path: 'plan/:planId',  element: <PlanResult />},
       // --- Plan 관련 라우트 (중첩 구조 유지) ---
       {
         path: 'reserve',
@@ -129,6 +130,18 @@ export const router = createBrowserRouter([
           {
             path: 'result',
             element: <PlanResult />
+          },
+          {
+            path: ':planId', 
+            element: <PlanResult />
+          },
+          {
+            path: 'check', 
+            element: <PlanCheckout />
+          },
+          {
+            path: 'receipt',
+            element: <PlanReceipt />
           },
           
           // 💡 여기에 배치하여 /reserve/check 주소를 활성화합니다.
@@ -180,6 +193,7 @@ export const router = createBrowserRouter([
     path: '/admin',
     element: <ProtectedRoute><AdminLayout /></ProtectedRoute>,
     children: [
+      
       { index: true, element: <AdminDashboard /> },
       { path: 'users', element: <UserManagement /> },
       { path: 'spots', element: <SpotManagement /> },

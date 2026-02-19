@@ -90,18 +90,37 @@
 .review-card-wrapper:hover::before { bottom: 0; }
 
 /* 별점 및 텍스트 */
-.stars {
+/* 1. 별점 스타일: 꽉 찬 별을 노란색으로 강제 */
+.stars .filled {
     color: #FFD700 !important;
-    font-size: 28px;
-    margin-bottom: 15px;
 }
-.review-text {
-    font-size: 1.1rem;
-    line-height: 1.5;
-    font-weight: 500;
-    word-break: keep-all;
+.stars .empty {
+    color: #e0e0e0 !important;
 }
 
+/* 2. 사진 속 회색 박스의 범인일 가능성이 높은 클래스들 초기화 */
+.stars-display, .review-card {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+}
+
+/* 3. 텍스트 위치 교정 */
+.review-text {
+    margin-top: 10px;
+    color: #333;
+    font-size: 1.1rem;
+    z-index: 2;
+}
+
+/* 4. 호버 시 텍스트/별 색상 반전 (파란 배경 대응) */
+.review-card-wrapper:hover .filled,
+.review-card-wrapper:hover .empty,
+.review-card-wrapper:hover .review-text {
+    color: white !important;
+}
 /* 5. 버튼: 양 끝에 시원하게 배치 */
 .slide-btn {
     width: 55px;
@@ -176,4 +195,67 @@
     .edge-overlay {
         display: none;
     }
+
+    /* 노란 별 스타일 */
+.review-stars {
+    color: #FFD700; /* 황금색(Gold) */
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    letter-spacing: 2px; /* 별 사이 간격 */
 }
+
+/* 빈 별 스타일 (선택 사항: 약간 흐리게) */
+.empty-stars {
+    color: #e0e0e0; /* 연한 회색 */
+}
+
+/* 제목 스타일 */
+.review-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    /* 제목이 너무 길면 한 줄로 자르고 ... 처리 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+}
+
+/* 스켈레톤 기본 스타일 */
+.skeleton-card {
+    width: 250px; /* 실제 카드 너비에 맞추세요 */
+    height: 150px;
+    background: #eee;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    }
+
+    /* 애니메이션: 밝아졌다 어두워졌다 하는 효과 */
+    @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+    }
+
+    .skeleton {
+    animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    .skeleton-stars {
+    width: 80px;
+    height: 20px;
+    background: #ddd;
+    }
+
+    .skeleton-text {
+    width: 100%;
+    height: 15px;
+    background: #ddd;
+    }
+
+    .skeleton-text.short {
+    width: 60%;
+    }

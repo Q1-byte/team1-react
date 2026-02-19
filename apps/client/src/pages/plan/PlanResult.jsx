@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import './PlanResult.css';
 import Header from '../../components/Header';
+import api from '../../api';
+import { useAuth } from '../../context/AuthContext';
 
 const API_BASE = 'http://localhost:8080';
 
 const PlanResult = () => {
+    const { planId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useAuth();
+    
+    const isFirstRender = useRef(true);
 
     const finalPlanData = location.state?.finalPlanData || {};
     const selectedKeywords = finalPlanData.keywords || ["#힐링"];
@@ -24,29 +30,60 @@ const PlanResult = () => {
     const [activity, setActivity] = useState(null);
     const [ticket, setTicket] = useState(null);
 
-    useEffect(() => {
-        const fetchRealPlan = async () => {
-            try {
-                const SHORT_TO_FULL = {
-                    "서울": "서울", "부산": "부산", "대구": "대구", "인천": "인천",
-                    "광주": "광주", "대전": "대전", "울산": "울산", "세종": "세종",
-                    "경기": "경기", "강원": "강원",
-                    "충북": "충청북도", "충남": "충청남도",
-                    "전북": "전라북도", "전남": "전라남도",
-                    "경북": "경상북도", "경남": "경상남도",
-                    "제주": "제주"
-                };
-                const resolvedRegion = SHORT_TO_FULL[regionName] || regionName;
-                const searchRegion = subRegion || resolvedRegion;
+    // ✨ [추가] 자동 저장 함수: 추천받은 즉시 DB에 기록
+    // PlanResult.js 내 해당 함수 찾아서 수정
+    const savePlanAutomatically = async (formattedDetails) => {
+    console.log("자동 저장 시도 시작..."); // 👈 확인용
+    console.log("현재 유저 정보:", user); // 👈 유저 ID가 찍히는지 확인
+    console.log("데이터 개수:", formattedDetails.length);
 
-                const response = await axios.post(`${API_BASE}/api/plans/recommend`, {
-                    keyword: selectedKeywords,
-                    region: searchRegion
-                });
+    // 유저 정보가 없으면 여기서 리턴됩니다. 로그인이 안 되어 있다면 여기서 멈춰요!
+    if (!user?.id) {
+        console.warn("⚠️ 유저 ID가 없어 저장을 중단합니다.");
+        return;
+    }
+    if (planId) return; // 이미 저장된 글을 보는 중이라면 중단
 
-                const scheduleMap = response.data.schedule;
-                const formattedDetails = [];
+    const planPayload = {
+        userId: user.id,
+        regionName: regionName,
+        startDate: finalPlanData.start_date,
+        endDate: finalPlanData.end_date,
+        peopleCount: finalPlanData.people_count || 1,
+        spots: formattedDetails.map(d => ({ spotId: d.id, day: d.day }))
+    };
 
+    try {
+        const response = await axios.post('http://localhost:8080/api/plans/save', planPayload);
+        console.log("✅ DB 자동 저장 성공! 생성된 ID:", response.data);
+    } catch (error) {
+        console.error("❌ 자동 저장 실패:", error.response?.data || error.message);
+    }
+};
+
+    const fetchRealPlan = async () => {
+        try {
+            const SHORT_TO_FULL = {
+                "서울": "서울", "부산": "부산", "대구": "대구", "인천": "인천",
+                "광주": "광주", "대전": "대전", "울산": "울산", "세종": "세종",
+                "경기": "경기", "강원": "강원",
+                "충북": "충청북도", "충남": "충청남도",
+                "전북": "전라북도", "전남": "전라남도",
+                "경북": "경상북도", "경남": "경상남도",
+                "제주": "제주"
+            };
+            const resolvedRegion = SHORT_TO_FULL[regionName] || regionName;
+            const searchRegion = subRegion || resolvedRegion;
+
+            const response = await axios.post(`${API_BASE}/api/plans/recommend`, {
+                keyword: selectedKeywords,
+                region: searchRegion
+            });
+
+            const scheduleMap = response.data.schedule;
+            const formattedDetails = [];
+
+            if (scheduleMap) {
                 Object.entries(scheduleMap).forEach(([dayStr, spots]) => {
                     const dayNum = parseInt(dayStr.replace(/[^0-9]/g, '')) || 1;
                     if (Array.isArray(spots)) {
@@ -58,23 +95,84 @@ const PlanResult = () => {
                                 name: spot.name,
                                 address: spot.address,
                                 price: 0,
-                                imageUrl: spot.imageUrl || "data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27150%27 height=%27150%27%3E%3Crect width=%27150%27 height=%27150%27 fill=%27%23ddd%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27%23999%27 font-size=%2714%27%3ENo Image%3C/text%3E%3C/svg%3E",
+                                imageUrl: spot.imageUrl || "기본이미지...",
                                 is_selected: true
                             });
                         });
                     }
                 });
+            }
 
-                setDetails(formattedDetails);
-                if (formattedDetails.length > 0) {
-                    setActiveDay(Math.min(...formattedDetails.map(d => d.day)));
+            // 1. 화면을 그리기 위해 스테이트 업데이트
+            setDetails(formattedDetails);
+
+            if (formattedDetails.length > 0) {
+                console.log("저장 함수를 호출합니다...");
+                savePlanAutomatically(formattedDetails);
+            }
+
+            // 🚀 2. [추가할 부분] 추천 결과가 있으면 DB에 자동 저장 실행!
+            if (formattedDetails.length > 0) {
+                savePlanAutomatically(formattedDetails);
+            }
+
+            // 3. 첫 번째 날짜 탭 활성화
+            if (formattedDetails.length > 0) {
+                setActiveDay(Math.min(...formattedDetails.map(d => d.day)));
+            }
+        } catch (error) {
+            console.error("API 에러 발생:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            try {
+                if (location.state?.finalPlanData) {
+                    await fetchRealPlan();
+                } else if (planId) {
+                    const res = await api.get(`/plans/${planId}?userId=${user?.id}`);
+                    const data = res.data;
+                    
+                    if (data.schedule) {
+                        const formattedDetails = [];
+                        Object.entries(data.schedule).forEach(([dayStr, spots]) => {
+                            const dayNum = parseInt(dayStr.replace(/[^0-9]/g, '')) || 1;
+                            if (Array.isArray(spots)) {
+                                spots.forEach(spot => {
+                                    formattedDetails.push({
+                                        id: spot.id,
+                                        day: dayNum,
+                                        type: spot.spotKeywords?.[0]?.keyword?.name || '관광',
+                                        name: spot.name,
+                                        address: spot.address,
+                                        price: 0,
+                                        imageUrl: spot.imageUrl || "기본이미지URL",
+                                        is_selected: true
+                                    });
+                                });
+                            }
+                        });
+                        setDetails(formattedDetails);
+                        if (formattedDetails.length > 0) {
+                            setActiveDay(Math.min(...formattedDetails.map(d => d.day)));
+                        }
+                    }
                 }
-            } catch (error) {
-                console.error("API 에러 발생:", error);
+            } catch (err) {
+                console.error("데이터 로드 실패:", err);
             } finally {
                 setLoading(false);
             }
         };
+        loadData();
+    }, [planId]);
+
+    useEffect(() => {
+        if (!location.state?.finalPlanData) return;
         fetchRealPlan();
     }, [regionName, subRegion, JSON.stringify(selectedKeywords)]);
 
@@ -137,12 +235,8 @@ const PlanResult = () => {
     return (
         <div className="result-layout">
             <Header />
-            
             <div className="result-main-container">
-                {/* 하나의 흰색 카드 컨테이너 */}
                 <div className="combined-result-card">
-                    
-                    {/* 왼쪽 일정 섹션 */}
                     <div className="itinerary-section">
                         <div className="result-header">
                             <h2>{regionName} {subRegion && `${subRegion}`} 여행 스케줄 관리</h2>
@@ -184,7 +278,6 @@ const PlanResult = () => {
                         )}
                     </div>
 
-                    {/* 오른쪽 상품 섹션 */}
                     <div className="product-section">
                         <h3 className="section-title">추천 여행 상품</h3>
                         <div className="product-scroll-area">
@@ -222,7 +315,6 @@ const PlanResult = () => {
                     </div>
                 </div>
 
-                {/* 하단 결제 바 (카드 바로 아래 배치) */}
                 <div className="bottom-checkout-bar">
                     <div className="checkout-content">
                         <div className="total-price-info">
