@@ -223,7 +223,11 @@
     };
     }
 
-    const response = await api.put('/api/mypage/profile', profileData);
+    const response = await api.put('/api/mypage/profile', {
+        phone: profileData.phone,
+        keywordPref: profileData.keywordPref,
+        nickname: profileData.nickname
+    });
     return response.data;
     };
 

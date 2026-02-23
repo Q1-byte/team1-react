@@ -5,6 +5,7 @@ import './App.css';
 // 컴포넌트 임포트
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 export default function App() {
   const { loading } = useAuth();
@@ -15,6 +16,7 @@ export default function App() {
 
   return (
     <div className="App" style={{ position: 'relative', display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
+      <ScrollToTop />
       {/* 상단 영역 */}
       <Header />
 

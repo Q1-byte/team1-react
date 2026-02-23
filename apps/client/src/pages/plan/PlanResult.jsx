@@ -14,7 +14,7 @@ const PlanResult = () => {
     const location = useLocation();
     const { user } = useAuth();
     
-    const hasSaved = useRef(false);
+    const isSaving = useRef(false);
 
     const finalPlanData = location.state?.finalPlanData || {};
     const selectedKeywords = finalPlanData.keywords || ["#힐링"];
@@ -36,43 +36,6 @@ const PlanResult = () => {
     const [activity, setActivity] = useState(null);
     const [ticket, setTicket] = useState(null);
 
-    // ✨ [추가] 자동 저장 함수: 추천받은 즉시 DB에 기록
-    // PlanResult.js 내 해당 함수 찾아서 수정
-    const savePlanAutomatically = async (formattedDetails) => {
-    console.log("자동 저장 시도 시작..."); // 👈 확인용
-    console.log("현재 유저 정보:", user); // 👈 유저 ID가 찍히는지 확인
-    console.log("데이터 개수:", formattedDetails.length);
-
-    if (hasSaved.current) return;
-    if (!user?.id) {
-        console.warn("⚠️ 유저 ID가 없어 저장을 중단합니다.");
-        return;
-    }
-    if (planId) return; // 이미 저장된 글을 보는 중이라면 중단
-
-    const planPayload = {
-        userId: user.id,
-        regionName: regionName,
-        startDate: finalPlanData.start_date,
-        endDate: finalPlanData.end_date,
-        peopleCount: finalPlanData.people_count || 1,
-        spots: formattedDetails.map(d => ({ spotId: d.id, day: d.day }))
-    };
-
-    try {
-        hasSaved.current = true;
-        const response = await api.post('/plans/save', planPayload);
-        const raw = response.data;
-        const id = typeof raw === 'number' ? raw : (raw?.id ?? raw?.planId ?? raw?.data);
-        console.log("✅ DB 자동 저장 성공! 생성된 ID:", id);
-        if (id) {
-            setSavedPlanId(id);
-            api.post(`/plans/${id}/view`).catch(() => {});
-        }
-    } catch (error) {
-        console.error("❌ 자동 저장 실패:", error.response?.data || error.message);
-    }
-};
 
     const fetchRealPlan = async () => {
         try {
@@ -116,14 +79,9 @@ const PlanResult = () => {
                 });
             }
 
-            // 1. 화면을 그리기 위해 스테이트 업데이트
             setDetails(formattedDetails);
 
-            if (formattedDetails.length > 0) {
-                savePlanAutomatically(formattedDetails);
-            }
-
-            // 3. 첫 번째 날짜 탭 활성화
+            // 첫 번째 날짜 탭 활성화
             if (formattedDetails.length > 0) {
                 setActiveDay(Math.min(...formattedDetails.map(d => d.day)));
             }
@@ -138,9 +96,7 @@ const PlanResult = () => {
         const loadData = async () => {
             setLoading(true);
             try {
-                if (location.state?.finalPlanData) {
-                    await fetchRealPlan();
-                } else if (planId) {
+                if (planId) {
                     const res = await api.get(`/plans/${planId}?userId=${user?.id}`);
                     const data = res.data;
 
@@ -180,6 +136,8 @@ const PlanResult = () => {
                             setActiveDay(Math.min(...formattedDetails.map(d => d.day)));
                         }
                     }
+                } else if (location.state?.finalPlanData) {
+                    await fetchRealPlan();
                 }
             } catch (err) {
                 console.error("데이터 로드 실패:", err);
@@ -233,10 +191,39 @@ const PlanResult = () => {
     const ticketTotal = (ticket?.price || 0) * peopleCount;
     const totalPrice = details.filter(item => item.is_selected).reduce((sum, item) => sum + (item.price || 0), 0) + accomTotal + activityTotal + ticketTotal;
 
-    const handleGoToCheckout = () => {
+    const handleGoToCheckout = async () => {
         const selectedOnly = details.filter(item => item.is_selected);
         if (selectedOnly.length === 0) { alert("선택된 일정이 없습니다."); return; }
-        navigate('/reserve/check', { state: { finalPlanData: { ...finalPlanData, plan_id: savedPlanId, total_amount: totalPrice, confirmed_details: selectedOnly, selected_accommodation: accommodation, selected_activity: activity, selected_ticket: ticket } } });
+
+        let planIdToUse = savedPlanId || (planId ? parseInt(planId) : null);
+
+        // 신규 계획이고 아직 저장 안 된 경우 → 선택된 스팟만 저장
+        if (!planId && !savedPlanId && user?.id && !isSaving.current) {
+            isSaving.current = true;
+            try {
+                const planPayload = {
+                    userId: user.id,
+                    regionId: parentRegionDbId,
+                    regionName: regionName,
+                    startDate: finalPlanData.start_date,
+                    endDate: finalPlanData.end_date,
+                    peopleCount: finalPlanData.people_count || 1,
+                    spots: selectedOnly.map(d => ({ spotId: d.id, day: d.day }))
+                };
+                const response = await api.post('/plans/save', planPayload);
+                const raw = response.data;
+                const id = typeof raw === 'number' ? raw : (raw?.id ?? raw?.planId ?? raw?.data);
+                if (id) {
+                    planIdToUse = id;
+                    setSavedPlanId(id);
+                    api.post(`/plans/${id}/view`).catch(() => {});
+                }
+            } catch (error) {
+                console.error("계획 저장 실패:", error.response?.data || error.message);
+            }
+        }
+
+        navigate('/reserve/check', { state: { finalPlanData: { ...finalPlanData, plan_id: planIdToUse, total_amount: totalPrice, confirmed_details: selectedOnly, selected_accommodation: accommodation, selected_activity: activity, selected_ticket: ticket } } });
     };
 
     if (loading) return (

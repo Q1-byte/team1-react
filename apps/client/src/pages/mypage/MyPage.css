@@ -402,6 +402,12 @@
   margin-bottom: 12px;
 }
 
+.viewed-at {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 4px;
+}
+
 /* 제목과 태그를 감싸는 헤더 */
 .recent-header {
   display: flex;

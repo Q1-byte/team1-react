@@ -32,19 +32,10 @@ function MyPage() {
   const [activeTab, setActiveTab] = useState('plans');
   
   const [myPlans, setMyPlans] = useState([]);
-  const [pointHistory, setPointHistory] = useState([
-    { id: 1, user_id: 1, amount: 500, type: 'SAVE', description: '신규 회원 가입 축하 포인트', createdAt: '2024-05-10T09:00:00' },
-    { id: 2, user_id: 1, amount: -200, type: 'USE', description: '제주도 숙소 예약 할인 사용', createdAt: '2024-05-12T14:30:00' },
-    { id: 3, user_id: 1, amount: 1000, type: 'SAVE', description: '리뷰 작성 이벤트 당첨', createdAt: '2024-05-15T18:10:00' },
-    { id: 4, user_id: 1, amount: -300, type: 'USE', description: '포인트 샵 상품 구매', createdAt: '2024-05-16T11:05:00' }
-  ]);
+  const [pointHistory, setPointHistory] = useState([]);
   const [recentViews, setRecentViews] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
-  const [myInquiries, setMyInquiries] = useState([
-    { id: 1, category: '결제/환불', title: '결제 취소 건으로 문의드립니다.', status: 'WAIT', isSecret: true, createdAt: '2024-05-20T10:30:00' },
-    { id: 2, category: '여행상품', title: '제주도 패키지 일정 변경 가능한가요?', status: 'ANSWERED', isSecret: false, createdAt: '2024-05-18T14:20:00' },
-    { id: 3, category: '기타', title: '로그인이 자꾸 풀려요 ㅠㅠ', status: 'WAIT', isSecret: false, createdAt: '2024-05-15T09:00:00' }
-  ]);
+  const [myInquiries, setMyInquiries] = useState([]);
 
   const [accommodation, setAccommodation] = useState(null);
   const [activity, setActivity] = useState(null);
@@ -54,6 +45,7 @@ function MyPage() {
   const [error, setError] = useState(null);
   const [editPhone, setEditPhone] = useState('');
   const [editKeywordPref, setEditKeywordPref] = useState('');
+  const [editNickname, setEditNickname] = useState('');
   const [profileLoading, setProfileLoading] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -73,6 +65,7 @@ function MyPage() {
           setRecentViews(response.data.recentViewedPlans || []);
           setEditPhone(response.data.user.phone || '');
           setEditKeywordPref(response.data.user.keywordPref || '');
+          setEditNickname(response.data.user.nickname || '');
         } else {
           setError(response.message);
         }
@@ -148,11 +141,11 @@ function MyPage() {
   const handleProfileUpdate = async () => {
     try {
       setProfileLoading(true);
-      const response = await updateProfile({ phone: editPhone, keywordPref: editKeywordPref });
+      const response = await updateProfile({ phone: editPhone, keywordPref: editKeywordPref, nickname: editNickname });
       if (response.success) {
         alert('프로필이 수정되었습니다.');
         setUserInfo(response.data);
-        updateUser({ phone: response.data.phone, keywordPref: response.data.keywordPref });
+        updateUser({ phone: response.data.phone, keywordPref: response.data.keywordPref, nickname: response.data.nickname });
       } else {
         alert(response.message || '프로필 수정에 실패했습니다.');
       }
@@ -285,12 +278,11 @@ function MyPage() {
                     <div key={plan.id} className="plan-card">
                       <div className="plan-header">
                         <h4 className="plan-title">
-                          {REGION_DATA[Number(plan.regionId || plan.region_id || plan.region)] || plan.title || "지역 정보 없음"}
+                          {plan.region || plan.regionName || REGION_DATA[Number(plan.regionId || plan.region_id)] || plan.title || "지역 정보 없음"}
                         </h4>
                         {getStatusBadge(plan.status)}
                       </div>
                       <div className="plan-info">
-                        <div className="info-item"><span className="info-icon">🏷️</span><span className="info-text">{plan.type}</span></div>
                         <div className="info-item"><span className="info-icon">📅</span><span className="info-text">{plan.travelDate} ({plan.durationDays}일)</span></div>
                         <div className="info-item"><span className="info-icon">👥</span><span className="info-text">{plan.peopleCount}명</span></div>
                         <div className="info-item">
@@ -301,7 +293,13 @@ function MyPage() {
                         </div>
                       </div>
                       <div className="plan-actions">
-                        <button className="btn-sm-v" onClick={() => navigate(`/reserve/${plan.id}`)}>상세보기</button>
+                        <button className="btn-sm-v" onClick={() => {
+                          if (plan.status === 'PAID') {
+                            navigate('/reserve/receipt', { state: { planData: plan } });
+                          } else {
+                            navigate(`/reserve/${plan.id}`);
+                          }
+                        }}>상세보기</button>
                         {plan.status === 'READY' && (
                           <>
                             <button className="btn-sm-p">결제하기</button>
@@ -343,7 +341,7 @@ function MyPage() {
                       {pointHistory.map(point => (
                         <tr key={point.id} className="hover-row">
                           <td className="text-muted">{new Date(point.createdAt).toLocaleDateString()}</td>
-                          <td><span className={`badge-pill badge-${point.type.toLowerCase()}`}>{point.type === 'SAVE' ? '적립' : '사용'}</span></td>
+                          <td><span className={`badge-pill badge-${point.type?.toLowerCase() || 'save'}`}>{point.type === 'SAVE' ? '적립' : '사용'}</span></td>
                           <td className="text-dark font-medium">{point.description}</td>
                           <td className={`text-right font-bold ${point.amount > 0 ? 'color-plus' : 'color-minus'}`}>
                             {point.amount > 0 ? '+' : ''}{point.amount.toLocaleString()} P
@@ -375,7 +373,7 @@ function MyPage() {
                       <tr key={inquiry.id} className="clickable-row" onClick={() => navigate(`/inquiry/${inquiry.id}`)}>
                         <td><span className="badge badge-category">{inquiry.category}</span></td>
                         <td>{inquiry.title} {inquiry.isSecret && '🔒'}</td>
-                        <td><span className={`badge status-${inquiry.status.toLowerCase()}`}>{inquiry.status === 'ANSWERED' ? '답변완료' : '답변대기'}</span></td>
+                        <td><span className={`badge status-${inquiry.status?.toLowerCase() || 'wait'}`}>{inquiry.status === 'ANSWERED' ? '답변완료' : '답변대기'}</span></td>
                         <td>{inquiry.createdAt?.split('T')[0]}</td>
                       </tr>
                     ))}
@@ -398,9 +396,11 @@ function MyPage() {
                     <div key={index} className="recent-card">
                       <div className="recent-info">
                         <h4>{view.name || view.plan?.title || '제목 없음'}</h4>
-                        <span className="region-tag">
-                          📍 {REGION_DATA[Number(view.plan?.regionId || view.plan?.region_id)] || '지역 미정'}
-                        </span>
+                        {view.viewedAt && (
+                          <span className="viewed-at">
+                            {new Date(view.viewedAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        )}
                       </div>
                       <button className="btn-sm-v" onClick={() => navigate(`/reserve/${view.planId}`)}>보기</button>
                     </div>
@@ -432,6 +432,7 @@ function MyPage() {
               <div className="profile-form">
                 <div className="form-group"><label>아이디</label><input type="text" value={displayUser.username || ''} disabled /></div>
                 <div className="form-group"><label>이메일</label><input type="email" value={displayUser.email || ''} disabled /></div>
+                <div className="form-group"><label>닉네임</label><input type="text" value={editNickname} onChange={(e) => setEditNickname(e.target.value)} placeholder="닉네임을 입력하세요" /></div>
                 <div className="form-group"><label>연락처</label><input type="tel" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} /></div>
                 <div className="form-group"><label>여행 성향</label><input type="text" value={editKeywordPref} onChange={(e) => setEditKeywordPref(e.target.value)} /></div>
                 <div className="form-actions">
