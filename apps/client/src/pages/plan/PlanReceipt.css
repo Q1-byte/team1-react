@@ -1,220 +1,305 @@
-/* 전체 컨테이너: 영수증과 버튼을 중앙에 정렬 */
+/* ─── 전체 배경 ─── */
 .receipt-container {
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    padding: 0 0 60px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ─── 상단 완료 배너 ─── */
+.receipt-success-banner {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: white;
+    text-align: center;
+    padding: 50px 20px 40px;
+}
+
+.receipt-check-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 auto 20px;
+    line-height: 1;
+}
+
+.receipt-success-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -0.3px;
+}
+
+.receipt-success-sub {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0;
+}
+
+/* ─── 카드 영역 ─── */
+.receipt-card-wrap {
+    max-width: 680px;
+    margin: -24px auto 0;
+    padding: 0 16px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 40px 20px;
-    background-color: #f8f9fa; /* 연한 회색 배경 */
-    min-height: 100vh;
-    box-sizing: border-box;
-    font-family: 'Pretendard', -apple-system, sans-serif;
+    gap: 16px;
 }
 
-/* 영수증 종이 스타일 */
-.receipt-paper {
+.receipt-card {
     background: white;
-    width: 100%;
-    max-width: 400px; 
-    padding: 40px 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border-radius: 4px; /* 조금 더 영수증 같은 느낌을 위해 곡률 조정 */
-    position: relative;
-    box-sizing: border-box;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
 }
 
-/* 영수증 헤더 */
-.receipt-header {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.receipt-title {
-    font-size: 1.6rem;
-    font-weight: 900;
-    margin-bottom: 8px;
-    color: #222;
-    letter-spacing: 1px;
-}
-
-.receipt-status-badge {
-    display: inline-block;
-    padding: 3px 12px;
-    border: 1px solid #007bff; /* 배경 대신 테두리로 깔끔하게 */
-    color: #007bff;
-    border-radius: 2px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-.receipt-date {
-    font-size: 0.8rem;
-    color: #999;
-}
-
-/* 구분선 스타일 */
-.dashed-line {
-    border: none;
-    border-top: 1.5px dashed #eee;
-    margin: 20px 0;
-}
-
-.double-line {
-    border: none;
-    border-top: 3px double #333;
-    margin: 20px 0;
-}
-
-/* 각 항목 행 (텍스트 배치 보정) */
-.receipt-row {
+.receipt-card-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-    font-size: 0.95rem;
-    color: #444;
-}
-
-.receipt-row span:last-child {
-    text-align: right;
-    font-weight: 500;
-    color: #222;
-    word-break: keep-all;
-}
-
-.total-amount-row {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
-    font-weight: 800;
-    font-size: 1.25rem;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.total-price {
-    color: #007bff;
+.receipt-card-icon {
+    font-size: 1.2rem;
 }
 
-/* 일정 그룹 */
-.receipt-day-group {
-    margin-bottom: 14px;
-}
-
-.receipt-day-title {
+.receipt-card-title {
+    font-size: 1rem;
     font-weight: 700;
-    font-size: 0.9rem;
-    color: #007bff;
-    margin: 0 0 6px 0;
-    padding-bottom: 4px;
-    border-bottom: 1px solid #eee;
+    color: #1a1a1a;
+    margin: 0;
 }
 
-/* 키워드 태그 */
+/* ─── 여행 정보 그리드 ─── */
+.receipt-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.receipt-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.info-label {
+    min-width: 80px;
+    font-size: 0.85rem;
+    color: #888;
+    padding-top: 2px;
+}
+
+.info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* ─── 키워드 태그 ─── */
 .keyword-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 10px;
 }
 
 .receipt-tag {
     font-size: 0.8rem;
-    color: #666;
-    background: #f4f4f4;
+    color: #1a73e8;
+    background: #e8f0fe;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* ─── 인라인 일정 래퍼 (여행 정보 카드 내부) ─── */
+.receipt-itinerary-inline {
+    margin-left: 92px; /* info-label(80px) + gap(12px) 만큼 들여쓰기 */
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding: 12px 14px;
+    background: #f8faff;
+    border-left: 3px solid #c8d9f8;
+    border-radius: 0 8px 8px 0;
+}
+
+/* ─── 일정 그룹 ─── */
+.receipt-day-group {
+    margin-bottom: 20px;
+}
+
+.receipt-day-group:last-child {
+    margin-bottom: 0;
+}
+
+.receipt-day-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1a73e8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 10px;
+    padding: 4px 10px;
+    background: #e8f0fe;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.receipt-spot-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f8f8f8;
+}
+
+.receipt-spot-row:last-child {
+    border-bottom: none;
+}
+
+.spot-type-badge {
+    font-size: 0.72rem;
+    color: #555;
+    background: #f0f0f0;
     padding: 3px 8px;
     border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
 }
 
-/* 🧾 하단 푸터 (줄바꿈 및 간격 핵심 수정) */
-.receipt-footer {
-    text-align: center;
-    margin-top: 35px;
+.spot-info {
     display: flex;
-    flex-direction: column; /* 자식 요소들을 세로로 정렬 */
-    align-items: center;
-    gap: 8px; /* 문장 사이의 간격을 일정하게 부여 */
+    flex-direction: column;
+    gap: 3px;
 }
 
-.receipt-footer p {
-    margin: 0; /* 기본 마진 제거 후 gap으로 조절 */
-    font-size: 0.85rem;
-    color: #777;
-    line-height: 1.5;
-    word-break: keep-all; /* 단어 단위 줄바꿈으로 깔끔하게 */
-    width: 100%;
-}
-
-/* 두 번째 문구(감사 인사)를 좀 더 강조 */
-.receipt-footer p:nth-of-type(2) {
+.spot-name {
+    font-size: 0.92rem;
     font-weight: 600;
+    color: #222;
+}
+
+.spot-address {
+    font-size: 0.78rem;
+    color: #999;
+}
+
+/* ─── 결제 내역 ─── */
+.receipt-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 0;
+    font-size: 0.9rem;
     color: #444;
+    border-bottom: 1px solid #f4f4f4;
+    gap: 12px;
+}
+
+.receipt-price-row span:first-child {
+    flex: 1;
+}
+
+.receipt-price-row small {
+    color: #aaa;
+    font-size: 0.8em;
+    margin-left: 4px;
+}
+
+.receipt-price-discount {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.receipt-price-discount span:last-child {
+    color: #e74c3c;
+}
+
+.receipt-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 18px;
     margin-top: 4px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1a1a1a;
 }
 
-/* 바코드 스타일 보정 */
-.barcode {
-    margin: 30px auto 10px;
-    width: 250px;       /* 바코드 가로 길이 */
-    height: 60px;       /* 바코드 세로 높이 */
-    /* 🚀 핵심: 다양한 굵기의 검은 선을 그래디언트로 생성 */
-    background: repeating-linear-gradient(
-        90deg,
-        #000,
-        #000 2px,    /* 얇은 선 */
-        #fff 2px,
-        #fff 4px,    /* 간격 */
-        #000 4px,
-        #000 7px,    /* 굵은 선 */
-        #fff 7px,
-        #fff 9px
-    );
-    opacity: 0.9;
-    position: relative;
+.receipt-total-price {
+    font-size: 1.35rem;
+    color: #1a73e8;
+    font-weight: 800;
 }
 
-/* 바코드 아래에 임의의 숫자 번호 추가 (디테일) */
-.barcode::after {
-    content: "8 801234 567890";
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    letter-spacing: 3px;
-    color: #333;
+/* ─── 안내 문구 ─── */
+.receipt-notice {
+    text-align: center;
+    font-size: 0.82rem;
+    color: #aaa;
+    margin: 4px 0 0;
 }
 
-/* 🚀 버튼 영역 */
+/* ─── 하단 버튼 ─── */
 .receipt-actions {
+    max-width: 680px;
+    margin: 24px auto 0;
+    padding: 0 16px;
     display: flex;
     gap: 12px;
-    margin-top: 25px;
-    width: 100%;
-    max-width: 400px;
-    box-sizing: border-box;
 }
 
-.home-btn, .mypage-link-btn {
+.receipt-btn-secondary,
+.receipt-btn-primary {
     flex: 1;
-    padding: 16px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
+    height: 52px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
     cursor: pointer;
     border: none;
-    transition: all 0.2s ease;
+    transition: all 0.18s ease;
 }
 
-.home-btn {
-    background-color: #eee;
+.receipt-btn-secondary {
+    background: white;
     color: #555;
+    border: 1.5px solid #ddd;
 }
 
-.mypage-link-btn {
-    background-color: #007bff;
+.receipt-btn-secondary:hover {
+    background: #f4f4f4;
+}
+
+.receipt-btn-primary {
+    background: #1a73e8;
     color: white;
 }
 
-.home-btn:hover { background-color: #e2e2e2; }
-.mypage-link-btn:hover { background-color: #0056b3; }
+.receipt-btn-primary:hover {
+    background: #1558b0;
+}
+
+/* ─── 반응형 ─── */
+@media (max-width: 480px) {
+    .receipt-success-title {
+        font-size: 1.4rem;
+    }
+
+    .receipt-card {
+        padding: 18px;
+    }
+
+    .receipt-total-price {
+        font-size: 1.15rem;
+    }
+}

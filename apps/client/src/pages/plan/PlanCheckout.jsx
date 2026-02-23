@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { loadTossPayments } from '@tosspayments/payment-sdk';
 import api from '../../api/axiosConfig';
@@ -27,6 +27,27 @@ const PlanCheckout = () => {
     const ticketTotal = (ticket?.price || 0) * peopleCount;
 
     const [selectedMethod, setSelectedMethod] = useState('kakaopay');
+    const [userPoint, setUserPoint] = useState(user?.point || 0);
+    const [usePoints, setUsePoints] = useState(0);
+
+    const finalAmount = Math.max(0, totalPrice - usePoints);
+
+    useEffect(() => {
+        if (user?.id) {
+            api.get('/api/mypage').then(res => {
+                const data = res.data?.data || res.data;
+                setUserPoint(data?.user?.point ?? user?.point ?? 0);
+            }).catch(() => {
+                setUserPoint(user?.point || 0);
+            });
+        }
+    }, [user?.id]);
+
+    const handlePointInput = (value) => {
+        const num = parseInt(value) || 0;
+        const max = Math.min(userPoint, totalPrice);
+        setUsePoints(Math.min(Math.max(0, num), max));
+    };
 
     // 💡 1. 데이터를 일차(day)별로 그룹화하는 함수 (첫 번째 코드 기능 유지)
     const groupedDetails = confirmedDetails.reduce((acc, item) => {
@@ -56,7 +77,7 @@ const PlanCheckout = () => {
 
     // 💡 3. 통합 결제 처리 로직 (기존 기능 보존)
     const handlePayment = async () => {
-        if (totalPrice === 0) {
+        if (finalAmount === 0 && usePoints === 0) {
             alert("결제 금액이 0원입니다. 일정을 다시 확인해주세요.");
             return;
         }
@@ -65,6 +86,9 @@ const PlanCheckout = () => {
         localStorage.setItem('temp_plan_data', JSON.stringify(finalPlanData));
         if (finalPlanData?.plan_id) {
             localStorage.setItem('plan_id', String(finalPlanData.plan_id));
+        }
+        if (usePoints > 0) {
+            localStorage.setItem('use_points', String(usePoints));
         }
 
         // --- [방식 1] 카카오페이 로직 (기존 유지) ---
@@ -78,11 +102,12 @@ const PlanCheckout = () => {
             try {
                 const response = await api.post('/payment/ready', {
                     item_name: `${finalPlanData?.region_name || '지역'} AI 맞춤 여행 일정`,
-                    total_amount: totalPrice,
+                    total_amount: finalAmount,
                     partner_order_id: `order_${new Date().getTime()}`,
                     partner_user_id: String(user.id),
                     user_id: user.id,
                     plan_id: finalPlanData?.plan_id,
+                    use_point: usePoints,
                     plan_items: displayDetails
                 });
 
@@ -102,7 +127,7 @@ const PlanCheckout = () => {
                 const orderName = `${finalPlanData?.region_name || '지역'} 여행 일정 결제`;
 
                 const baseConfig = {
-                    amount: totalPrice,
+                    amount: finalAmount,
                     orderId: orderId,
                     orderName: orderName,
                 };
@@ -211,9 +236,59 @@ const PlanCheckout = () => {
                         </div>
 
                         <div className="receipt-footer">
-                            <span>총 결제 금액</span>
-                            <span className="price-amount">{totalPrice.toLocaleString()}원</span>
+                            {usePoints > 0 ? (
+                                <div className="price-breakdown">
+                                    <div className="price-row">
+                                        <span>상품 금액</span>
+                                        <span>{totalPrice.toLocaleString()}원</span>
+                                    </div>
+                                    <div className="price-row discount">
+                                        <span>포인트 할인</span>
+                                        <span>- {usePoints.toLocaleString()} P</span>
+                                    </div>
+                                    <div className="price-row final">
+                                        <span>최종 결제 금액</span>
+                                        <span className="price-amount">{finalAmount.toLocaleString()}원</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <span>총 결제 금액</span>
+                                    <span className="price-amount">{totalPrice.toLocaleString()}원</span>
+                                </>
+                            )}
                         </div>
+                    </div>
+
+                    {/* 포인트 사용 섹션 */}
+                    <div className="point-section">
+                        <div className="point-header">
+                            <span className="point-label">🎁 포인트 사용</span>
+                            <span className="point-balance">보유 포인트: <strong>{userPoint.toLocaleString()} P</strong></span>
+                        </div>
+                        <div className="point-input-row">
+                            <input
+                                type="number"
+                                className="point-input"
+                                value={usePoints || ''}
+                                min={0}
+                                max={Math.min(userPoint, totalPrice)}
+                                placeholder="사용할 포인트 입력"
+                                onChange={(e) => handlePointInput(e.target.value)}
+                            />
+                            <button
+                                className="point-all-btn"
+                                onClick={() => setUsePoints(Math.min(userPoint, totalPrice))}
+                            >
+                                전액 사용
+                            </button>
+                            {usePoints > 0 && (
+                                <button className="point-reset-btn" onClick={() => setUsePoints(0)}>취소</button>
+                            )}
+                        </div>
+                        {usePoints > 0 && (
+                            <p className="point-discount-msg">{usePoints.toLocaleString()} P 할인 적용 → {finalAmount.toLocaleString()}원 결제</p>
+                        )}
                     </div>
 
                     {/* 결제 수단 선택 섹션: 4개 버튼 */}
@@ -239,7 +314,7 @@ const PlanCheckout = () => {
                     {/* 하단 액션 버튼 */}
                     <div className="checkout-actions">
                         <button className="main-pay-btn" onClick={handlePayment}>
-                            {totalPrice.toLocaleString()}원 결제하기
+                            {finalAmount.toLocaleString()}원 결제하기
                         </button>
                         <button className="back-btn" onClick={handleBackToResult}>
                             일정 수정하러 가기

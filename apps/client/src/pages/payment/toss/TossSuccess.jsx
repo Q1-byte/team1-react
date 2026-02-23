@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../../../api/axiosConfig';
+import { useAuth } from '../../../context/AuthContext';
 import '../PaymentStatus.css';
 
 const TossSuccess = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [isProcessing, setIsProcessing] = useState(true);
 
     useEffect(() => {
@@ -23,29 +25,46 @@ const TossSuccess = () => {
 
                 // 2. 백엔드 TossPaymentService.confirmPayment 호출
                 const planId = localStorage.getItem('plan_id');
+                const usePoints = parseInt(localStorage.getItem('use_points') || '0', 10);
                 const response = await api.post('/api/payment/toss/confirm', {
                     paymentKey,
                     orderId,
                     amount: parseInt(amount, 10),
-                    planId: planId ? parseInt(planId, 10) : null
+                    planId: planId ? parseInt(planId, 10) : null,
+                    userId: user?.id ?? null,
+                    usePoint: usePoints
                 });
 
                 if (response.status === 200 || response.data) {
                     console.log("토스 결제 승인 완료:", response.data);
-                    
+
                     // 처리 완료 상태로 변경
                     setIsProcessing(false);
-                    
-                    // 로컬스토리지에 저장했던 임시 데이터가 있다면 여기서 삭제
+
+                    // 포인트 적립 알림
+                    const earnedPoint = response.data?.earnedPoint;
+                    if (earnedPoint > 0) {
+                        alert(`${earnedPoint.toLocaleString()}포인트 적립되었습니다!`);
+                    }
+
+                    // 결제 상세 내역 읽기 (삭제 전)
+                    const tempPlanData = JSON.parse(localStorage.getItem('temp_plan_data') || '{}');
+
+                    // planId 키로 영구 보존 (use_points 포함 — 영수증 포인트 할인 표시용)
+                    if (planId) {
+                        const detail = { ...tempPlanData, used_points: usePoints };
+                        localStorage.setItem(`payment_detail_${planId}`, JSON.stringify(detail));
+                    }
+
+                    // 임시 데이터 삭제
                     localStorage.removeItem('temp_plan_data');
                     localStorage.removeItem('plan_id');
+                    localStorage.removeItem('use_points');
 
-                    // 🧾 영수증 페이지로 이동 (우리가 설정한 중첩 라우트 경로)
-                    // 바로 이동하면 유저가 완료 메시지를 못 볼 수 있으니 살짝 지연 후 이동
                     setTimeout(() => {
-                        navigate('/reserve/receipt', { 
-                            replace: true, // 뒤로가기 방지
-                            state: { paymentResult: response.data } 
+                        navigate('/reserve/receipt', {
+                            replace: true,
+                            state: { finalPlanData: { ...tempPlanData, used_points: usePoints }, paymentResult: response.data }
                         });
                     }, 1500);
                 }

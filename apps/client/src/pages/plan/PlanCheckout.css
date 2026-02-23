@@ -233,3 +233,115 @@
 .selected-item-row {
     padding: 5px 0 5px 10px; /* 왼쪽에 살짝 들여쓰기 */
 }
+
+/* 가격 명세 */
+.price-breakdown {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #666;
+}
+
+.price-row.discount {
+    color: #e74c3c;
+}
+
+.price-row.final {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+    margin-top: 4px;
+}
+
+/* 포인트 사용 섹션 */
+.point-section {
+    border: 1px solid #e0ecff;
+    background: #f5f9ff;
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.point-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.point-label {
+    font-weight: bold;
+    font-size: 15px;
+    color: #333;
+}
+
+.point-balance {
+    font-size: 13px;
+    color: #555;
+}
+
+.point-balance strong {
+    color: #007bff;
+}
+
+.point-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.point-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #cce0ff;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+}
+
+.point-input:focus {
+    border-color: #007bff;
+}
+
+.point-all-btn {
+    padding: 10px 14px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.point-all-btn:hover {
+    background: #0056b3;
+}
+
+.point-reset-btn {
+    padding: 10px 10px;
+    background: #e9ecef;
+    color: #666;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.point-discount-msg {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #e74c3c;
+    font-weight: 500;
+}
