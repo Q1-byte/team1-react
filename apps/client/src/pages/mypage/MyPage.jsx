@@ -9,6 +9,13 @@ import { getMyInquiriesApi } from '../../api/inquiryApi';
 import api from '../../api';
 import './MyPage.css';
 
+const REGION_DATA = {
+  1: "서울", 2: "인천", 3: "대전", 4: "울산", 5: "대구", 
+  6: "광주", 7: "부산", 8: "세종", 9: "경기", 10: "강원", 
+  11: "충북", 12: "충남", 13: "전북", 14: "전남", 15: "경북", 
+  16: "경남", 17: "제주"
+};
+
 const getRecentPlansApi = async (userId) => {
   try {
     const response = await api.get(`/plans/recent?userId=${userId}`);
@@ -24,39 +31,43 @@ function MyPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('plans');
   
-  // 데이터 상태
   const [myPlans, setMyPlans] = useState([]);
-  const [pointHistory, setPointHistory] = useState([]);
+  const [pointHistory, setPointHistory] = useState([
+    { id: 1, user_id: 1, amount: 500, type: 'SAVE', description: '신규 회원 가입 축하 포인트', createdAt: '2024-05-10T09:00:00' },
+    { id: 2, user_id: 1, amount: -200, type: 'USE', description: '제주도 숙소 예약 할인 사용', createdAt: '2024-05-12T14:30:00' },
+    { id: 3, user_id: 1, amount: 1000, type: 'SAVE', description: '리뷰 작성 이벤트 당첨', createdAt: '2024-05-15T18:10:00' },
+    { id: 4, user_id: 1, amount: -300, type: 'USE', description: '포인트 샵 상품 구매', createdAt: '2024-05-16T11:05:00' }
+  ]);
   const [recentViews, setRecentViews] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
-  const [myInquiries, setMyInquiries] = useState([]);
+  const [myInquiries, setMyInquiries] = useState([
+    { id: 1, category: '결제/환불', title: '결제 취소 건으로 문의드립니다.', status: 'WAIT', isSecret: true, createdAt: '2024-05-20T10:30:00' },
+    { id: 2, category: '여행상품', title: '제주도 패키지 일정 변경 가능한가요?', status: 'ANSWERED', isSecret: false, createdAt: '2024-05-18T14:20:00' },
+    { id: 3, category: '기타', title: '로그인이 자꾸 풀려요 ㅠㅠ', status: 'WAIT', isSecret: false, createdAt: '2024-05-15T09:00:00' }
+  ]);
+
+  const [accommodation, setAccommodation] = useState(null);
+  const [activity, setActivity] = useState(null);
+  const [ticket, setTicket] = useState(null);
   
-  // 로딩/에러 상태
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // 프로필 수정 상태
   const [editPhone, setEditPhone] = useState('');
   const [editKeywordPref, setEditKeywordPref] = useState('');
   const [profileLoading, setProfileLoading] = useState(false);
-  
-  // 비밀번호 변경 상태
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordError, setPasswordError] = useState('');
-
-  // 마이페이지 메인 데이터 로드
+  
   useEffect(() => {
     const fetchMainData = async () => {
       if (!user) return;
-      
       try {
         setLoading(true);
         const response = await getMyPageMain();
-        
         if (response.success) {
           setUserInfo(response.data.user);
           setRecentViews(response.data.recentViewedPlans || []);
@@ -72,11 +83,9 @@ function MyPage() {
         setLoading(false);
       }
     };
-
     fetchMainData();
   }, [user]);
 
-  // 탭 변경 시 데이터 로드
   useEffect(() => {
     const fetchTabData = async () => {
       if (!user) return;
@@ -95,10 +104,26 @@ function MyPage() {
         } else if (activeTab === 'inquiries' && myInquiries.length === 0) {
           const data = await getMyInquiriesApi(0, 5);
           setMyInquiries(data.content || []);
-        }else if (activeTab === 'recent' && recentViews.length === 0) {
-          const response = await getRecentPlansApi(user.id);
-          if (response.success) {
-            setRecentViews(response.data || []);
+        } else if (activeTab === 'recent') {
+          if (recentViews.length === 0) {
+            const response = await getRecentPlansApi(user.id);
+            if (response.success) {
+              setRecentViews(response.data || []);
+            }
+          }
+
+          // ✅ 백엔드 컨트롤러 주소(/api/accommodations)와 ApiResponse 구조에 맞춰 수정
+          try {
+            const res = await api.get('/accommodations', { params: { limit: 2 } });
+            // 백엔드가 ApiResponse<List<AccommodationDto>> 형식을 사용하므로 res.data.data 참조
+            if (res.data && res.data.data) {
+              const list = res.data.data;
+              if (list.length > 0) {
+                setAccommodation(list[0]); // 첫 번째 숙소를 추천 상품으로 설정
+              }
+            }
+          } catch (e) {
+            console.log("추천 상품 로드 실패 (백엔드 경로 확인 필요)");
           }
         }
       } catch (err) {
@@ -107,9 +132,8 @@ function MyPage() {
     };
     
     fetchTabData();
-  }, [activeTab, user, myPlans.length, pointHistory.length, myInquiries.length, recentViews.length]);
+  }, [activeTab, user]);
 
-  // 여행 계획 삭제 핸들러
   const handleDeletePlan = async (planId) => {
     if (!window.confirm('이 여행 계획을 삭제할까요?')) return;
     try {
@@ -121,23 +145,14 @@ function MyPage() {
     }
   };
 
-  // 프로필 수정 핸들러
   const handleProfileUpdate = async () => {
     try {
       setProfileLoading(true);
-      const response = await updateProfile({
-        phone: editPhone,
-        keywordPref: editKeywordPref
-      });
-
+      const response = await updateProfile({ phone: editPhone, keywordPref: editKeywordPref });
       if (response.success) {
         alert('프로필이 수정되었습니다.');
         setUserInfo(response.data);
-        // AuthContext 업데이트
-        updateUser({
-          phone: response.data.phone,
-          keywordPref: response.data.keywordPref
-        });
+        updateUser({ phone: response.data.phone, keywordPref: response.data.keywordPref });
       } else {
         alert(response.message || '프로필 수정에 실패했습니다.');
       }
@@ -149,39 +164,27 @@ function MyPage() {
     }
   };
 
-  // 비밀번호 변경 핸들러
   const handlePasswordChange = async () => {
-    // 유효성 검사
     if (!currentPassword || !newPassword || !confirmPassword) {
       setPasswordError('모든 필드를 입력해주세요.');
       return;
     }
-
     if (newPassword !== confirmPassword) {
       setPasswordError('새 비밀번호가 일치하지 않습니다.');
       return;
     }
-
     if (newPassword.length < 6) {
       setPasswordError('비밀번호는 6자 이상이어야 합니다.');
       return;
     }
-
     try {
       setPasswordLoading(true);
       setPasswordError('');
-      
-      const response = await changePassword({
-        currentPassword,
-        newPassword
-      });
-
+      const response = await changePassword({ currentPassword, newPassword });
       if (response.success) {
         alert('비밀번호가 변경되었습니다.');
         setShowPasswordModal(false);
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
+        setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
       } else {
         setPasswordError(response.message || '비밀번호 변경에 실패했습니다.');
       }
@@ -193,24 +196,20 @@ function MyPage() {
     }
   };
 
-  // 로그인 체크
   if (!user) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
+      <div className="login-required-container">
         <h2>로그인이 필요합니다</h2>
-        <button onClick={() => navigate('/login')} className="btn-primary">
-          로그인하러 가기
-        </button>
+        <button onClick={() => navigate('/login')} className="btn-primary">로그인하러 가기</button>
       </div>
     );
   }
 
-  // 로딩 중
   if (loading) {
     return (
       <>
         <Header />
-        <div className="mypage-container" style={{ textAlign: 'center', paddingTop: '200px' }}>
+        <div className="mypage-container loading-state">
           <div className="loading-spinner"></div>
           <p>로딩 중...</p>
         </div>
@@ -219,16 +218,13 @@ function MyPage() {
     );
   }
 
-  // 에러 발생
   if (error) {
     return (
       <>
         <Header />
-        <div className="mypage-container" style={{ textAlign: 'center', paddingTop: '200px' }}>
-          <p style={{ color: '#e74c3c' }}>{error}</p>
-          <button onClick={() => window.location.reload()} className="btn-primary">
-            다시 시도
-          </button>
+        <div className="mypage-container error-state">
+          <p className="error-text">{error}</p>
+          <button onClick={() => window.location.reload()} className="btn-primary">다시 시도</button>
         </div>
         <Footer />
       </>
@@ -239,132 +235,81 @@ function MyPage() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      READY: { text: '준비중', color: '#3498db' },
-      PAID: { text: '결제완료', color: '#2ecc71' },
-      CANCEL: { text: '취소', color: '#e74c3c' },
-      DONE: { text: '완료', color: '#95a5a6' }
+      READY: { text: '준비중', className: 'badge-ready' },
+      PAID: { text: '결제완료', className: 'badge-paid' },
+      CANCEL: { text: '취소', className: 'badge-cancel' },
+      DONE: { text: '완료', className: 'badge-done' }
     };
     const badge = badges[status] || badges.READY;
-    return (
-      <span style={{
-        padding: '4px 12px',
-        borderRadius: '12px',
-        fontSize: '12px',
-        fontWeight: '600',
-        background: badge.color + '20',
-        color: badge.color
-      }}>
-        {badge.text}
-      </span>
-    );
-  };
-
-  const getPointTypeBadge = (type) => {
-    const colors = {
-      '적립': '#2ecc71',
-      '사용': '#e74c3c',
-      '이벤트': '#9b59b6',
-      '후기': '#f39c12'
-    };
-    return colors[type] || '#95a5a6';
+    return <span className={`status-badge ${badge.className}`}>{badge.text}</span>;
   };
 
   return (
-    <>
+    <div className="mypage-wrapper">
       <Header />
       <div className="mypage-container">
-      {/* 사용자 정보 헤더 */}
-        <div className="mypage-header">
+        <div className="mypage-header-card">
           <div className="user-info">
             <div className="user-avatar">
               {displayUser.username?.charAt(0).toUpperCase()}
             </div>
-            <div>
+            
+            <div className="user-text">
               <h2>{displayUser.username}님</h2>
-              <p>{displayUser.email}</p>
-              {displayUser.phone && <p>📞 {displayUser.phone}</p>}
+              <p className="email">{displayUser.email}</p>
+              {displayUser.phone && <p className="phone">📞 {displayUser.phone}</p>}
             </div>
-          </div>
-          <div className="user-points">
-            <span className="points-label">보유 포인트</span>
-            <span className="points-value">{displayUser.point?.toLocaleString() || 0}P</span>
           </div>
         </div>
 
-      {/* 탭 메뉴 */}
-      <div className="mypage-tabs">
-        <button
-          className={`tab ${activeTab === 'plans' ? 'active' : ''}`}
-          onClick={() => setActiveTab('plans')}
-        >
-          내 여행 계획
-        </button>
-        <button
-          className={`tab ${activeTab === 'points' ? 'active' : ''}`}
-          onClick={() => setActiveTab('points')}
-        >
-          포인트 내역
-        </button>
-        <button
-          className={`tab ${activeTab === 'recent' ? 'active' : ''}`}
-          onClick={() => setActiveTab('recent')}
-        >
-          최근 본 계획
-        </button>
-        <button
-          className={`tab ${activeTab === 'inquiries' ? 'active' : ''}`}
-          onClick={() => setActiveTab('inquiries')}
-        >
-          문의 내역
-        </button>
-        <button
-          className={`tab ${activeTab === 'profile' ? 'active' : ''}`}
-          onClick={() => setActiveTab('profile')}
-        >
-          회원정보
-        </button>
-      </div>
+        <div className="mypage-tabs">
+          <button className={`tab ${activeTab === 'plans' ? 'active' : ''}`} onClick={() => setActiveTab('plans')}>내 여행 계획</button>
+          <button className={`tab ${activeTab === 'points' ? 'active' : ''}`} onClick={() => setActiveTab('points')}>포인트 내역</button>
+          <button className={`tab ${activeTab === 'recent' ? 'active' : ''}`} onClick={() => setActiveTab('recent')}>최근 본 계획</button>
+          <button className={`tab ${activeTab === 'inquiries' ? 'active' : ''}`} onClick={() => setActiveTab('inquiries')}>문의 내역</button>
+          <button className={`tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>회원정보</button>
+        </div>
 
-      {/* 탭 컨텐츠 */}
         <div className="mypage-content">
-          {/* 내 여행 계획 */}
           {activeTab === 'plans' && (
             <div>
               <h3>내 여행 계획</h3>
               {myPlans.length === 0 ? (
                 <div className="empty-state">
                   <p>아직 여행 계획이 없습니다.</p>
-                  <button onClick={() => navigate('/reserve')} className="btn-primary">
-                    여행 계획 만들기
-                  </button>
+                  <button onClick={() => navigate('/reserve')} className="btn-primary">여행 계획 만들기</button>
                 </div>
               ) : (
                 <div className="plan-grid">
                   {myPlans.map(plan => (
                     <div key={plan.id} className="plan-card">
                       <div className="plan-header">
-                        <h4>{plan.title}</h4>
+                        <h4 className="plan-title">
+                          {REGION_DATA[Number(plan.regionId || plan.region_id || plan.region)] || plan.title || "지역 정보 없음"}
+                        </h4>
                         {getStatusBadge(plan.status)}
                       </div>
                       <div className="plan-info">
-                        <p>🏷️ {plan.type}</p>
-                        <p>📅 {plan.travelDate} ({plan.durationDays}일)</p>
-                        <p>👥 {plan.peopleCount}명</p>
-                        <p>🔖 {plan.keyword}</p>
-                        <p className="plan-price">💰 {plan.totalPrice ? `${plan.totalPrice.toLocaleString()}원` : '-'}</p>
+                        <div className="info-item"><span className="info-icon">🏷️</span><span className="info-text">{plan.type}</span></div>
+                        <div className="info-item"><span className="info-icon">📅</span><span className="info-text">{plan.travelDate} ({plan.durationDays}일)</span></div>
+                        <div className="info-item"><span className="info-icon">👥</span><span className="info-text">{plan.peopleCount}명</span></div>
+                        <div className="info-item">
+                          <span className="info-icon">💰</span>
+                          <span className="info-text">
+                            {plan.totalPrice ? `${plan.totalPrice.toLocaleString()}원` : '-'}
+                          </span>
+                        </div>
                       </div>
                       <div className="plan-actions">
-                        <button className="btn-primary btn-sm" onClick={() => plan.status === 'PAID' ? navigate('/reserve/receipt', { state: { planData: plan } }) : navigate(`/reserve/${plan.id}`)}>상세보기</button>
+                        <button className="btn-sm-v" onClick={() => navigate(`/reserve/${plan.id}`)}>상세보기</button>
                         {plan.status === 'READY' && (
                           <>
-                            <button className="btn-success btn-sm">결제하기</button>
-                            <button className="btn-danger btn-sm" onClick={() => handleDeletePlan(plan.id)}>삭제</button>
+                            <button className="btn-sm-p">결제하기</button>
+                            <button className="btn-sm-c" onClick={() => handleDeletePlan(plan.id)}>삭제</button>
                           </>
                         )}
                         {plan.status === 'DONE' && (
-                          <button className="btn-secondary btn-sm" onClick={() => navigate('/reviews/write')}>
-                            후기 작성
-                          </button>
+                          <button className="btn-sm-w" onClick={() => navigate('/reviews/write')}>후기 작성</button>
                         )}
                       </div>
                     </div>
@@ -374,49 +319,64 @@ function MyPage() {
             </div>
           )}
 
-          {/* 포인트 내역 */}
           {activeTab === 'points' && (
-            <div>
+            <div className="tab-content-fade">
               <h3>포인트 내역</h3>
-              <div className="point-summary">
-                <span>현재 포인트: <strong>{displayUser.point?.toLocaleString() || 0}P</strong></span>
+              <div className="point-dashboard">
+                <div className="point-info-card">
+                  <span className="point-label">보유 포인트</span>
+                  <div className="point-amount-wrapper">
+                    <span className="point-value">{displayUser.point?.toLocaleString() || 0}</span>
+                    <span className="point-unit">P</span>
+                  </div>
+                </div>
               </div>
               {pointHistory.length === 0 ? (
-                <div className="empty-state">
-                  <p>포인트 내역이 없습니다.</p>
+                <div className="empty-state card-style"><p>아직 적립된 포인트 내역이 없습니다.</p></div>
+              ) : (
+                <div className="table-container">
+                  <table className="data-table">
+                    <thead>
+                      <tr><th>날짜</th><th>구분</th><th>내용</th><th className="text-right">포인트 변동</th></tr>
+                    </thead>
+                    <tbody>
+                      {pointHistory.map(point => (
+                        <tr key={point.id} className="hover-row">
+                          <td className="text-muted">{new Date(point.createdAt).toLocaleDateString()}</td>
+                          <td><span className={`badge-pill badge-${point.type.toLowerCase()}`}>{point.type === 'SAVE' ? '적립' : '사용'}</span></td>
+                          <td className="text-dark font-medium">{point.description}</td>
+                          <td className={`text-right font-bold ${point.amount > 0 ? 'color-plus' : 'color-minus'}`}>
+                            {point.amount > 0 ? '+' : ''}{point.amount.toLocaleString()} P
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'inquiries' && (
+            <div>
+              <div className="inquiry-header-row">
+                <h3>문의 내역</h3>
+                <span className="link-text-click" onClick={() => navigate('/inquiry')}>전체보러가기 {`>>`}</span>
+              </div>
+              {myInquiries.length === 0 ? (
+                <div className="empty-state"><p>문의 내역이 없습니다.</p></div>
               ) : (
                 <table className="data-table">
                   <thead>
-                    <tr>
-                      <th>날짜</th>
-                      <th>구분</th>
-                      <th>내용</th>
-                      <th>포인트</th>
-                    </tr>
+                    <tr><th>카테고리</th><th>제목</th><th>상태</th><th>작성일</th></tr>
                   </thead>
                   <tbody>
-                    {pointHistory.map(point => (
-                      <tr key={point.id}>
-                        <td>{new Date(point.createdAt).toLocaleDateString()}</td>
-                        <td>
-                          <span 
-                            className="badge"
-                            style={{ 
-                              background: getPointTypeBadge(point.type) + '20',
-                              color: getPointTypeBadge(point.type)
-                            }}
-                          >
-                            {point.type}
-                          </span>
-                        </td>
-                        <td>{point.description}</td>
-                        <td style={{
-                          fontWeight: 'bold',
-                          color: point.amount > 0 ? '#2ecc71' : '#e74c3c'
-                        }}>
-                          {point.amount > 0 ? '+' : ''}{point.amount.toLocaleString()}P
-                        </td>
+                    {myInquiries.map(inquiry => (
+                      <tr key={inquiry.id} className="clickable-row" onClick={() => navigate(`/inquiry/${inquiry.id}`)}>
+                        <td><span className="badge badge-category">{inquiry.category}</span></td>
+                        <td>{inquiry.title} {inquiry.isSecret && '🔒'}</td>
+                        <td><span className={`badge status-${inquiry.status.toLowerCase()}`}>{inquiry.status === 'ANSWERED' ? '답변완료' : '답변대기'}</span></td>
+                        <td>{inquiry.createdAt?.split('T')[0]}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -424,175 +384,59 @@ function MyPage() {
               )}
             </div>
           )}
-
-          {/* 최근 본 계획 */}
-          {/* 1. 이 부분을 찾으세요 (약 250~270라인 사이) */}
+          
           {activeTab === 'recent' && (
-            <div>
+            <div className="recent-container">
               <h3>최근 본 계획</h3>
               {recentViews.length === 0 ? (
-                <div className="empty-state">
+                <div className="empty-state card-style">
                   <p>최근 본 계획이 없습니다.</p>
-                  <button onClick={() => navigate('/plan/search')} className="btn-primary">
-                    여행 계획 둘러보기
-                  </button>
                 </div>
               ) : (
                 <div className="recent-list">
-                  {/* 2. 바로 여기! 기존 {recentViews.map(...)} 부분을 아래 코드로 교체하세요 */}
                   {recentViews.map((view, index) => (
-                    <div key={index} className="recent-item">
+                    <div key={index} className="recent-card">
                       <div className="recent-info">
-                        <h4>{view.name || '제목 없음'}</h4> 
-                        <p>📍 {view.region || '지역 정보 없음'}</p>
-                        <small>조회: {view.viewedAt ? new Date(view.viewedAt).toLocaleString() : '-'}</small>
+                        <h4>{view.name || view.plan?.title || '제목 없음'}</h4>
+                        <span className="region-tag">
+                          📍 {REGION_DATA[Number(view.plan?.regionId || view.plan?.region_id)] || '지역 미정'}
+                        </span>
                       </div>
-                      <div className="recent-actions">
-                        <button
-                          className="btn-primary btn-sm"
-                          onClick={() => navigate(`/reserve/${view.planId}`)}
-                        >
-                          보기
-                        </button>
-                      </div>
+                      <button className="btn-sm-v" onClick={() => navigate(`/reserve/${view.planId}`)}>보기</button>
                     </div>
                   ))}
                 </div>
               )}
-            </div>
-          )}
 
-          {/* 문의 내역 */}
-          {activeTab === 'inquiries' && (
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h3 style={{ margin: 0 }}>문의 내역</h3>
-                <button
-                  className="btn-primary btn-sm"
-                  onClick={() => navigate('/inquiry')}
-                >
-                  전체보기
-                </button>
-              </div>
-              {myInquiries.length === 0 ? (
-                <div className="empty-state">
-                  <p>문의 내역이 없습니다.</p>
-                  <button onClick={() => navigate('/inquiry/write')} className="btn-primary">
-                    문의하기
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>카테고리</th>
-                        <th>제목</th>
-                        <th>상태</th>
-                        <th>작성일</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {myInquiries.map(inquiry => (
-                        <tr
-                          key={inquiry.id}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => navigate(`/inquiry/${inquiry.id}`)}
-                        >
-                          <td>
-                            <span className="badge" style={{ background: '#3498db20', color: '#3498db' }}>
-                              {inquiry.category}
-                            </span>
-                          </td>
-                          <td>
-                            {inquiry.title}
-                            {inquiry.isSecret && <span style={{ marginLeft: '5px', color: '#999' }}>🔒</span>}
-                          </td>
-                          <td>
-                            <span
-                              className="badge"
-                              style={{
-                                background: inquiry.status === 'ANSWERED' ? '#2ecc7120' : '#f39c1220',
-                                color: inquiry.status === 'ANSWERED' ? '#2ecc71' : '#f39c12'
-                              }}
-                            >
-                              {inquiry.statusDescription || (inquiry.status === 'ANSWERED' ? '답변완료' : '답변대기')}
-                            </span>
-                          </td>
-                          <td>{inquiry.createdAt?.split('T')[0]}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <button
-                      className="btn-secondary"
-                      onClick={() => navigate('/inquiry/write')}
-                    >
-                      새 문의하기
-                    </button>
+              {/* ✅ 숙소 추천 영역 (백엔드 필드명 pricePerNight 적용) */}
+              {accommodation && (
+                <div className="recommendation-section" style={{ marginTop: '40px', padding: '20px', borderTop: '1px solid #eee' }}>
+                  <h3 style={{ marginBottom: '15px' }}>✨ {displayUser.username}님을 위한 추천 상품</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '15px' }}>
+                    <div className="recommend-card card-style" style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
+                      <span className="badge-ready" style={{ fontSize: '12px', padding: '2px 6px' }}>추천 숙소</span>
+                      <h4 style={{ margin: '10px 0 5px' }}>{accommodation.name}</h4>
+                      <p style={{ color: '#007bff', fontWeight: 'bold' }}>
+                        {accommodation.pricePerNight?.toLocaleString()}원~
+                      </p>
+                    </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           )}
 
-          {/* 회원정보 */}
           {activeTab === 'profile' && (
             <div>
               <h3>회원정보</h3>
               <div className="profile-form">
-                <div className="form-group">
-                  <label>아이디</label>
-                  <input type="text" value={displayUser.username || ''} disabled />
-                </div>
-                <div className="form-group">
-                  <label>이메일</label>
-                  <input type="email" value={displayUser.email || ''} disabled />
-                </div>
-                <div className="form-group">
-                  <label>연락처</label>
-                  <input 
-                    type="tel" 
-                    value={editPhone} 
-                    onChange={(e) => setEditPhone(e.target.value)}
-                    placeholder="010-0000-0000" 
-                  />
-                </div>
-                <div className="form-group">
-                  <label>여행 성향 (키워드)</label>
-                  <input 
-                    type="text" 
-                    value={editKeywordPref}
-                    onChange={(e) => setEditKeywordPref(e.target.value)}
-                    placeholder="힐링, 맛집, 액티비티 등" 
-                  />
-                  <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
-                    여러 키워드는 쉼표(,)로 구분해주세요
-                  </small>
-                </div>
-                <div className="form-group">
-                  <label>가입일</label>
-                  <input 
-                    type="text" 
-                    value={displayUser.createdAt ? new Date(displayUser.createdAt).toLocaleDateString() : '-'} 
-                    disabled 
-                  />
-                </div>
+                <div className="form-group"><label>아이디</label><input type="text" value={displayUser.username || ''} disabled /></div>
+                <div className="form-group"><label>이메일</label><input type="email" value={displayUser.email || ''} disabled /></div>
+                <div className="form-group"><label>연락처</label><input type="tel" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} /></div>
+                <div className="form-group"><label>여행 성향</label><input type="text" value={editKeywordPref} onChange={(e) => setEditKeywordPref(e.target.value)} /></div>
                 <div className="form-actions">
-                  <button 
-                    className="btn-primary" 
-                    onClick={handleProfileUpdate}
-                    disabled={profileLoading}
-                  >
-                    {profileLoading ? '저장 중...' : '정보 수정'}
-                  </button>
-                  <button 
-                    className="btn-secondary"
-                    onClick={() => setShowPasswordModal(true)}
-                  >
-                    비밀번호 변경
-                  </button>
+                  <button className="btn-sm-s" onClick={handleProfileUpdate} disabled={profileLoading}>정보 수정</button>
+                  <button className="btn-sm-n" onClick={() => setShowPasswordModal(true)}>비밀번호 변경</button>
                 </div>
               </div>
             </div>
@@ -600,70 +444,34 @@ function MyPage() {
         </div>
       </div>
 
-      {/* 비밀번호 변경 모달 */}
       {showPasswordModal && (
         <div className="modal-overlay" onClick={() => setShowPasswordModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>비밀번호 변경</h3>
-            {passwordError && (
-              <div className="error-message" style={{ marginBottom: '16px' }}>
-                {passwordError}
-              </div>
-            )}
+            {passwordError && <p className="error-text">{passwordError}</p>}
             <div className="form-group">
               <label>현재 비밀번호</label>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="현재 비밀번호 입력"
-              />
+              <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
             </div>
             <div className="form-group">
               <label>새 비밀번호</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="새 비밀번호 입력 (6자 이상)"
-              />
+              <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
             </div>
             <div className="form-group">
               <label>새 비밀번호 확인</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="새 비밀번호 다시 입력"
-              />
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
             </div>
             <div className="modal-actions">
-              <button
-                className="btn-primary"
-                onClick={handlePasswordChange}
-                disabled={passwordLoading}
-              >
-                {passwordLoading ? '변경 중...' : '비밀번호 변경'}
+              <button className="btn-sm-n" onClick={handlePasswordChange} disabled={passwordLoading}>
+                {passwordLoading ? '변경 중...' : '변경'}
               </button>
-              <button
-                className="btn-secondary"
-                onClick={() => {
-                  setShowPasswordModal(false);
-                  setCurrentPassword('');
-                  setNewPassword('');
-                  setConfirmPassword('');
-                  setPasswordError('');
-                }}
-              >
-                취소
-              </button>
+              <button className="btn-sm-c" onClick={() => setShowPasswordModal(false)}>취소</button>
             </div>
           </div>
         </div>
       )}
-
       <Footer />
-    </>
+    </div>
   );
 }
 
