@@ -1,105 +1,20 @@
+/* ==========================================
+    1. 레이아웃 및 컨테이너 (Layout)
+   ========================================== */
 .mypage-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 20px;
-  padding-top: 160px;
+  padding: 32px 20px 32px 20px;
+  padding-top: 200px;
 }
 
-/* 사용자 정보 헤더 */
-.mypage-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 32px;
-  border-radius: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.user-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36px;
-  font-weight: bold;
-}
-
-.user-info h2 {
-  margin: 0 0 8px 0;
-  font-size: 28px;
-}
-
-.user-info p {
-  margin: 0;
-  opacity: 0.9;
-  font-size: 14px;
-}
-
-.user-points {
-  text-align: right;
-}
-
-.points-label {
-  display: block;
-  font-size: 14px;
-  opacity: 0.9;
-  margin-bottom: 8px;
-}
-
-.points-value {
-  display: block;
-  font-size: 32px;
-  font-weight: bold;
-}
-
-/* 탭 메뉴 */
-.mypage-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-  border-bottom: 2px solid #eee;
-}
-
-.tab {
-  padding: 12px 24px;
-  background: none;
-  border: none;
-  border-bottom: 3px solid transparent;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  color: #666;
-  transition: all 0.2s;
-}
-
-.tab:hover {
-  color: #667eea;
-}
-
-.tab.active {
-  color: #667eea;
-  border-bottom-color: #667eea;
-  font-weight: 600;
-}
-
-/* 컨텐츠 */
 .mypage-content {
   background: white;
   padding: 32px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 50px;
+  margin-top: 20px;
 }
 
 .mypage-content h3 {
@@ -107,379 +22,601 @@
   font-size: 24px;
   color: #2c3e50;
 }
-
-/* 여행 계획 카드 */
-.plan-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.plan-card {
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 20px;
-  transition: all 0.2s;
-}
-
-.plan-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-}
-
-.plan-header {
+/* ==========================================
+    2. 헤더 및 유저 정보 (Header & User)
+   ========================================== */
+/* 배경색을 살짝 깔아 흰색 카드를 돋보이게 함 */
+/* 상단 헤더 카드 */
+.mypage-header-card {
+  background: linear-gradient(135deg, #007bff1f 0%, #c3dcfd 100%);;
+  border-radius: 80px;
+  padding: 35px 45px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+  align-items: center; /* 세로 중앙 정렬 */
+  margin-bottom: 40px;
+  
 }
 
+/* 왼쪽 유저 정보 묶음 */
+.user-info {
+  display: flex;
+  align-items: center; /* 이미지와 텍스트의 세로 중앙 정렬 */
+  gap: 25px;
+}
+
+.user-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  
+  /* 배경색: 보라색이나 블루 계열 그라데이션을 주면 훨씬 예쁩니다 */
+  background: #007bff;
+  color: white;
+  
+  /* 글자를 중앙으로 보내는 핵심 코드 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  font-size: 36px; /* 첫 글자 크기 */
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(110, 142, 251, 0.3); /* 아바타에 어울리는 그림자 */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.user-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 이름과 번호 높이 밸런스 조정 */
+.user-text h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #222;
+  line-height: 1.2;
+}
+
+.user-text p {
+  margin: 0;
+  font-size: 15px;
+  color: #777;
+}
+
+.user-text .email {
+  margin: 0;
+  color: #888;
+  font-size: 15px;
+}
+
+.user-text .phone {
+  margin: 0;
+  color: #555;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* 오른쪽 포인트 영역 (심플 스타일) */
+.user-points {
+  text-align: right;
+}
+
+.points-label {
+  font-size: 13px;
+  color: #a0a0a0;
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.points-value {
+  font-size: 32px;
+  font-weight: 900;
+  color: #333; /* 검은색 계열로 더 심플하게 */
+  letter-spacing: -1px;
+}
+
+/* ==========================================
+    3. 상세 버튼 스타일 (80x40px, 중앙정렬, 입체효과)
+   ========================================== */
+
+  [class^="btn-sm-"] {
+    margin: 20px 10px 20px 0px;
+    width: 80px;
+    height: 40px;
+    
+    /* 정중앙 정렬을 위한 Flex 설정 */
+    display: inline-flex;
+    align-items: center;      /* 수직 중앙 */
+    justify-content: center;  /* 수평 중앙 */
+    
+    /* 텍스트 처짐 방지 핵심 포인트 */
+    line-height: 1;           /* 폰트 상하 여백 제거 */
+    padding: 0;               /* 내부 여백 완전 제거 */
+    
+    font-size: 12px;
+    font-weight: 600;         /* 가독성을 위해 두께 살짝 추가 */
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    top: 0;
+}
+
+/* --- 호버 효과 (떠오름 + 그림자) --- */
+.btn-sm-c, .btn-sm-n, .btn-sm-w { background-color: #eeeeee; color: #555; }
+.btn-sm-c:hover, .btn-sm-n:hover {
+  background-color: #e74c3c !important;
+  color: white !important;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3);
+}
+
+
+.btn-sm-s, .btn-sm-q, .btn-sm-v, .btn-sm-p {
+  align-items: center;
+  background-color: #3498db;
+  color: white;
+}
+.btn-sm-s:hover, .btn-sm-q:hover, .btn-sm-v:hover, .btn-sm-w:hover, .btn-sm-p:hover {
+  background-color: #1a2a44 !important;
+  color: white !important;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(26, 42, 68, 0.3);
+}
+
+/* --- 클릭 시 피드백 --- */
+[class^="btn-sm-"]:active {
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+    4. 탭 메뉴 (Refined Capsule Style)
+   ========================================== */
+ /* 탭 메뉴 공통 스타일 */
+.tab {
+  padding: 12px 24px;
+  border: 1px solid #eaeaea;
+  border-bottom: none; /* 아래쪽 선 제거 */
+  background-color: #f8f9fa;
+  color: #666;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  margin-bottom: -20px;
+  /* 애니메이션을 위한 핵심 설정 */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  top: 0; /* 움직임의 기준점 */
+}
+
+/* 🔥 마우스 호버 효과 (핵심) */
+.tab:hover {
+  background-color: #007bff; /* 배경 파란색 */
+  color: #ffffff;           /* 글씨 흰색 */
+  border-color: #007bff;     /* 테두리도 파란색으로 통일 */
+ 
+}
+
+/* ✅ 현재 선택된 탭 (Active) */
+/* 호버 중이 아닐 때도 강조되도록 설정 */
+.tab.active {
+  background-color: #ffffff;
+  color: #007bff;
+  font-weight: 700;
+  border-color: #eaeaea;
+  top: 0; /* 활성 탭은 고정하거나 취향에 따라 조정 */
+  z-index: 2;
+}
+
+/* 틈새를 완벽히 가리기 위한 가상 요소 (Active 탭 하단) */
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #ffffff;
+  z-index: 3;
+}
+
+/* 탭 메뉴 컨테이너 */
+.mypage-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: -1px; /* 본문 박스와 선 겹치기 */
+  position: relative;
+  z-index: 1;
+}
+
+/* 하단 컨텐츠 박스 */
+.mypage-content {
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 0 20px 20px 20px;
+  padding: 40px;
+  position: relative;
+  z-index: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+/*/* ==========================================
+    6. 상태 표시 배지 (Status Badge)
+   ========================================== */
+
+/* 모든 배지 공통 설정 */
+[class^="badge-"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px; /* 알약 모양 */
+  line-height: 1;
+  min-width: 60px;
+}
+
+/* 준비중 (READY): 회색 바탕 + 검정 글씨 */
+.badge-ready {
+  background-color: #e0e0e0;
+  color: #333333;
+}
+
+/* 결제완료 (PAID): 연두 바탕 + 하얀 글씨 */
+.badge-paid {
+  background-color: #2ecc71; /* 생동감 있는 연두색 */
+  color: #ffffff;
+}
+
+/* 취소 (CANCEL): 빨간 배경 + 흰색 글씨 */
+.badge-cancel {
+  background-color: #e74c3c;
+  color: #ffffff;
+}
+
+/* 완료 (DONE): 파란 배경 + 흰색 글씨 */
+.badge-done {
+  background-color: #0c4870;
+  color: #ffffff;
+}
+  /* 카드 상단: 제목(왼쪽)과 배지(오른쪽) 끝으로 배치 */
+.plan-header {
+  display: flex;
+  align-items: center;      /* 세로 중앙 정렬 */
+  justify-content: space-between; /* 양 끝으로 밀어내기 */
+  gap: 16px;                /* 제목이 길어질 경우 최소 간격 */
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* 제목 스타일 (배지를 밀어내지 않도록 설정) */
 .plan-header h4 {
   margin: 0;
   font-size: 18px;
+  font-weight: 700;
   color: #2c3e50;
+  
+  /* 제목이 너무 길어서 배지를 침범할 때를 위한 처리 */
+  flex: 1;                  /* 남는 공간을 차지하게 함 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;  /* 길면 ... 처리 */
 }
 
-.plan-info {
-  margin-bottom: 16px;
+/* 배지 스타일 (오른쪽에 고정) */
+[class^="badge-"] {
+  flex-shrink: 0;           /* 배지 크기 고정 */
+  margin-left: auto;        /* 명시적으로 오른쪽으로 밀기 */
 }
 
-.plan-info p {
-  margin: 8px 0;
-  font-size: 14px;
-  color: #7f8c8d;
+  
+/* ==========================================
+    8. 내여행계획 카드
+   ========================================== */
+
+/* 1. 카드를 감싸는 컨테이너: 가로로 나열 */
+.plan-grid {
+  display: flex;          /* 그리드 대신 플렉스 사용 */
+  flex-direction: row;    /* 가로 방향 배치 */
+  gap: 20px;              /* 카드 사이 간격 */
+  overflow-x: auto;       /* 카드가 많아지면 가로 스크롤 생성 */
+  padding: 10px 5px 20px 5px; /* 그림자가 잘리지 않게 하단 여백 */
+  align-items: stretch;   /* 카드들의 높이를 통일 */
 }
 
-.plan-price {
-  font-weight: bold;
-  color: #2c3e50 !important;
-  font-size: 16px !important;
+/* 2. 개별 카드: 가로폭을 내용에 맞게 */
+.plan-card {
+  /* 고정 폭 대신 내용에 맞는 최소/최대 폭 설정 */
+  flex: 0 0 auto;         /* 카드가 찌그러지지 않게 설정 */
+  width: fit-content;     /* 텍스트 길이에 맞춰 카드 폭 결정 */
+  min-width: 250px;       /* 너무 좁아 보이는 것 방지 */
+  
+  background: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .plan-actions {
   display: flex;
-  gap: 8px;
+  justify-content: center; /* 가로 중앙 정렬 */
+  margin-top: auto;        /* 카드 하단으로 밀기 */
+  width: 100%;
 }
 
-/* 최근 본 계획 */
+/* 3. 호버 시 효과 (말씀하신 튀어나오는 느낌 + 그림자) */
+.plan-card:hover {
+  transform: translateY(-8px); /* 위로 슥 올라오는 느낌 */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08); /* 부드럽고 깊은 그림자 */
+  border-color: #ddd;
+}
+/* ==========================================
+    8-1. 최근 본 계획 카드
+   ========================================== */
+
+/* 1. 카드를 가로로 나열하는 컨테이너 */
 .recent-list {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;    /* 세로에서 가로 배치로 변경 */
+  flex-wrap: wrap;        /* 자리가 모자라면 다음 줄로 자연스럽게 넘김 */
+  gap: 16px;              /* 카드 사이 간격 */
+  margin-top: 20px;
 }
 
-.recent-item {
+/* 2. 개별 최근 본 계획 카드 */
+/* 개별 최근 본 계획 카드 */
+.recent-card {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;    /* 핵심: 카드 내 모든 요소를 세로축 중앙 정렬 */
+  text-align: center;     /* 핵심: 텍스트 중앙 정렬 */
+  
+  width: fit-content;     
+  min-width: 180px;       
+  
+  padding: 30px 24px 15px 24px;
+  background: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  top: 0;
+  cursor: pointer;
+}
+
+/* 최근 본 계획 정보 컨테이너 */
+.recent-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;    /* 내부 요소(제목, 날짜) 중앙 정렬 */
+  margin-bottom: 12px;
+}
+
+/* 제목과 태그를 감싸는 헤더 */
+.recent-header {
+  display: flex;
+  flex-direction: column; /* 제목과 지역태그를 위아래로 쌓으면서 중앙 정렬 */
+  align-items: center;    
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.recent-header h4 {
+  margin: 0;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+/* 조회 날짜 스타일 */
+.view-date {
+  display: block;
+  color: #95a5a6;
+  font-size: 11px;       /* 2줄이 되므로 폰트를 살짝 줄이면 더 예쁩니다 */
+  line-height: 1.4;      /* 줄 간격 확보 */
+  margin-top: 4px;
+  
+  /* 2줄 처리를 위한 핵심 설정 */
+  max-width: 120px;      /* 글자가 이 너비를 넘으면 줄바꿈됨 (글자수에 맞춰 조절) */
+  word-break: keep-all;  /* 단어 단위로 예쁘게 끊기 */
+  margin-left: auto;     /* 가로 중앙 정렬을 위해 auto 사용 */
+  margin-right: auto;
+}
+
+/* 버튼 컨테이너 */
+.recent-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* 버튼 가로 중앙 정렬 */
+}
+
+/* 호버 효과 (요청하신 수치 유지) */
+.recent-card:hover {
+  transform: translateY(-8px); 
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08); 
+  border-color: #ddd;
+}
+
+/* 내부 간격 조정 */
+.recent-info {
+  margin-bottom: 5px;    /* 정보와 버튼 사이 간격 */
+}
+
+.recent-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  gap: 10px;               /* 버튼 사이 간격 */
+  margin-top: auto;
+}
+
+
+
+
+/* ==========================================
+  8-2. 문의하러가기 버튼
+   ========================================== */
+
+   /* 전체보러가기 텍스트 링크 스타일 */
+.link-text-click {
+  font-size: 15px;
+  color: #666b6b;      /* 부드러운 회색 */
+  cursor: pointer;     /* 마우스 올리면 손가락 모양 */
+  font-weight: 500;
+  transition: all 0.2s;
+  user-select: none;   /* 텍스트 드래그 방지 */
+}
+
+/* 마우스를 올렸을 때 효과 */
+.link-text-click:hover {
+  color: #764ba2;          /* 강조 색상으로 변경 */
+  text-decoration: underline; /* 밑줄 추가로 클릭 유도 */
+}
+
+/* 헤더 정렬 확인 */
+.inquiry-header-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-
-.recent-item:hover {
-  background: #f8f9fa;
-}
-
-.recent-item h4 {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-}
-
-.recent-item p {
-  margin: 0;
-  font-size: 14px;
-  color: #7f8c8d;
-}
-
-.recent-item small {
-  color: #999;
-  font-size: 12px;
-}
-
-/* 회원정보 폼 */
-.profile-form {
-  max-width: 600px;
-}
-
-.profile-form .form-group {
+  align-items: flex-end; /* 제목과 텍스트 하단 높이 맞춤 */
   margin-bottom: 20px;
 }
 
-.profile-form label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #2c3e50;
-  font-size: 14px;
-}
-
-.profile-form input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-.profile-form input:disabled {
-  background: #f5f5f5;
-  cursor: not-allowed;
-}
-
-.profile-form input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.form-actions {
+.centered-action {
   display: flex;
-  gap: 12px;
-  margin-top: 24px;
+  justify-content: center; /* center에서 오른쪽으로 변경 */
+  margin-top: 20px;
 }
 
-/* 공통 버튼 */
-.btn-primary, .btn-success, .btn-secondary {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
+/* ==========================================
+  8-3. 포인트 탭
+   ========================================== */
+
+  /* 포인트 대시보드 상단 */
+.point-dashboard {
+  background: linear-gradient(135deg, #fdfbfb 0%, #c7e2ff 100%);
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  
+  display: flex;
+  justify-content: center;
+}
+
+.point-info-card {
+  text-align: center;
+}
+
+.point-amount-wrapper {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+}
+
+.point-value {
+  font-size: 36px;
+  font-weight: 800;
+  color: #2c3e50;
+  letter-spacing: -1px;
+}
+
+.point-unit {
+  font-size: 18px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
+  color: #34495e;
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-success {
-  background: #2ecc71;
-  color: white;
-}
-
-.btn-success:hover {
-  background: #27ae60;
-}
-
-.btn-secondary {
-  background: #95a5a6;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background: #7f8c8d;
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-/* 테이블 */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
+/* 테이블 디자인 개선 */
 .data-table th {
-  background: #f8f9fa;
-  padding: 14px;
-  text-align: left;
-  font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #dee2e6;
-  font-size: 14px;
+  background-color: #007bff; /* 아바타 배경색과 통일 */
+  color: #ffffff;            /* 글자색 흰색 */
+  padding: 16px 14px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center !important;        /* 제목 중앙 정렬 */
+  border: none;
 }
 
+/* 2. 테이블 몸통: 중앙 정렬 및 틀어짐 방지 */
 .data-table td {
-  padding: 14px;
-  border-bottom: 1px solid #dee2e6;
+  padding: 16px 14px;
+  vertical-align: middle;    /* 세로 중앙 */
+  text-align: center;        /* 가로 중앙 */
+  border-bottom: 1px solid #f1f3f5;
+  color: #444;
+}
+
+/* 3. 날짜 칸 배경색 제거 또는 통일 */
+/* 틀어져 보이는 원인이 될 수 있으므로, 배경색을 빼거나 연하게 처리합니다 */
+.data-table td.text-muted {
+  background-color: transparent; /* 배경색 제거 */
+  color: #868e96 !important;
+  
   font-size: 14px;
 }
 
-.data-table tbody tr:hover {
-  background: #f8f9fa;
+/* 4. 포인트 변동(금액)만 우측 정렬 유지 (가독성) */
+/* 만약 금액도 중앙이 좋다면 이 부분은 삭제하세요 */
+.data-table td.text-right {
+  text-align: right;
+  padding-right: 30px; /* 우측 여백 확보 */
 }
 
-/* 배지 */
-.badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.badge-success {
-  background: #d4edda;
-  color: #155724;
-}
-
-.badge-danger {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-/* 반응형 */
-@media (max-width: 768px) {
-  .mypage-header {
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-  }
-
-  .user-points {
-    text-align: center;
-  }
-
-  .plan-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .mypage-tabs {
-    overflow-x: auto;
-  }
-
-  .tab {
-    white-space: nowrap;
-  }
-}
-
-/* 모달 */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
+/* 5. 배지 중앙 정렬 보정 */
+.badge-pill {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
 }
 
-.modal-content {
-  background: white;
-  padding: 32px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 450px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+/* 3. 호버 시 줄 전체 효과 */
+.hover-row:hover {
+    background-color: #f0f7ff; /* 마우스 올렸을 때 색상 */
 }
 
-.modal-content h3 {
-  margin: 0 0 24px 0;
-  font-size: 22px;
-  color: #2c3e50;
+/* 포인트 변동 색상 */
+.color-plus {
+  color: #007bff; /* 초록색 (적립) */
 }
 
-.modal-content .form-group {
-  margin-bottom: 16px;
+.color-minus {
+  color: #e74c3c; /* 빨간색 (사용) */
 }
 
-.modal-content label {
-  display: block;
-  margin-bottom: 8px;
+.text-right { text-align: right; }
+.font-bold { font-weight: 700; }
+.font-medium { font-weight: 500; }
+.text-muted { color: #bdc3c7; font-size: 13px; }
+
+/* 포인트 전용 알약 모양 배지 */
+.badge-pill {
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 11px;
   font-weight: 600;
-  color: #2c3e50;
-  font-size: 14px;
 }
 
-.modal-content input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  box-sizing: border-box;
+.badge-save { background-color: rgba(46, 204, 113, 0.1); color: #27ae60; }
+.badge-use { background-color: rgba(189, 195, 199, 0.2); color: #7f8c8d; }
+
+
+/* ==========================================
+   9. 반응형 (Responsive)
+   ========================================== */
+@media (max-width: 768px) {
+  .mypage-header { flex-direction: column; gap: 20px; text-align: center; }
+  .user-points { text-align: center; }
+  .plan-grid { grid-template-columns: 1fr; }
+  .mypage-tabs { overflow-x: auto; }
+  .tab { white-space: nowrap; }
 }
 
-.modal-content input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.modal-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-}
-
-/* 에러 메시지 */
-.error-message {
-  background: #fee2e2;
-  color: #dc2626;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  border: 1px solid #fecaca;
-}
-
-/* 포인트 요약 */
-.point-summary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 16px 24px;
-  border-radius: 12px;
-  margin-bottom: 24px;
-  font-size: 16px;
-}
-
-.point-summary strong {
-  font-size: 24px;
-}
-
-/* 빈 상태 */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: #7f8c8d;
-}
-
-.empty-state p {
-  margin-bottom: 20px;
-  font-size: 16px;
-}
-
-/* 최근 본 계획 메타 정보 */
-.recent-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-/* 로딩 스피너 */
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 16px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* 버튼 비활성화 상태 */
-.btn-primary:disabled,
-.btn-secondary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
