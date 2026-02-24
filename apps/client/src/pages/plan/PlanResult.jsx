@@ -1,10 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import './PlanResult.css';
-import Header from '../../components/Header';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
+
+// sessionStorage에서 마지막으로 저장된 planId를 찾는 헬퍼
+const getLastSavedPlanIdFromSession = () => {
+    for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith('saved_plan_')) {
+            const val = sessionStorage.getItem(key);
+            if (val) return Number(val);
+        }
+    }
+    return null;
+};
 
 const API_BASE = 'http://localhost:8080';
 
@@ -13,7 +24,7 @@ const PlanResult = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useAuth();
-    
+
     const hasSaved = useRef(false);
 
     const finalPlanData = location.state?.finalPlanData || {};
@@ -35,44 +46,47 @@ const PlanResult = () => {
     const [accommodation, setAccommodation] = useState(null);
     const [activity, setActivity] = useState(null);
     const [ticket, setTicket] = useState(null);
+    const [productsSaved, setProductsSaved] = useState(false); // localStorage 복원 여부
 
     // ✨ [추가] 자동 저장 함수: 추천받은 즉시 DB에 기록
     // PlanResult.js 내 해당 함수 찾아서 수정
     const savePlanAutomatically = async (formattedDetails) => {
-    console.log("자동 저장 시도 시작..."); // 👈 확인용
-    console.log("현재 유저 정보:", user); // 👈 유저 ID가 찍히는지 확인
-    console.log("데이터 개수:", formattedDetails.length);
+        if (hasSaved.current) return;
+        if (!user?.id) return;
+        if (planId) return; // 이미 저장된 계획 조회 중
 
-    if (hasSaved.current) return;
-    if (!user?.id) {
-        console.warn("⚠️ 유저 ID가 없어 저장을 중단합니다.");
-        return;
-    }
-    if (planId) return; // 이미 저장된 글을 보는 중이라면 중단
-
-    const planPayload = {
-        userId: user.id,
-        regionName: regionName,
-        startDate: finalPlanData.start_date,
-        endDate: finalPlanData.end_date,
-        peopleCount: finalPlanData.people_count || 1,
-        spots: formattedDetails.map(d => ({ spotId: d.id, day: d.day }))
-    };
-
-    try {
-        hasSaved.current = true;
-        const response = await api.post('/plans/save', planPayload);
-        const raw = response.data;
-        const id = typeof raw === 'number' ? raw : (raw?.id ?? raw?.planId ?? raw?.data);
-        console.log("✅ DB 자동 저장 성공! 생성된 ID:", id);
-        if (id) {
-            setSavedPlanId(id);
-            api.post(`/plans/${id}/view`).catch(() => {});
+        // 컴포넌트 remount 시 중복 저장 방지: sessionStorage에 저장된 planId 확인
+        const sessionKey = `saved_plan_${user.id}_${finalPlanData.start_date}_${regionName}`;
+        const existingId = sessionStorage.getItem(sessionKey);
+        if (existingId) {
+            setSavedPlanId(Number(existingId));
+            return;
         }
-    } catch (error) {
-        console.error("❌ 자동 저장 실패:", error.response?.data || error.message);
-    }
-};
+
+        const planPayload = {
+            userId: user.id,
+            regionName: regionName,
+            regionId: finalPlanData.parent_region_db_id || null,
+            startDate: finalPlanData.start_date,
+            endDate: finalPlanData.end_date,
+            peopleCount: finalPlanData.people_count || 1,
+            spots: formattedDetails.map(d => ({ spotId: Number(d.id), day: d.day }))
+        };
+
+        try {
+            hasSaved.current = true;
+            const response = await api.post('/plans/save', planPayload);
+            const raw = response.data;
+            const id = typeof raw === 'number' ? raw : (raw?.id ?? raw?.planId ?? raw?.data);
+            if (id) {
+                setSavedPlanId(id);
+                sessionStorage.setItem(sessionKey, String(id)); // remount 시 중복 방지
+            }
+        } catch (error) {
+            console.error("자동 저장 실패:", error.response?.data || error.message);
+            hasSaved.current = false; // 실패 시 재시도 허용
+        }
+    };
 
     const fetchRealPlan = async () => {
         try {
@@ -134,6 +148,13 @@ const PlanResult = () => {
         }
     };
 
+    // ✅ savedPlanId가 세팅되면 URL을 /reserve/:planId로 교체 (새로고침 대응)
+    useEffect(() => {
+        if (savedPlanId && !planId) {
+            navigate(`/reserve/${savedPlanId}`, { replace: true });
+        }
+    }, [savedPlanId]);
+
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
@@ -142,7 +163,7 @@ const PlanResult = () => {
                     await fetchRealPlan();
                 } else if (planId) {
                     const res = await api.get(`/plans/${planId}?userId=${user?.id}`);
-                    
+
                     console.log("백엔드 응답 전체:", res);
                     console.log("백엔드 실제 데이터:", res.data);
                     const data = res.data;
@@ -156,7 +177,6 @@ const PlanResult = () => {
                     if (data.region) {
                         setRegionName(data.region);
                     } else if (data.title && data.title.includes(' ')) {
-                        // "인천광역시 AI..." 에서 "인천광역시"만 추출
                         const extracted = data.title.split(' ')[0];
                         setRegionName(extracted);
                     } else {
@@ -166,7 +186,7 @@ const PlanResult = () => {
                     // 3. 인원 세팅
                     if (data.peopleCount) setPeopleCount(data.peopleCount);
 
-                    // 4. 날짜 로직 (기존과 동일하지만 안전하게 유지)
+                    // 4. 날짜 로직
                     if (data.travelDate) {
                         setStartDate(data.travelDate);
                         if (data.durationDays) {
@@ -200,6 +220,25 @@ const PlanResult = () => {
                             setActiveDay(Math.min(...formattedDetails.map(d => d.day)));
                         }
                     }
+
+                    // 저장된 상품 복원
+                    const saved = localStorage.getItem(`plan_products_${planId}`);
+                    if (saved) {
+                        const { accommodation: a, activity: act, ticket: t } = JSON.parse(saved);
+                        if (a) setAccommodation(a);
+                        if (act) setActivity(act);
+                        if (t) setTicket(t);
+                        setProductsSaved(true);
+                    }
+                } else {
+                    // ✅ state도 없고 planId URL param도 없는 경우 → sessionStorage에서 복원 시도
+                    const fallbackId = getLastSavedPlanIdFromSession();
+                    if (fallbackId) {
+                        console.log('[PlanResult] fallback planId from sessionStorage:', fallbackId);
+                        navigate(`/reserve/${fallbackId}`, { replace: true });
+                        return; // navigate 후 useEffect가 다시 실행됨
+                    }
+                    setLoading(false);
                 }
             } catch (err) {
                 console.error("데이터 로드 실패:", err);
@@ -208,11 +247,27 @@ const PlanResult = () => {
             }
         };
         loadData();
-    }, [planId]);
+        // user?.id를 의존성에 추가해서 로그인 후 재로드 대응
+    }, [planId, user?.id]);
 
+
+    // user가 details보다 늦게 로드될 경우를 대비한 재시도 저장
+    // (인증 컨텍스트가 비동기로 로드될 때 savePlanAutomatically가 user=null로 건너뛰는 경우 방지)
+    useEffect(() => {
+        if (!user?.id || details.length === 0 || planId || savedPlanId || hasSaved.current) return;
+        const sessionKey = `saved_plan_${user.id}_${finalPlanData.start_date}_${regionName}`;
+        const existingId = sessionStorage.getItem(sessionKey);
+        if (existingId) {
+            setSavedPlanId(Number(existingId));
+            return;
+        }
+        savePlanAutomatically(details);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id, details.length]);
 
     useEffect(() => {
-        // [수정] parentRegionDbId가 없어도 regionName이 있으면 일단 진행하도록 조건 변경
+        // 계획 데이터 로딩 중에는 상품 조회 금지 (기본값 null/"지역미정"으로 잘못 조회되는 것 방지)
+        if (loading) return;
         if (!parentRegionDbId && !regionName) return;
 
         const pickByKeyword = (list, keywords) => {
@@ -226,14 +281,16 @@ const PlanResult = () => {
             return scored[0]?.item || null;
         };
 
+        if (productsSaved) return; // 저장된 상품이 있으면 재요청 안 함
+
         const fetchProducts = async () => {
             try {
                 // [로그 추가] 실제로 어떤 값으로 요청을 보내는지 확인용
                 console.log("상품 조회 시도 - ID:", parentRegionDbId, "이름:", regionName);
 
                 // 파라미터 구성: ID가 있으면 ID로, 없으면 이름으로 (백엔드 대응 확인 필요)
-                const queryParams = parentRegionDbId 
-                    ? { regionId: parentRegionDbId } 
+                const queryParams = parentRegionDbId
+                    ? { regionId: parentRegionDbId }
                     : { regionName: regionName.split(' ')[0] }; // "인천광역시" -> "인천" 식으로 잘라서 보낼 수도 있음
 
                 const [accomRes, activityRes, ticketRes] = await Promise.all([
@@ -259,8 +316,7 @@ const PlanResult = () => {
         };
 
         fetchProducts();
-        // 의존성 배열에 regionName 추가
-    }, [parentRegionDbId, regionName, JSON.stringify(selectedKeywords)]);
+    }, [loading, parentRegionDbId, regionName, JSON.stringify(selectedKeywords), productsSaved]);
 
     const toggleItem = (id) => {
         setDetails(prev => prev.map(item =>
@@ -273,10 +329,48 @@ const PlanResult = () => {
     const ticketTotal = (ticket?.price || 0) * peopleCount;
     const totalPrice = details.filter(item => item.is_selected).reduce((sum, item) => sum + (item.price || 0), 0) + accomTotal + activityTotal + ticketTotal;
 
-    const handleGoToCheckout = () => {
+    const handleGoToCheckout = async () => {
         const selectedOnly = details.filter(item => item.is_selected);
         if (selectedOnly.length === 0) { alert("선택된 일정이 없습니다."); return; }
-        navigate('/reserve/check', { state: { finalPlanData: { ...finalPlanData, plan_id: savedPlanId, total_amount: totalPrice, confirmed_details: selectedOnly, selected_accommodation: accommodation, selected_activity: activity, selected_ticket: ticket } } });
+
+        let idToSave = savedPlanId || (planId ? Number(planId) : null);
+        console.log('[예약하기] savedPlanId:', savedPlanId, '| planId:', planId, '| idToSave:', idToSave, '| user:', user?.id);
+
+        // savedPlanId가 없으면 직접 저장 시도 (자동 저장 실패 케이스 대비)
+        if (!idToSave && user?.id && details.length > 0) {
+            try {
+                const planPayload = {
+                    userId: user.id,
+                    regionName: regionName,
+                    regionId: parentRegionDbId || null,
+                    startDate: finalPlanData.start_date,
+                    endDate: finalPlanData.end_date,
+                    peopleCount: finalPlanData.people_count || 1,
+                    spots: details.map(d => ({ spotId: Number(d.id), day: d.day }))
+                };
+                const response = await api.post('/plans/save', planPayload);
+                const raw = response.data;
+                idToSave = typeof raw === 'number' ? raw : (raw?.id ?? raw?.planId ?? raw?.data);
+                if (idToSave) setSavedPlanId(idToSave);
+            } catch (e) {
+                console.error('계획 저장 실패:', e);
+            }
+        }
+
+        if (idToSave) {
+            localStorage.setItem(`plan_products_${idToSave}`, JSON.stringify({
+                accommodation,
+                activity,
+                ticket
+            }));
+            if (user?.id) {
+                api.post(`/plans/${idToSave}/view?userId=${user.id}`)
+                    .then(() => console.log('[예약하기] view 기록 성공 planId:', idToSave))
+                    .catch((e) => console.error('[예약하기] view 기록 실패:', e.response?.status, e.message));
+            }
+        }
+
+        navigate('/reserve/check', { state: { finalPlanData: { ...finalPlanData, plan_id: idToSave, total_amount: totalPrice, confirmed_details: selectedOnly, selected_accommodation: accommodation, selected_activity: activity, selected_ticket: ticket } } });
     };
 
     if (loading) return (

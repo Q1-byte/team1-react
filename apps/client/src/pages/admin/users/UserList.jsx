@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getUsers, deleteUser, updateUserPoint } from '../../../api/userApi';
+import { getUsers, deleteUser, updateUserPoint, updateUserStatus } from '../../../api/userApi';
 
 function UserList() {
   const [users, setUsers] = useState([]);
@@ -53,6 +53,19 @@ function UserList() {
     } catch (err) {
       console.error('삭제 실패:', err);
       alert('삭제에 실패했습니다.');
+    }
+  };
+
+  const handleToggleStatus = async (user) => {
+    if (user.role === 'ADMIN') return;
+    const isActive = user.status !== 'SUSPENDED';
+    const action = isActive ? '사용중지' : '활성화';
+    if (!window.confirm(`${user.username}을(를) ${action}하시겠습니까?`)) return;
+    try {
+      await updateUserStatus(user.id, isActive ? 'SUSPENDED' : 'ACTIVE');
+      fetchUsers(page, keyword, roleFilter);
+    } catch (err) {
+      alert(`${action} 처리에 실패했습니다.`);
     }
   };
 
@@ -154,6 +167,7 @@ function UserList() {
                   <th>이메일</th>
                   <th>연락처</th>
                   <th>권한</th>
+                  <th>상태</th>
                   <th>포인트</th>
                   <th>여행 성향</th>
                   <th>가입일</th>
@@ -170,14 +184,13 @@ function UserList() {
                       <td>{user.email}</td>
                       <td>{user.phone || '-'}</td>
                       <td>
-                        <span
-                          className="badge"
-                          style={{
-                            background: user.role === 'ADMIN' ? '#fde8e8' : '#e6f4ea',
-                            color: user.role === 'ADMIN' ? '#c62828' : '#2e7d32'
-                          }}
-                        >
+                        <span className="badge" style={{ background: user.role === 'ADMIN' ? '#fde8e8' : '#e6f4ea', color: user.role === 'ADMIN' ? '#c62828' : '#2e7d32' }}>
                           {user.role}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="badge" style={{ background: user.status === 'SUSPENDED' ? '#fde8e8' : '#e6f4ea', color: user.status === 'SUSPENDED' ? '#c62828' : '#2e7d32' }}>
+                          {user.status === 'SUSPENDED' ? '중지' : '정상'}
                         </span>
                       </td>
                       <td><strong>{user.point?.toLocaleString() || 0}P</strong></td>
@@ -190,6 +203,14 @@ function UserList() {
                             className="btn btn-primary btn-sm"
                           >
                             포인트
+                          </button>
+                          <button
+                            onClick={() => handleToggleStatus(user)}
+                            className="btn btn-sm"
+                            style={{ background: user.status === 'SUSPENDED' ? '#2ecc71' : '#f39c12', color: 'white' }}
+                            disabled={user.role === 'ADMIN'}
+                          >
+                            {user.status === 'SUSPENDED' ? '활성화' : '중지'}
                           </button>
                           <button
                             onClick={() => handleDelete(user.id, user.role)}
@@ -205,7 +226,7 @@ function UserList() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="10" style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                    <td colSpan="11" style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
                       검색 결과가 없습니다.
                     </td>
                   </tr>
