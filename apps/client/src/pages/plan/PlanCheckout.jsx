@@ -9,23 +9,20 @@ import './PlanCheckout.css';
 const PlanCheckout = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { user, loading } = useAuth(); // loading 상태가 있다면 함께 가져오세요
+    const { user, loading } = useAuth();
 
     useEffect(() => {
-        // 로그인 로딩이 끝났는데 유저 정보가 없다면
         if (!loading && !user) {
             alert("로그인이 필요한 서비스입니다.");
             navigate('/login', { state: { from: location.pathname } }); 
         }
     }, [user, loading, navigate]);
 
-    // 데이터 추출
     const { finalPlanData } = location.state || {};
     const confirmedDetails = finalPlanData?.confirmed_details || [];
     const totalPrice = finalPlanData?.total_amount || 0;
-    const displayDetails = confirmedDetails; // 기존 코드와의 호환성을 위해 유지
+    const displayDetails = confirmedDetails;
 
-    // 숙소 / 액티비티 / 티켓
     const accommodation = finalPlanData?.selected_accommodation;
     const activity = finalPlanData?.selected_activity;
     const ticket = finalPlanData?.selected_ticket;
@@ -57,14 +54,12 @@ const PlanCheckout = () => {
         setUsePoints(Math.min(Math.max(0, num), max));
     };
 
-    // 💡 1. 데이터를 일차(day)별로 그룹화하는 함수 (첫 번째 코드 기능 유지)
     const groupedDetails = confirmedDetails.reduce((acc, item) => {
         if (!acc[item.day]) acc[item.day] = [];
         acc[item.day].push(item);
         return acc;
     }, {});
 
-    // 💡 2. 4가지 결제 수단 리스트 (두 번째 코드 기능 유지)
     const paymentMethods = [
         { id: 'kakaopay', name: '카카오페이', icon: '🟡' },
         { id: 'toss', name: '토스페이', icon: '🔵' },
@@ -83,30 +78,29 @@ const PlanCheckout = () => {
         });
     };
 
-    // 💡 3. 통합 결제 처리 로직 (기존 기능 보존)
+    // 💡 수정된 통합 결제 처리 로직
     const handlePayment = async () => {
         if (finalAmount === 0 && usePoints === 0) {
             alert("결제 금액이 0원입니다. 일정을 다시 확인해주세요.");
             return;
         }
 
-        // 공통 데이터 백업
+        if (!user?.id) {
+            alert("로그인 정보가 없습니다. 다시 로그인 해주세요.");
+            navigate('/login');
+            return;
+        }
+
+        // [핵심!] 토스/카카오로 떠나기 전, 모든 필수 정보를 localStorage에 안전하게 보관합니다.
+        localStorage.setItem('user_id', String(user.id)); // <-- 이 부분이 TossSuccess 에러를 해결합니다.
         localStorage.setItem('temp_plan_data', JSON.stringify(finalPlanData));
         if (finalPlanData?.plan_id) {
             localStorage.setItem('plan_id', String(finalPlanData.plan_id));
         }
-        if (usePoints > 0) {
-            localStorage.setItem('use_points', String(usePoints));
-        }
+        localStorage.setItem('use_points', String(usePoints));
 
-        // --- [방식 1] 카카오페이 로직 (기존 유지) ---
+        // --- [방식 1] 카카오페이 ---
         if (selectedMethod === 'kakaopay') {
-            if (!user?.id) {
-                alert("로그인이 필요합니다.");
-                navigate('/login');
-                return;
-            }
-
             try {
                 const response = await api.post('/payment/ready', {
                     item_name: `${finalPlanData?.region_name || '지역'} AI 맞춤 여행 일정`,
@@ -127,7 +121,7 @@ const PlanCheckout = () => {
                 alert("카카오페이 서버와 통신 중 오류가 발생했습니다.");
             }
 
-        // --- [방식 2, 3, 4] 토스페이먼츠 로직 (기존 유지) ---
+        // --- [방식 2, 3, 4] 토스페이먼츠 ---
         } else {
             try {
                 const tossPayments = await loadTossPayments("test_ck_kYG57Eba3GmDmmW4wpMwrpWDOxmA");
@@ -184,7 +178,6 @@ const PlanCheckout = () => {
                         <h2>💳 최종 예약 확인 및 결제</h2>
                     </div>
                     
-                    {/* 영수증 섹션: 일차별 그룹화 적용 */}
                     <div className="receipt-section">
                         <div className="trip-basic-info">
                             <strong>{finalPlanData?.region_name || '부산광역시'} 여행</strong>
@@ -211,7 +204,6 @@ const PlanCheckout = () => {
                             )}
                         </div>
 
-                        {/* 숙소 / 액티비티 / 티켓 */}
                         <div className="product-price-list">
                             {accommodation && (
                                 <div className="selected-item-row">
@@ -267,7 +259,6 @@ const PlanCheckout = () => {
                         </div>
                     </div>
 
-                    {/* 포인트 사용 섹션 */}
                     <div className="point-section">
                         <div className="point-header">
                             <span className="point-label">🎁 포인트 사용</span>
@@ -298,7 +289,6 @@ const PlanCheckout = () => {
                         )}
                     </div>
 
-                    {/* 결제 수단 선택 섹션: 4개 버튼 */}
                     <div className="payment-method-section">
                         <p className="method-label">결제 수단 선택</p>
                         <div className="method-grid">
@@ -306,10 +296,7 @@ const PlanCheckout = () => {
                                 <div
                                     key={method.id}
                                     className={`method-item ${selectedMethod === method.id ? 'active' : ''}`}
-                                    onClick={() => {
-                                        console.log("선택된 결제수단:", method.id);
-                                        setSelectedMethod(method.id);
-                                    }}
+                                    onClick={() => setSelectedMethod(method.id)}
                                 >
                                     <span className="method-icon">{method.icon}</span>
                                     <span className="method-name">{method.name}</span>
@@ -318,7 +305,6 @@ const PlanCheckout = () => {
                         </div>
                     </div>
 
-                    {/* 하단 액션 버튼 */}
                     <div className="checkout-actions">
                         <button className="main-pay-btn" onClick={handlePayment}>
                             {finalAmount.toLocaleString()}원 결제하기
