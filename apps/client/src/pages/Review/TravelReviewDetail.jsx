@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import './TravelReviewDetail.css';
 
+// 외부 플레이스홀더 서비스 대신 로컬 SVG 사용
+const NO_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext fill='%23aaa' font-family='sans-serif' font-size='16' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Not Found%3C/text%3E%3C/svg%3E";
+
 const TravelReviewDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
+
+    const hasFetched = useRef(false); // React StrictMode 2회 호출 방지
 
     const [review, setReview] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -19,9 +24,13 @@ const TravelReviewDetail = () => {
 
     // 💬 댓글 관련 상태
     const [newComment, setNewComment] = useState("");
-    const [replyToId, setReplyToId] = useState(null); // 대댓글 부모 ID
+    const [replyToId, setReplyToId] = useState(null);
 
     useEffect(() => {
+        // StrictMode에서 2번 실행되어 조회수가 2씩 오르는 문제 방지
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+
         api.get(`/reviews/${id}`)
             .then(res => {
                 setReview(res.data);
@@ -33,10 +42,16 @@ const TravelReviewDetail = () => {
             });
     }, [id]);
 
+    // 댓글/답글 등록·삭제 후 화면만 갱신 (조회수 증가 없이 댓글만 업데이트)
+    const refreshComments = async () => {
+        const res = await api.get(`/reviews/${id}`);
+        setReview(res.data);
+    };
+
     // [함수] 댓글 제출 핸들러
     const handleCommentSubmit = async () => {
         if (!newComment.trim()) return;
-        if (!user.isLoggedIn) {
+        if (!user) {
             alert("로그인 후 이용 가능합니다.");
             return;
         }
@@ -45,13 +60,11 @@ const TravelReviewDetail = () => {
             await api.post(`/reviews/${id}/comments`, {
                 userId: user.id,
                 content: newComment,
-                parentId: replyToId // 대댓글일 경우 부모 ID 포함
+                parentId: replyToId
             });
             setNewComment("");
             setReplyToId(null);
-            // 댓글 등록 후 새로고침
-            const res = await api.get(`/reviews/${id}`);
-            setReview(res.data);
+            await refreshComments();
         } catch (error) {
             alert("댓글 등록에 실패했습니다.");
         }
@@ -65,9 +78,7 @@ const TravelReviewDetail = () => {
             await api.delete(`/reviews/${id}/comments/${commentId}`, {
                 params: { userId: user.id }
             });
-            // 삭제 후 새로고침
-            const res = await api.get(`/reviews/${id}`);
-            setReview(res.data);
+            await refreshComments();
         } catch (error) {
             alert("댓글 삭제에 실패했습니다.");
         }
@@ -99,7 +110,6 @@ const TravelReviewDetail = () => {
 
     const handleDelete = () => {
         if (window.confirm("정말로 이 후기를 삭제하시겠습니까?")) {
-            // 삭제 시 userId가 필요함 (백엔드 deleteReview 참고)
             api.delete(`/reviews/${id}`, { params: { userId: user.id } })
                 .then(() => {
                     alert("삭제되었습니다.");
@@ -122,38 +132,47 @@ const TravelReviewDetail = () => {
         );
     }
 
-    const renderMixedContent = (content, images) => {
-        if (!content) return null;
-        const parts = content.split(/(\[IMAGE_\d+\])/g);
-        const sortedImages = images ? [...images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
+    // 비공개 리뷰: 작성자 본인 또는 관리자가 아니면 접근 차단
+    if (!review.isPublic && !(user && (review.userId === user.id || user.role === 'ADMIN'))) {
+        return (
+            <div className="error-wrap">
+                <p>비공개 후기입니다.</p>
+                <button onClick={() => navigate('/reviews')}>목록으로 돌아가기</button>
+            </div>
+        );
+    }
 
-        return parts.map((part, index) => {
-            const match = part.match(/\[IMAGE_(\d+)\]/);
-            if (match) {
-                const imgIdx = parseInt(match[1], 10) - 1;
-                const imgObj = sortedImages[imgIdx];
-                return imgObj ? (
-                    <div key={`img-${index}`} className="gallery-card">
-                        <div className="img-frame">
-                            <img
-                                src={imgObj.storedUrl}
-                                alt={imgObj.originName}
-                                className="fixed-height-img"
-                                onError={(e) => { e.target.src = "https://via.placeholder.com/400x300?text=Image+Not+Found"; }}
-                            />
-                        </div>
-                        <p className="img-name-tag">{imgObj.originName}</p>
+    // 본문 텍스트 렌더링: [IMAGE_N] 태그 제거 후 줄바꿈 처리
+    const renderContent = (content) => {
+        if (!content) return null;
+        const cleanText = content.replace(/\[IMAGE_\d+\]/g, '').trim();
+        return cleanText.split('\n').map((line, i) => (
+            <p key={i} className="content-line">{line || '\u00A0'}</p>
+        ));
+    };
+
+    // 첨부 이미지 갤러리 렌더링
+    const renderImageGallery = (images) => {
+        if (!images || images.length === 0) return null;
+        const sorted = [...images].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+        return (
+            <div className="attachment-gallery">
+                {sorted.map((img, i) => (
+                    <div key={i} className="attachment-item">
+                        <img
+                            src={img.storedUrl}
+                            alt={img.originName || `이미지 ${i + 1}`}
+                            onError={(e) => { e.target.src = NO_IMG; }}
+                        />
                     </div>
-                ) : null;
-            }
-            return <span key={`text-${index}`} className="content-text-part">{part}</span>;
-        });
+                ))}
+            </div>
+        );
     };
 
     const renderStars = (num) => "★".repeat(num || 0) + "☆".repeat(5 - (num || 0));
 
-    // [추가] 관리 권한 체크 (글 작성자이거나 관리자일 때)
-    const canEditOrDelete = review.userId === user.id || user.role === 'admin';
+    const canEditOrDelete = user && (review.userId === user.id || user.role === 'ADMIN');
 
     return (
         <div className="review-detail-layout">
@@ -180,7 +199,6 @@ const TravelReviewDetail = () => {
                             <span className="summary-value star-gold">{renderStars(review.rating)}</span>
                         </div>
 
-                        {/* 본인 또는 관리자일 때만 노출 */}
                         {canEditOrDelete && (
                             <div className="post-admin-actions">
                                 <button className="text-action-btn" onClick={() => navigate(`/reviews/edit/${id}`)}>수정</button>
@@ -192,9 +210,17 @@ const TravelReviewDetail = () => {
                 </div>
 
                 <div className="review-body">
-                    <div className="content-mixed-area">
-                        {renderMixedContent(review.content, review.images)}
+                    {/* 본문 텍스트 */}
+                    <div className="content-text-area">
+                        {renderContent(review.content)}
                     </div>
+                    {/* 첨부 이미지 갤러리 */}
+                    {review.images && review.images.length > 0 && (
+                        <div className="content-attachments">
+                            <p className="attachment-label">첨부 이미지 ({review.images.length}장)</p>
+                            {renderImageGallery(review.images)}
+                        </div>
+                    )}
                 </div>
 
                 <footer className="review-footer">
@@ -204,7 +230,7 @@ const TravelReviewDetail = () => {
                 </footer>
             </article>
 
-            {/* 💬 댓글 섹션 추가 */}
+            {/* 💬 댓글 섹션 */}
             <section className="comment-section">
                 <h3>댓글 {review.comments?.length || 0}</h3>
 
@@ -221,25 +247,22 @@ const TravelReviewDetail = () => {
                                             document.querySelector('.comment-write textarea')?.focus();
                                         }}>답글</button>
 
-                                        {/* 댓글 작성자 또는 관리자만 삭제 가능 */}
-                                        {(comment.userId === user.id || user.role === 'admin') && (
+                                        {user && (comment.userId === user.id || user.role === 'admin') && (
                                             <button className="comment-delete-btn" onClick={() => handleCommentDelete(comment.id)}>삭제</button>
                                         )}
                                     </div>
                                 </div>
                                 <p className="comment-content">{comment.content}</p>
 
-                                {/* 답글(대댓글) 렌더링 */}
-                                {comment.replies && comment.replies.length > 0 && (
+                                {comment.children && comment.children.length > 0 && (
                                     <div className="reply-list">
-                                        {comment.replies.map(reply => (
+                                        {comment.children.map((reply) => (
                                             <div key={reply.id} className="reply-item">
                                                 <div className="comment-header">
                                                     <span className="comment-author">↪ {reply.authorAccountId}</span>
                                                     <span className="comment-date">{reply.createdAt ? reply.createdAt.split('T')[0] : ''}</span>
 
-                                                    {/* 답글 작성자 또는 관리자만 삭제 가능 */}
-                                                    {(reply.userId === user.id || user.role === 'admin') && (
+                                                    {user && (reply.userId === user.id || user.role === 'admin') && (
                                                         <button className="comment-delete-btn" onClick={() => handleCommentDelete(reply.id)}>삭제</button>
                                                     )}
                                                 </div>
@@ -263,15 +286,16 @@ const TravelReviewDetail = () => {
                         </div>
                     )}
                     <textarea
-                        placeholder={replyToId ? "답글을 입력하세요..." : "댓글을 입력하세요..."}
+                        placeholder={user ? (replyToId ? "답글을 입력하세요..." : "댓글을 입력하세요...") : "로그인 후 댓글을 작성할 수 있습니다."}
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
+                        disabled={!user}
                     />
-                    <button className="comment-submit-btn" onClick={handleCommentSubmit}>등록</button>
+                    <button className="comment-submit-btn" onClick={handleCommentSubmit} disabled={!user}>등록</button>
                 </div>
             </section>
 
-            {/* 🚩 신고 모달 UI */}
+            {/* 🚩 신고 모달 */}
             {isReportModalOpen && (
                 <div className="report-modal-overlay">
                     <div className="report-modal-content">

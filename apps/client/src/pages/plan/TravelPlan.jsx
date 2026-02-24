@@ -11,8 +11,9 @@ export default function TravelPlan() {
         sub_region: "",
         sub_region_id: null,
         people_count: 1,
-        budget_range: [10, 50],
+        budget_range: [0, 0],
         travel_date: null,
+        end_date: null,
         keywords: [],
     });
 

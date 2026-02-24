@@ -197,17 +197,18 @@ function UserList() {
                       <td style={{ fontSize: '12px', color: '#7f8c8d' }}>{user.keywordPref || '-'}</td>
                       <td>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}</td>
                       <td>
-                        <div style={{ display: 'flex', gap: '6px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '64px' }}>
                           <button
                             onClick={() => handleEditPoint(user)}
                             className="btn btn-primary btn-sm"
+                            style={{ fontSize: '12px', padding: '4px 0', width: '100%' }}
                           >
                             포인트
                           </button>
                           <button
                             onClick={() => handleToggleStatus(user)}
                             className="btn btn-sm"
-                            style={{ background: user.status === 'SUSPENDED' ? '#2ecc71' : '#f39c12', color: 'white' }}
+                            style={{ background: user.status === 'SUSPENDED' ? '#2ecc71' : '#f39c12', color: 'white', fontSize: '12px', padding: '4px 0', width: '100%' }}
                             disabled={user.role === 'ADMIN'}
                           >
                             {user.status === 'SUSPENDED' ? '활성화' : '중지'}
@@ -215,7 +216,7 @@ function UserList() {
                           <button
                             onClick={() => handleDelete(user.id, user.role)}
                             className="btn btn-sm"
-                            style={{ background: '#e74c3c', color: 'white' }}
+                            style={{ background: '#e74c3c', color: 'white', fontSize: '12px', padding: '4px 0', width: '100%' }}
                             disabled={user.role === 'ADMIN'}
                           >
                             삭제

@@ -149,21 +149,34 @@
     transform: scale(1.1);
 }
 
-/* 🚩 본문 삽입 버튼 (기존 스타일) */
-.insert-tag-btn {
-    padding: 6px 12px;
-    background-color: #34495e;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    font-size: 0.85rem;
+/* 사진 추가 버튼 */
+.file-upload-btn {
+    display: inline-block;
+    padding: 8px 18px;
+    background-color: #f1f3f5;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s;
+    margin-bottom: 15px;
 }
 
-.insert-tag-btn:hover {
-    background-color: #2c3e50;
+.file-upload-btn:hover {
+    background-color: #e9ecef;
+}
+
+/* 파일명 표시 */
+.preview-filename {
+    font-size: 0.75rem;
+    color: #888;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
 }
 
 .helper-text {

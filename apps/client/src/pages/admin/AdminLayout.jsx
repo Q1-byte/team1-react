@@ -26,7 +26,8 @@ export default function AdminLayout() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    
+    <div style={{ display: 'flex'}}>
       {/* 사이드바 */}
       <aside className="admin-sidebar">
         <div className="sidebar-header">
