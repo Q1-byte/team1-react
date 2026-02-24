@@ -22,6 +22,85 @@
     font-size: 14px;          /* 글자 크기도 적당하게 조절 */
 }
 
+/* 모달 확인 버튼 스타일 */
+.modal-confirm-btn {
+    width: 100%;             /* 버튼 너비를 모달에 맞게 */
+    padding: 12px 0;         /* 위아래 여백 */
+    background-color: #005ADE; /* 요청하신 파란색 */
+    color: white;            /* 글자색 흰색 */
+    border: none;            /* 테두리 제거 */
+    border-radius: 8px;      /* 둥근 모서리 */
+    font-size: 16px;         /* 글자 크기 */
+    font-weight: 600;        /* 글자 두께 */
+    cursor: pointer;         /* 마우스 포인터 변경 */
+    margin-top: 20px;        /* 위쪽 콘텐츠와의 간격 */
+    
+    /* 부드러운 변화 효과 */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* 마우스를 올렸을 때 (Hover) */
+.modal-confirm-btn:hover {
+    background-color: #0046b3; /* 살짝 더 진한 파란색으로 변경 */
+    transform: translateY(-1px); /* 아주 살짝 위로 들림 */
+}
+
+/* 클릭했을 때 (Active) */
+.modal-confirm-btn:active {
+    transform: translateY(0);    /* 다시 제자리로 */
+    filter: brightness(0.9);     /* 살짝 어두워짐 */
+}
+
+/* 내용을 감싸는 스크롤 박스 */
+.scroll-box {
+    max-height: 400px;       /* 모달 안에서 내용이 보일 최대 높이 (조절 가능) */
+    overflow-y: auto;        /* 내용이 길어지면 세로 스크롤 생성 */
+    padding-right: 10px;     /* 스크롤바와 텍스트 사이 간격 */
+    margin: 20px 0;          /* 위아래 여백 */
+    text-align: center;        /* 텍스트 왼쪽 정렬 */
+}
+
+/* 스크롤바 스타일링 (선택 사항: 더 깔끔하게 보임) */
+.scroll-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scroll-box::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb:hover {
+    background: #005ADE;    /* 스크롤바도 버튼 색상과 통일 */
+}
+
+/* 내부 텍스트 스타일 */
+.policy-text h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-top: 20px;
+    justify-content: center;
+    text-align: center;
+}
+
+.policy-text p, .policy-text li {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.6;
+    word-break: keep-all;
+    text-align: center;
+}
+
+.policy-text ul {
+    display: inline-block; /* 내용만큼만 너비를 가지게 함 */
+    text-align: left;      /* 글자 내용은 왼쪽 정렬 (가독성) */
+    margin: 0 auto 15px auto; /* 블록 자체를 가운데로 */
+}
 
 .divider {
   color: #ffffff; /* 또는 color: white; */
