@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import './App.css';
 import BottomBanner from './components/BottomBanner';
+import ScrollToTop from './components/ScrollToTop';
 
 // App.js
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
       margin: 0, 
       padding: 0 
     }}>
+      <ScrollToTop />
       <Header />
       <main style={{ flex: 1, width: '100%' }}>
         <Outlet />

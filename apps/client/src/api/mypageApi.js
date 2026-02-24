@@ -260,10 +260,20 @@
     return response.data;
     };
 
+    /**
+     * 신규 회원 웰컴 포인트 지급 (1회 한정)
+     * POST /api/user/welcome-bonus
+     */
+    export const claimWelcomeBonus = async () => {
+        const response = await api.post('/api/user/welcome-bonus');
+        return response.data;
+    };
+
     export default {
     getMyPageMain,
     getMyPlans,
     getMyPoints,
     updateProfile,
-    changePassword
+    changePassword,
+    claimWelcomeBonus
     };

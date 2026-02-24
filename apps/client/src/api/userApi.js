@@ -14,3 +14,6 @@ export const deleteUser = (id) =>
 
 export const updateUserPoint = (id, point) =>
     api.patch(`${BASE}/${id}/point`, { point }).then(r => r.data);
+
+export const updateUserStatus = (id, status) =>
+    api.patch(`${BASE}/${id}/status`, { status }).then(r => r.data);

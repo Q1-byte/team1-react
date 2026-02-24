@@ -9,6 +9,8 @@ import { getMyInquiriesApi } from '../../api/inquiryApi';
 import api from '../../api';
 import './MyPage.css';
 
+const TRAVEL_KEYWORDS = ['힐링', '자연', '스릴', '추억', '예술', '체험', '데이트', '트레킹'];
+
 const REGION_DATA = {
   1: "서울", 2: "인천", 3: "대전", 4: "울산", 5: "대구", 
   6: "광주", 7: "부산", 8: "세종", 9: "경기", 10: "강원", 
@@ -44,7 +46,7 @@ function MyPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editPhone, setEditPhone] = useState('');
-  const [editKeywordPref, setEditKeywordPref] = useState('');
+  const [editKeywordPref, setEditKeywordPref] = useState([]);
   const [editNickname, setEditNickname] = useState('');
   const [profileLoading, setProfileLoading] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -64,7 +66,7 @@ function MyPage() {
           setUserInfo(response.data.user);
           setRecentViews(response.data.recentViewedPlans || []);
           setEditPhone(response.data.user.phone || '');
-          setEditKeywordPref(response.data.user.keywordPref || '');
+          setEditKeywordPref(response.data.user.keywordPref ? response.data.user.keywordPref.split(',').map(k => k.trim()).filter(Boolean) : []);
           setEditNickname(response.data.user.nickname || '');
         } else {
           setError(response.message);
@@ -141,11 +143,12 @@ function MyPage() {
   const handleProfileUpdate = async () => {
     try {
       setProfileLoading(true);
-      const response = await updateProfile({ phone: editPhone, keywordPref: editKeywordPref, nickname: editNickname });
+      const response = await updateProfile({ phone: editPhone, keywordPref: editKeywordPref.join(','), nickname: editNickname });
       if (response.success) {
         alert('프로필이 수정되었습니다.');
         setUserInfo(response.data);
         updateUser({ phone: response.data.phone, keywordPref: response.data.keywordPref, nickname: response.data.nickname });
+        setEditKeywordPref(response.data.keywordPref ? response.data.keywordPref.split(',').map(k => k.trim()).filter(Boolean) : []);
       } else {
         alert(response.message || '프로필 수정에 실패했습니다.');
       }
@@ -434,7 +437,21 @@ function MyPage() {
                 <div className="form-group"><label>이메일</label><input type="email" value={displayUser.email || ''} disabled /></div>
                 <div className="form-group"><label>닉네임</label><input type="text" value={editNickname} onChange={(e) => setEditNickname(e.target.value)} placeholder="닉네임을 입력하세요" /></div>
                 <div className="form-group"><label>연락처</label><input type="tel" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} /></div>
-                <div className="form-group"><label>여행 성향</label><input type="text" value={editKeywordPref} onChange={(e) => setEditKeywordPref(e.target.value)} /></div>
+                <div className="form-group keyword-section">
+                  <label>여행 성향</label>
+                  <div className="keyword-grid">
+                    {TRAVEL_KEYWORDS.map(keyword => (
+                      <button
+                        key={keyword}
+                        type="button"
+                        className={`keyword-chip ${editKeywordPref.includes(keyword) ? 'selected' : ''}`}
+                        onClick={() => setEditKeywordPref(prev =>
+                          prev.includes(keyword) ? prev.filter(k => k !== keyword) : [...prev, keyword]
+                        )}
+                      >{keyword}</button>
+                    ))}
+                  </div>
+                </div>
                 <div className="form-actions">
                   <button className="btn-sm-s" onClick={handleProfileUpdate} disabled={profileLoading}>정보 수정</button>
                   <button className="btn-sm-n" onClick={() => setShowPasswordModal(true)}>비밀번호 변경</button>
