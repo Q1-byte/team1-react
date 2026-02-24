@@ -5,7 +5,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 32px 20px 32px 20px;
-  padding-top: 200px;
+  padding-top: 80px;
 }
 
 .mypage-content {
@@ -34,7 +34,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center; /* 세로 중앙 정렬 */
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   
 }
 
@@ -400,12 +400,6 @@
   flex-direction: column;
   align-items: center;    /* 내부 요소(제목, 날짜) 중앙 정렬 */
   margin-bottom: 12px;
-}
-
-.viewed-at {
-  font-size: 11px;
-  color: #aaa;
-  margin-top: 4px;
 }
 
 /* 제목과 태그를 감싸는 헤더 */

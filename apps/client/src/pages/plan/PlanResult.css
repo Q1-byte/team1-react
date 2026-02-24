@@ -109,6 +109,7 @@
     background-color: #fff;
     color: #ff4d4f; /* 경고 의미의 레드 */
     border-color: #ff4d4f;
+    margin-left: 30px;
 }
 
 .toggle-btn.remove:hover {

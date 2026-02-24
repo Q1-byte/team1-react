@@ -1,144 +1,112 @@
-/* 1. 기본 설정 및 폰트 */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    }
+/* 모든 여백의 근원을 차단 */
+html, body, #root, .App {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex;
+    flex-direction: column;
+}
 
-    html, body, #root {
-    font-family: 'Pretendard';
-    color: #333;
-    line-height: 1.6;
-    background-color: #f8f9fa;
-    min-height: 100vh;
-    }
-
-    /* 3. 타이틀(제목) 전용 폰트 설정 */
-    h1, h2, h3, h4, h5, h6, .title-font {
-    font-family: 'Pretendard';
-    /* 제목이 너무 얇아 보인다면 아래 속성을 조절하세요 */
+h1, h2, h3, h4, h5, h6, .title-font {
+    font-family: 'Pretendard', sans-serif;
     font-weight: 700; 
-    }
+}
 
+/* 2. 메인 구조 (App.js의 flex 구조와 연동) */
+/* App.css */
+.App {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
 
-    /* 6. 후기 섹션 */
-    /* 후기 섹션 전체 정렬 */
-    .review-section {
+main {
+    flex: 1;
+    display: block; 
+    width: 100%;
+    position: relative; /* 자식 요소들의 기준점만 되어줌 */
+    /* 여기에 margin-top: 140px 같은 게 있다면 지워주세요! */
+}
+
+/* 3. 후기 섹션 (모든 페이지 공통일 경우 여기에 유지) */
+.review-section {
     padding: 100px 20px;
     max-width: 1200px;
     margin: 0 auto;
-    text-align: center; /* 타이틀 중앙 정렬 */
-    }
+    text-align: center;
+}
 
-    /* 1. 상단 작은 라벨 스타일 */
-    .review-title-tag {
+.review-title-tag {
     display: inline-block;
-    background-color: #E8F0FE; /* 연한 블루 (그라디언트 없는 플랫한 색상) */
-    color: #2C5F9E;           /* 진한 블루 포인트 */
+    background-color: #E8F0FE;
+    color: #2C5F9E;
     font-size: 14px;
-    font-weight: 700;         /* Pretendard Bold */
+    font-weight: 700;
     padding: 6px 16px;
-    border-radius: 50px;      /* 완전히 둥근 라벨 */
+    border-radius: 50px;
     letter-spacing: 1px;
     margin-bottom: 15px;
-    }
+}
 
-    /* 2. 메인 타이틀 스타일 */
-    .review-main-title {
-    font-family: 'Pretendard', sans-serif;
+.review-main-title {
     font-size: 2.5rem;
-    font-weight: 600;         /* 아주 두껍게 */
+    font-weight: 600;
     color: #1a2a3a;
-    margin-bottom: 50px;      /* 카드들과의 간격 */
+    margin-bottom: 50px;
     letter-spacing: -1px;
-    }
+}
 
-    /* 후기 카드 컨테이너 간격 유지 */
-    .review-container {
+.review-container {
     display: flex;
     justify-content: center;
     gap: 25px;
-    }
+}
 
-    .review-card {
+.review-card {
     background-color: #F5F5F5;
     padding: 40px 25px;
     border-radius: 30px;
     flex: 1;
     text-align: center;
-    }
+}
 
-    .divider { color: #556677; margin: 0 5px; }
-
-    .copyright { 
-    font-size: 12px; 
-    color: #8899aa; 
-    margin-top: 15px; 
-    }
-
-    .modal-overlay {
+/* 4. 공통 모달 스타일 */
+.modal-overlay {
     position: fixed;
-    /* top, left, right, bottom을 모두 0으로 주면 화면 전체를 확실히 덮습니다 */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    height: 100vh;
+    top: 0; left: 0; right: 0; bottom: 0;
     background-color: rgba(0, 0, 0, 0.7);
-    
-    /* 중앙 정렬을 위한 핵심 코드 */
-    display: flex !important;   /* 다른 설정에 밀리지 않게 강제 적용 */
-    justify-content: center;    /* 가로 중앙 */
-    align-items: center;        /* 세로 중앙 */
-    
+    display: flex;
+    justify-content: center;
+    align-items: center;
     z-index: 9999;
-    }
+}
 
-    .modal-content {
+.modal-content {
     background: white;
     width: 90%;
     max-width: 500px;
     padding: 30px;
     border-radius: 20px;
-    /* 혹시 모를 왼쪽 정렬 속성 제거 */
-    margin: 0 auto; 
     position: relative;
-    }
+}
 
-    .scroll-box {
-    height: 250px;
-    overflow-y: auto;
-    text-align: left;
-    padding: 15px;
-    background: #f8f9fa;
-    border: 1px solid #eee;
-    margin: 20px 0;
-    }
+/* 5. 하단 푸터 영역 관련 */
+.footer-info {
+    font-size: 12px;
+    color: #8899aa;
+    margin-top: 15px;
+}
 
-    .modal-confirm-btn {
-    background-color: #2C5F9E;
-    color: white;
-    border: none;
-    padding: 12px 0;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 100%;
-    }
-
-    /* 9. 📱 모바일 반응형 (768px 정상 수치 적용) */
-    @media (max-width: 768px) {
-    .topbanner-section { height: 350px; }
-    .banner-content h1 { font-size: 1.8rem; }
-    
-    .nav-bar { gap: 20px; padding: 40px 10px; }
-    .icon-circle { width: 100px; height: 100px; }
-    
-    .mid-banner { height: 150px; }
-    
+/* 6. 모바일 공통 반응형 */
+@media (max-width: 768px) {
     .review-container {
         flex-direction: column;
         align-items: center;
     }
-    .review-card { width: 100%; max-width: 400px; }
+    .review-card {
+        width: 100%;
+        max-width: 400px;
+    }
 }
+

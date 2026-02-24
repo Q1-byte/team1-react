@@ -7,8 +7,9 @@
     flex-direction: column !important;
     justify-content: flex-start !important; 
     align-items: center !important;
-    padding: 100px 20px 50px 20px; /* 헤더 높이 고려 */
+    padding: 100px 20px 100px 20px;
     box-sizing: border-box;
+    margin-bottom: 100;
 }
 
 /* 2. 제목 스타일: 카드 상단 중앙 배치 */
@@ -19,7 +20,7 @@
     text-align: center;
     width: 100%;
     margin-top: 0;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
 /* 3. 메인 카드 상자: 모든 설정 요소를 감싸는 흰색 카드 */
@@ -29,17 +30,18 @@
     background-color: #ffffff;
     border-radius: 25px;
     padding: 50px; 
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 100px rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 40px; /* 섹션(달력, 인원, 취향) 간의 간격 */
+    gap: 15px; /* 섹션(달력, 인원, 취향) 간의 간격 */
 }
 
 /* 4. 공통 섹션 아이템 구조 (너비 100% 유지) */
 .setup-item {
     width: 100%;
     box-sizing: border-box;
+    margin-bottom: 20px;
 }
 
 /* 5. 섹션 레이블 스타일 (📅 언제 떠나시나요? 등) */
@@ -48,7 +50,7 @@
     display: block;
     font-size: 1.2rem;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: #333;
     text-align: left;
 }
@@ -71,13 +73,32 @@
 /* 7. 인원 선택 셀렉트 박스 */
 .people-select {
     width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    font-size: 1rem;
-    outline: none;
+    padding: 12px 40px 12px 15px; /* 오른쪽 패딩(40px)을 넉넉히 주어 화살표와 글자가 안 겹치게 함 */
+    font-size: 1.2rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
     background-color: #fff;
-    transition: border-color 0.2s;
+    color: #444;
+    outline: none;
+    cursor: pointer;
+
+    /* 1. 기본 화살표 숨기기 */
+    -webkit-appearance: none; /* 크롬, 사파리 */
+    -moz-appearance: none;    /* 파이어폭스 */
+    appearance: none;         /* 표준 */
+
+    /* 2. 커스텀 화살표 배경 넣기 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    
+    /* 3. 화살표 위치 조절 (오른쪽에서 15px 띄움) */
+    background-position: calc(100% - 15px) center; 
+    background-size: 16px; /* 화살표 크기 */
+}
+
+/* IE에서 화살표 숨기기 */
+.people-select::-ms-expand {
+    display: none;
 }
 
 .people-select:focus {
@@ -90,7 +111,6 @@
     padding: 25px;
     border-radius: 20px;
     border: 1px solid #f1f3f5;
-    margin-bottom: 20px;
     width: 100%;
     box-sizing: border-box;
 }
@@ -99,7 +119,7 @@
     font-size: 1.05rem;
     font-weight: 700;
     color: #444;
-    margin-bottom: 18px;
+    margin-bottom: 10px;
     text-align: left;
 }
 
@@ -108,7 +128,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start; /* 왼쪽 정렬로 일관성 유지 */
-    gap: 12px;
+    gap: 10px;
 }
 
 .keyword-item {
@@ -142,7 +162,7 @@
 .button-group {
     display: flex;
     gap: 15px;
-    margin-top: 20px;
+    margin-top: 10px;
     align-items: stretch; 
     width: 100%;
 }
@@ -196,4 +216,13 @@
     .category-group {
         padding: 20px;
     }
+}
+
+.setup-item.info-section {
+    margin-bottom: 0px; /* 2번 원인 제거 */
+}
+
+/* 만약 전체적으로 너무 넓다면 1번의 gap을 수정 */
+.plan-keyword-container {
+    gap: 10px; /* 40px에서 20px로 줄여보세요 */
 }

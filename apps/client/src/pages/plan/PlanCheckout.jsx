@@ -9,7 +9,15 @@ import './PlanCheckout.css';
 const PlanCheckout = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, loading } = useAuth(); // loading 상태가 있다면 함께 가져오세요
+
+    useEffect(() => {
+        // 로그인 로딩이 끝났는데 유저 정보가 없다면
+        if (!loading && !user) {
+            alert("로그인이 필요한 서비스입니다.");
+            navigate('/login', { state: { from: location.pathname } }); 
+        }
+    }, [user, loading, navigate]);
 
     // 데이터 추출
     const { finalPlanData } = location.state || {};
@@ -170,7 +178,6 @@ const PlanCheckout = () => {
 
     return (
         <>
-            <Header />
             <div className="checkout-page-container">
                 <div className="checkout-box">
                     <div className="checkout-title">
