@@ -14,6 +14,27 @@ html, body {
 }
 
 /* 3. 상단 광고 배너 (여백 원천 봉쇄) */
+.top-ad-bar--welcome {
+    background: linear-gradient(90deg, #637cec, #2433be) !important;
+    gap: 12px !important;
+}
+
+.welcome-claim-btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+}
+
+.welcome-claim-btn:hover { opacity: 0.85; }
+.welcome-claim-btn:disabled { opacity: 0.6; cursor: default; }
+
 .top-ad-bar {
     width: 100% !important;
     height: 40px !important;

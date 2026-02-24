@@ -620,3 +620,37 @@
   .tab { white-space: nowrap; }
 }
 
+/* ─── 여행 성향 키워드 칩 ─── */
+.keyword-section { flex-direction: column; align-items: flex-start; }
+
+.keyword-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.keyword-chip {
+  padding: 8px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+
+.keyword-chip:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.keyword-chip.selected {
+  border-color: #667eea;
+  background: #667eea;
+  color: white;
+  font-weight: 600;
+}
+
