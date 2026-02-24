@@ -1,22 +1,30 @@
 /* 1. 기본 레이아웃 */
 .gacha-screen {
     background-color: #9DBFF5;
-    min-height: 80vh;
+    /* height: 100vh; 대신 min-height를 사용하여 컨텐츠가 길어지면 배경도 늘어나게 함 */
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 50px 0;
+    justify-content: flex-start;
+    padding-top: 60px;
+    /* ★ 결과 카드가 나왔을 때 바닥에 딱 붙지 않도록 하단 여백 추가 */
+    padding-bottom: 40px; 
+    /* 컨텐츠가 늘어날 때 배경색이 잘리지 않도록 설정 */
+    height: auto; 
 }
 
-/* 2. 기계 및 애니메이션 */
+/* 2. 기계 컨테이너 - 하단 마진 제거 */
 .machine-container {
+    position: relative;
     display: inline-block;
-    margin-bottom: 20px;
+    margin-bottom: 0px; /* 여백 0 */
 }
 
 .gacha-image-container img {
-    width: 450px; /* 아이콘 크기를 기계에 맞게 조정 (원래 200px에서 변경) */
+    width: 450px; 
+    display: block;
+    margin-bottom: -20px;
 }
 
 @keyframes shake {
@@ -133,24 +141,76 @@
 }
 
 /* 5. 캡슐 및 결과 카드 */
+/* 5. 캡슐 및 결과 카드 수정 */
 .capsule-pop {
-    margin-top: 20px;
-    text-align: center;
-    animation: pop-up 0.8s cubic-bezier(0.1, 0.9, 0.2, 1.3) forwards;
+    position: absolute;
+    /* 기계 하단 입구(배출구) 아래로 위치 조정 */
+    bottom: -80px; 
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* 부모 너비 기준으로 중앙 정렬 보장 */
+}/* 5. 캡슐 위치 - 기계 하단에 밀착 */
+.capsule-pop {
+    position: absolute;
+    bottom: 50px; /* 기계 이미지 안쪽 배출구 근처로 배치 */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
-@keyframes pop-up {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+/* 후광 정중앙 정렬 보정 */
+.capsule-glow {
+    position: absolute;
+    top: 50%; /* 캡슐 정중앙 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, black 70%);
+    z-index: -1;
+    animation: pulse 0.5s infinite;
 }
 
+/* 버튼 섹션 여백 조정 */
+.controls-section {
+    margin-top: 20px; /* 기계 바로 아래에 버튼 배치 */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 캡슐 이미지: 크기 조절 및 그림자 */
+.capsule-pop img {
+    width: 200px; /* 너무 크면 기계와 겹치므로 살짝 조절 */
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
+    z-index: 2;
+}
+
+/* 캡슐 텍스트 */
 .capsule-text {
-    font-size: 2rem;
+    margin-top: 15px;
+    font-size: 1.8rem;
     font-weight: bold;
-    color: #fff;
-    animation: blink 1s infinite alternate;
+    color: black;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+    white-space: nowrap;
 }
 
+/* 나타나는 애니메이션 */
+@keyframes pop-up {
+    0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+    100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
 .result-card {
     background-color: #fff;
     border-radius: 15px;
@@ -190,4 +250,24 @@
 @keyframes slide-up {
     from { transform: translateY(50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-20px); }
+}
+
+.list-fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }

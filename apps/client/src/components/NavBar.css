@@ -4,7 +4,7 @@
     flex-direction: row !important;
     justify-content: center;   /* 아이템들을 가로 가운데로 */
     align-items: flex-start;
-    gap: 60px;                /* 아이템 사이 간격 */
+    gap: 90px;                /* 아이템 사이 간격 */
     padding: 80px 20px;
     background-color: #fff;
     width: 100%;

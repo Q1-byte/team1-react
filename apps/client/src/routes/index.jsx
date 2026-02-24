@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import App from '../App';
+import React from 'react';
 
 // 페이지 임포트
 import Login from '../pages/auth/Login';
@@ -14,13 +15,21 @@ import TopSlider from '../components/TopSlider';
 import NavBar from '../components/NavBar';
 import MidBanner from '../components/MidBanner';
 import ReviewSection from '../components/ReviewSection';
+import BottomBanner from '../components/BottomBanner'; // 신규 배너 추가
 
 // 관리자 페이지
 import AdminLayout from '../pages/admin/AdminLayout';
+import AdminDashboard from '../pages/admin/Dashboard';
+import UserManagement from '../pages/admin/users/UserList';
+import SpotManagement from '../pages/admin/spots/SpotList';
+import PaymentManagement from '../pages/admin/payments/PaymentList';
+import EventManagement from '../pages/admin/events/EventList';
+import ReviewManagement from '../pages/admin/reviews/ReviewList';
+import InquiryManagement from '../pages/admin/inquiries/InquiryList';
 
 // Plan 페이지
 import PlanSearch from '../pages/plan/PlanSearch';
-import PlanSetup from '../pages/plan/PlanSetup';
+import PlanSetup from '../pages/plan/PlanSetup'; // 기존에 선언만 되어있던 것 활용
 import PlanKeyword from '../pages/plan/PlanKeyword';
 import PlanResult from '../pages/plan/PlanResult';
 import PlanCheckout from '../pages/plan/PlanCheckout';
@@ -50,13 +59,6 @@ import TossFail from '../pages/payment/toss/TossFail';
 import VBankSuccess from '../pages/payment/vbank/VBankSuccess';
 import VBankFail from '../pages/payment/vbank/VBankFail';
 import PaymentCancel from '../pages/payment/PaymentCancel';
-import AdminDashboard from '../pages/admin/Dashboard';
-import UserManagement from '../pages/admin/users/UserList';
-import SpotManagement from '../pages/admin/spots/SpotList';
-import PaymentManagement from '../pages/admin/payments/PaymentList';
-import EventManagement from '../pages/admin/events/EventList';
-import ReviewManagement from '../pages/admin/reviews/ReviewList';
-import InquiryManagement from '../pages/admin/inquiries/InquiryList';
 
 // 메인 페이지 컴포넌트 임포트
 import Header from '../components/Header';
@@ -78,7 +80,7 @@ function GuestRoute({ children }) {
   return children;
 }
 
-// 메인 홈 컴포넌트
+// 메인 홈 컴포넌트 (BottomBanner 포함 통합)
 function HomePage() {
   return (
     <div style={{ position: 'relative' }}>
@@ -89,73 +91,41 @@ function HomePage() {
       <NavBar />
       <MidBanner />
       <ReviewSection />
+      <BottomBanner /> {/* 새로 추가된 하단 배너 */}
       <Footer />
     </div>
   );
 }
 
 export const router = createBrowserRouter([
-  // 메인페이지
+  // 1. 메인페이지 (독립 레이아웃)
   {
     path: '/',
     element: <HomePage />
   },
-  // 공통 레이아웃 페이지
+  
+  // 2. 공통 레이아웃 페이지 (Gacha, Plan, Payment, 커뮤니티 등)
   {
     path: '/',
     element: <App />,
     children: [
-      {
-        path: 'gacha',
-        element: <GachaPage />
-      },
-      { path: 'plan/:planId',  element: <PlanResult />},
-      // --- Plan 관련 라우트 (중첩 구조 유지) ---
+      { path: 'gacha', element: <GachaPage /> },
+      { path: 'plan/:planId', element: <PlanResult /> },
+      
+      // --- Plan 관련 라우트 (중첩 구조 최적화) ---
       {
         path: 'reserve',
         element: <TravelPlan />,
         children: [
-          {
-            index: true,
-            element: <PlanSearch />
-          },
-          {
-            path: 'setup',
-            element: <PlanKeyword />
-          },
-          {
-            path: 'keyword',
-            element: <PlanKeyword />
-          },
-          {
-            path: 'result',
-            element: <PlanResult />
-          },
-          {
-            path: ':planId', 
-            element: <PlanResult />
-          },
-          {
-            path: 'check', 
-            element: <PlanCheckout />
-          },
-          {
-            path: 'receipt',
-            element: <PlanReceipt />
-          },
-          
-          // 💡 여기에 배치하여 /reserve/check 주소를 활성화합니다.
-          {
-            path: 'check', 
-            element: <PlanCheckout />
-          },
-          {
-            path: 'receipt', // 👈 영수증 페이지 누락 방지
-            element: <PlanReceipt />
-          },
+          { index: true, element: <PlanSearch /> },
+          { path: 'setup', element: <PlanKeyword /> }, // PlanSetup 컴포넌트로 정상 연결
+          { path: 'keyword', element: <PlanKeyword /> },
+          { path: 'result', element: <PlanResult /> },
+          { path: ':planId', element: <PlanResult /> },
+          { path: 'check', element: <PlanCheckout /> },
+          { path: 'receipt', element: <PlanReceipt /> },
         ]
       },
-      // 💡 외부 중복 주소는 제거되었습니다.
 
       // Payment 관련 라우트
       { path: 'payment/kakao/success', element: <KakaoPaySuccess /> },
@@ -182,18 +152,18 @@ export const router = createBrowserRouter([
       { path: 'reviews/edit/:id', element: <TravelReviewEdit /> }
     ]
   },
-  // 인증 관련
+
+  // 3. 인증 관련 (GuestRoute/ProtectedRoute 적용)
   { path: '/login', element: <GuestRoute><Login /></GuestRoute> },
   { path: '/register', element: <GuestRoute><Register /></GuestRoute> },
   { path: '/oauth/callback', element: <OAuthCallback /> },
   { path: '/mypage', element: <ProtectedRoute><MyPage /></ProtectedRoute> },
 
-  // 관리자 페이지
+  // 4. 관리자 페이지 (ProtectedRoute & 중첩 라우트)
   {
     path: '/admin',
     element: <ProtectedRoute><AdminLayout /></ProtectedRoute>,
     children: [
-      
       { index: true, element: <AdminDashboard /> },
       { path: 'users', element: <UserManagement /> },
       { path: 'spots', element: <SpotManagement /> },
@@ -203,6 +173,7 @@ export const router = createBrowserRouter([
       { path: 'inquiries', element: <InquiryManagement /> }
     ]
   },
-  // 404
+
+  // 5. 404 Not Found
   { path: '*', element: <div>404 Not Found</div> }
 ]);

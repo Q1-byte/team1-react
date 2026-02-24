@@ -1,13 +1,37 @@
 /* 1. 전체 컨테이너 및 배경 설정 */
+/* 1. 전체 컨테이너 수정 */
 .plan-search-container {
-    margin-top: 100px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f8f9fa;
-    padding: 40px 20px;
+    
+    /* 1. 이 배경색이 헤더 위로 올라오는지 확인 */
+    background-color: #f8f9fa; 
+    
+    /* 2. 헤더 높이만큼 확실하게 밀어내기 */
+    /* 헤더가 140px이면 최소 140px 이상을 줘야 헤더를 안 가립니다 */
+    padding-top: 100px; 
+    
+    /* 3. 만약 헤더가 fixed(고정) 상태라면 margin-top을 써야 합니다 */
+    /* margin-top: 140px; */ 
+
     min-height: 100vh;
-    overflow-x: hidden;
+    box-sizing: border-box;
+    margin-bottom: 100px;
+}
+
+/* 3. 메인 레이아웃 수정 */
+.plan-search-layout {
+    width: 100%;
+    max-width: 1200px; /* 여기를 1200px(또는 더 작게)로 줄이면 끝! */
+    margin: 0 auto;    /* 가운데로 모으기 */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch; 
+    gap: 30px;
+    margin: 0 auto; /* 중앙 정렬 보장 */
 }
 
 /* 유령 텍스트/바 강제 제거 */

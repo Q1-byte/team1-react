@@ -1,71 +1,179 @@
-/* 1. 최상위 부모 */
-.topbanner-section {
-    position: relative;
-    width: 100%;
-    height: 700px;
-    background-color: #DBE2E8; /* 이미지가 로드되기 전 기본 배경색 */
-    overflow: hidden;
+/* TopSlider.css */
+
+.slider-outer-container {
+    width: 100% !important;
+    display: block !important;
+    position: relative !important;
+    margin-top: 200px !important; 
+    padding: 0 !important;
+    z-index: 1;
 }
 
-/* 2. 배경 이미지 슬라이더 (바닥층) */
-.slider-container {
+.topbanner-section {
+    position: relative !important;
+    width: 98% !important; 
+    max-width: 1800px !important; 
+    height: 500px !important; 
+    border-radius: 30px;
+    overflow: hidden;
+    margin: 0 auto !important; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ★ 이미지 크기 조절 ★ */
+.slide-item {
     position: absolute;
+    top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1; /* 가장 아래 */
-}
-
-.slide-item {
-    position: absolute;
-    bottom: 0;    
-    width: 100%;
-    height: 100%;
-    background-size: cover;
+    /* 이미지가 너무 크게 느껴지면 'contain'을 써도 되지만, 
+       배너를 꽉 채우되 비율을 맞추려면 cover가 가장 좋습니다. */
+    background-size: cover; 
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0;
-    transition: opacity 1s ease-in-out;
+    transition: opacity 0.8s ease-in-out;
+    /* 이미지 자체가 너무 부각되지 않게 스케일을 살짝 조절하고 싶을 때 사용 */
+    transform: scale(1.0); 
 }
 
 .slide-item.active {
     opacity: 1;
-    z-index: 2; /* 활성화된 배경이 살짝 위로 */
+    z-index: 1;
 }
 
-/* 3. 텍스트 이미지 슬라이더 (위층) */
+/* ★ 글씨 크기 대폭 축소 및 중앙 정렬 ★ */
+.text-slide {
+    position: absolute;
+    top: 55%; /* 살짝 아래로 내려서 안정감 부여 */
+    left: 50%; 
+    transform: translate(-50%, -60%) !important;
+    
+    /* 너비 제한을 줘서 글자가 양옆으로 너무 퍼지지 않게 함 */
+    width: auto !important;
+    min-width: 300px;
+    max-width: 70% !important; 
+    
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    z-index: 15;
+    text-align: center;
+}
+
+/* 실제 글씨(h1, h2 등) 크기 조절 */
+.text-slide h1 {
+    font-size: 2.2rem !important; /* 기존 3.2rem 등에서 대폭 축소 */
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.text-slide p {
+    font-size: 1rem !important; /* 설명글 크기 축소 */
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.text-slide.active {
+    opacity: 1;
+}
+
 .banner-content-wrapper {
     position: absolute;
-    /* bottom: 0; 기존 코드 */
-    top: 0px; /* 바닥에서 20px 띄움 */
-    left: 50%;
-    transform: translateX(-50%);
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 1300px;
     height: 100%;
     z-index: 10;
     pointer-events: none;
 }
-.banner-content {
+
+/* 📱 반응형: 모바일에서는 더 작게! */
+@media (max-width: 1024px) {
+    .topbanner-section { height: 400px !important; }
+    .text-slide h1 { font-size: 1.8rem !important; }
+}
+
+@media (max-width: 768px) {
+    .topbanner-section { height: 320px !important; }
+    .text-slide { width: 90% !important; }
+    .text-slide h1 { font-size: 1.4rem !important; }
+    .text-slide p { font-size: 0.9rem !important; }
+}
+
+/* 화살표 버튼 크기도 살짝 조절 */
+.slider-btn {
+    z-index: 20;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.25);
+    color: #fff;
+    border: none;
+    padding: 10px 15px; /* 버튼 크기 축소 */
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 16px;
+}
+
+.slider-btn.prev { left: 20px; }
+.slider-btn.next { right: 20px; }
+
+/* 도트 인디케이터 크기 조절 */
+.slider-dots {
+    z-index: 20;
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.4);
+    display: inline-block;
+}
+
+.dot.active { background-color: #fff; }
+
+/* 네비게이션 버튼 (컵 모양) */
+.nav-btn {
+    background: transparent;
+    border: 2px solid #333;
+    border-top: none; 
+    padding: 10px 20px;
+    margin-left: 12px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    color: #333;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
     position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.nav-btn::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
     width: 100%;
     height: 100%;
+    background-color: #005ADE;
+    z-index: -1;
+    transition: top 0.4s ease;
 }
 
-.text-slide {
-    position: absolute;
-    top: 50%; /* 세로 중앙 */
-    left: 0;  /* 1200px 영역의 왼쪽 정렬 */
-    transform: translateY(-50%);
-    max-width: 100%;
-    height: auto;
-    
-    /* 다시 0으로 돌려놓으세요 */
-    opacity: 0; 
-    transition: opacity 0.8s ease-in-out;
-}
-
-/* 리액트가 active 클래스를 넣어줄 때만 보이게 함 */
-.text-slide.active {
-    opacity: 1;
-}
+.nav-btn:hover { color: #fff !important; border-color: #fff !important; transform: translateY(3px); }
+.nav-btn:hover::before { top: 0; }
