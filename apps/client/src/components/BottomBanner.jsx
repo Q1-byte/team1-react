@@ -9,6 +9,13 @@ export default function BottomBanner() {
         'bottombanner3.png',
         'bottombanner4.png'
     ];
+    
+    const bannerData = [
+        { img: 'bottombanner1.png', url: 'https://knto.or.kr/eng/index' },
+        { img: 'bottombanner2.png', url: 'https://korean.visitkorea.or.kr/main/main.do' },
+        { img: 'bottombanner3.png', url: 'https://know.tour.go.kr/' },
+        { img: 'bottombanner4.png', url: 'https://www.koroad.or.kr/' }
+    ];
 
     return (
         <section className="bottom-banner">
@@ -20,13 +27,22 @@ export default function BottomBanner() {
 
             {/* 이미지들을 담는 컨테이너 */}
             <div className="bottom-illust-container">
-                {bannerImages.map((imgName, index) => (
-                    <img 
-                        key={index}
-                        src={`/banner/${imgName}`} 
-                        alt={`bottom-illust-${index + 1}`} 
-                        className="bottom-illust" 
-                    />
+                {bannerData.map((item, index) => (
+                    <a 
+                        key={index} 
+                        href={item.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="illust-box-link"
+                    >
+                        <div className="illust-box">
+                            <img 
+                                src={`/banner/${item.img}`} 
+                                alt={`bottom-illust-${index + 1}`} 
+                                className="bottom-illust" 
+                            />
+                        </div>
+                    </a>
                 ))}
             </div>
         </section>

@@ -159,6 +159,7 @@
 .admin-sidebar {
   width: 260px;
   background: #1a2a3a;
+  min-height: 100vh;
   color: white;
   padding: 0;
   display: flex;
@@ -217,6 +218,7 @@
 .sidebar-footer {
   padding: 20px 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
 }
 
 .sidebar-footer a {
