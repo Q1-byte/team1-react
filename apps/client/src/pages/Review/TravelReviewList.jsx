@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api';
 import './TravelReviewList.css';
+
+const NO_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 100'%3E%3Crect fill='%23f0f0f0' width='150' height='100'/%3E%3Ctext fill='%23bbb' font-family='sans-serif' font-size='11' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
 
 const TravelReviewList = () => {
     const navigate = useNavigate();
@@ -11,7 +13,8 @@ const TravelReviewList = () => {
     useEffect(() => {
         api.get('/reviews')
             .then(res => {
-                setReviews(res.data.content);
+                const all = res.data.content || [];
+                setReviews(all.filter(r => r.isPublic !== false));
                 setLoading(false);
             })
             .catch(err => {
@@ -37,12 +40,10 @@ const TravelReviewList = () => {
                         <div key={review.id} className="review-item" onClick={() => navigate(`/reviews/${review.id}`)}>
                             <div className="review-thumbnail">
                                 <img
-                                    src={review.thumbnailUrl || "https://via.placeholder.com/150x100?text=No+Image"}
+                                    src={review.thumbnailUrl || NO_IMG}
                                     alt="썸네일"
                                     loading="lazy"
-                                    onError={(e) => {
-                                        e.target.src = "https://via.placeholder.com/150x100?text=No+Image";
-                                    }}
+                                    onError={(e) => { e.target.src = NO_IMG; }}
                                 />
                             </div>
 

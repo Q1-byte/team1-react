@@ -26,10 +26,16 @@ const PlanResult = () => {
     const { user } = useAuth();
 
     const hasSaved = useRef(false);
+    const hasFetchedProducts = useRef(false); // fetchProducts 중복 호출 방지
 
     const finalPlanData = location.state?.finalPlanData || {};
     const selectedKeywords = finalPlanData.keywords || ["#힐링"];
     const subRegion = finalPlanData.sub_region || "";
+
+    // 예산: useState로 관리해 navigate 이후에도 값이 유지됨
+    const [budgetMax] = useState(
+        () => finalPlanData?.budget_range?.[1] || location.state?.config?.budget_range?.[1] || 0
+    );
 
     const [parentRegionDbId, setParentRegionDbId] = useState(finalPlanData.parent_region_db_id || null);
     const [regionName, setRegionName] = useState(finalPlanData.region_name || finalPlanData.regionName || "지역미정");
@@ -149,9 +155,10 @@ const PlanResult = () => {
     };
 
     // ✅ savedPlanId가 세팅되면 URL을 /reserve/:planId로 교체 (새로고침 대응)
+    // ⚠️ location.state를 함께 전달해야 새 컴포넌트에서도 budgetMax 등을 읽을 수 있음
     useEffect(() => {
         if (savedPlanId && !planId) {
-            navigate(`/reserve/${savedPlanId}`, { replace: true });
+            navigate(`/reserve/${savedPlanId}`, { replace: true, state: location.state });
         }
     }, [savedPlanId]);
 
@@ -266,9 +273,11 @@ const PlanResult = () => {
     }, [user?.id, details.length]);
 
     useEffect(() => {
-        // 계획 데이터 로딩 중에는 상품 조회 금지 (기본값 null/"지역미정"으로 잘못 조회되는 것 방지)
+        // 계획 데이터 로딩 중에는 상품 조회 금지
         if (loading) return;
         if (!parentRegionDbId && !regionName) return;
+        // 이미 상품을 한 번 정상적으로 가져왔으면 중복 요청 방지
+        if (hasFetchedProducts.current) return;
 
         const pickByKeyword = (list, keywords) => {
             if (!list || list.length === 0) return null;
@@ -285,30 +294,59 @@ const PlanResult = () => {
 
         const fetchProducts = async () => {
             try {
-                // [로그 추가] 실제로 어떤 값으로 요청을 보내는지 확인용
-                console.log("상품 조회 시도 - ID:", parentRegionDbId, "이름:", regionName);
+                console.log("상품 조회 시도 - ID:", parentRegionDbId, "이름:", regionName, "예산:", budgetMax);
 
-                // 파라미터 구성: ID가 있으면 ID로, 없으면 이름으로 (백엔드 대응 확인 필요)
-                const queryParams = parentRegionDbId
+                // 숙박 일수 계산 (API 파라미터 계산에 먼저 필요)
+                const nights = (startDate && endDate)
+                    ? Math.max(1, Math.round((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)))
+                    : 2;
+
+                // --- 백엔드 API에 전달할 파라미터 계산 ---
+                // 숙소: pricePerNight 기준 → 예산 ÷ 숙박일수
+                // 액티비티·티켓: 1인 기준 → 예산 ÷ 인원수
+                const accomMaxPricePerNight = budgetMax > 0 ? Math.floor(budgetMax / Math.max(1, nights)) : null;
+                const perPersonMaxPrice = budgetMax > 0 ? Math.floor(budgetMax / Math.max(1, peopleCount)) : null;
+
+                const regionParam = parentRegionDbId
                     ? { regionId: parentRegionDbId }
-                    : { regionName: regionName.split(' ')[0] }; // "인천광역시" -> "인천" 식으로 잘라서 보낼 수도 있음
+                    : { regionName: regionName.split(' ')[0] };
+
+                // 각 API에 맞는 파라미터 구성 (maxPrice = null 이면 파라미터 자체를 제외)
+                const accomParams = { ...regionParam, ...(accomMaxPricePerNight != null ? { maxPrice: accomMaxPricePerNight } : {}) };
+                const activityParams = { ...regionParam, ...(perPersonMaxPrice != null ? { maxPrice: perPersonMaxPrice } : {}) };
+                const ticketParams = { ...regionParam, ...(perPersonMaxPrice != null ? { maxPrice: perPersonMaxPrice } : {}) };
+
+                console.log("숙소 쿼리:", accomParams, "| 액티비티 쿼리:", activityParams);
 
                 const [accomRes, activityRes, ticketRes] = await Promise.all([
-                    axios.get(`${API_BASE}/api/accommodations`, { params: queryParams }),
-                    axios.get(`${API_BASE}/api/activities`, { params: queryParams }),
-                    axios.get(`${API_BASE}/api/tickets`, { params: queryParams }),
+                    axios.get(`${API_BASE}/api/accommodations`, { params: accomParams }),
+                    axios.get(`${API_BASE}/api/activities`, { params: activityParams }),
+                    axios.get(`${API_BASE}/api/tickets`, { params: ticketParams }),
                 ]);
 
                 const cleanKeywords = selectedKeywords.map(k => k.replace('#', ''));
 
-                const bestAccom = pickByKeyword(accomRes.data?.data, cleanKeywords);
-                const bestActivity = pickByKeyword(activityRes.data?.data, cleanKeywords);
-                const bestTicket = pickByKeyword(ticketRes.data?.data, cleanKeywords);
+                // 클라이언트 2차 필터: 백엔드가 전체 fallback 했을 경우 대비
+                const filterByBudget = (list, calcTotal) => {
+                    if (!list || list.length === 0) return list;
+                    if (budgetMax <= 0) return list;
+                    const filtered = list.filter(item => calcTotal(item) <= budgetMax);
+                    return filtered.length > 0 ? filtered : list; // 예산 내 상품 없으면 전체 fallback
+                };
 
-                // 최종 할당: 키워드 매칭 안 되면 그냥 첫 번째 데이터라도 보여줌
-                setAccommodation(bestAccom || (accomRes.data?.data && accomRes.data.data[0]) || null);
-                setActivity(bestActivity || (activityRes.data?.data && activityRes.data.data[0]) || null);
-                setTicket(bestTicket || (ticketRes.data?.data && ticketRes.data.data[0]) || null);
+                const filteredAccom = filterByBudget(accomRes.data?.data, a => (a.pricePerNight || 0) * nights);
+                const filteredActivity = filterByBudget(activityRes.data?.data, a => (a.price || 0) * peopleCount);
+                const filteredTicket = filterByBudget(ticketRes.data?.data, t => (t.price || 0) * peopleCount);
+
+                const bestAccom = pickByKeyword(filteredAccom, cleanKeywords);
+                const bestActivity = pickByKeyword(filteredActivity, cleanKeywords);
+                const bestTicket = pickByKeyword(filteredTicket, cleanKeywords);
+
+                setAccommodation(bestAccom || filteredAccom?.[0] || null);
+                setActivity(bestActivity || filteredActivity?.[0] || null);
+                setTicket(bestTicket || filteredTicket?.[0] || null);
+
+                hasFetchedProducts.current = true; // 중복 요청 차단
 
             } catch (error) {
                 console.error("상품 데이터 로드 실패:", error);
@@ -316,7 +354,8 @@ const PlanResult = () => {
         };
 
         fetchProducts();
-    }, [loading, parentRegionDbId, regionName, JSON.stringify(selectedKeywords), productsSaved]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loading, parentRegionDbId, productsSaved]);
 
     const toggleItem = (id) => {
         setDetails(prev => prev.map(item =>
@@ -324,7 +363,10 @@ const PlanResult = () => {
         ));
     };
 
-    const accomTotal = (accommodation?.pricePerNight || 0) * 2;
+    const nights = (startDate && endDate)
+        ? Math.max(1, Math.round((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)))
+        : 2;
+    const accomTotal = (accommodation?.pricePerNight || 0) * nights;
     const activityTotal = (activity?.price || 0) * peopleCount;
     const ticketTotal = (ticket?.price || 0) * peopleCount;
     const totalPrice = details.filter(item => item.is_selected).reduce((sum, item) => sum + (item.price || 0), 0) + accomTotal + activityTotal + ticketTotal;

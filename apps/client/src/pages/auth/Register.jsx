@@ -12,6 +12,13 @@ const TRAVEL_KEYWORDS = [
   '데이트', '트레킹'
 ];
 
+const formatPhone = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+};
+
 function Register() {
   const navigate = useNavigate();
   const { register } = useAuth();
@@ -33,7 +40,7 @@ function Register() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'phone' ? formatPhone(value) : value
     }));
     setError('');
   };

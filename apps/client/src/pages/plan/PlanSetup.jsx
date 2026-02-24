@@ -10,12 +10,38 @@ export default function PlanSetup() {
     // 🚀 확정된 8가지 키워드
     const officialKeywords = ['힐링', '자연', '트래킹', '데이트', '스릴', '추억', '예술', '체험'];
 
+    const MAX_NIGHTS = 2;
+
+    // 시작일 기준 최대 종료일 계산
+    const getMaxEndDate = (startDate) => {
+        if (!startDate) return '';
+        const d = new Date(startDate);
+        d.setDate(d.getDate() + MAX_NIGHTS);
+        return d.toISOString().split('T')[0];
+    };
+
+    // 오늘 날짜 (input min 값)
+    const today = new Date().toISOString().split('T')[0];
+
+    // 시작일 변경 핸들러
+    const handleStartDateChange = (value) => {
+        handleConfigChange('travel_date', value);
+        // 종료일이 새 시작일보다 이전이거나 최대 초과면 초기화
+        if (planConfig.end_date) {
+            const maxEnd = getMaxEndDate(value);
+            if (planConfig.end_date < value || planConfig.end_date > maxEnd) {
+                handleConfigChange('end_date', null);
+            }
+        }
+    };
+
     // 🚀 일정 생성 및 API 호출 로직
     const handleGeneratePlan = async () => {
-        const { travel_date, people_count, keywords, region_name, sub_region } = planConfig;
+        const { travel_date, end_date, people_count, keywords, region_name, sub_region } = planConfig;
 
         // 필수 값 체크
-        if (!travel_date) return alert("여행 날짜를 선택해주세요!");
+        if (!travel_date) return alert("여행 시작 날짜를 선택해주세요!");
+        if (!end_date) return alert("여행 종료 날짜를 선택해주세요!");
         if (!keywords || keywords.length === 0) return alert("취향 키워드를 최소 1개 선택해주세요!");
 
         setLoading(true);
@@ -26,8 +52,8 @@ export default function PlanSetup() {
                 subRegion: sub_region,
                 selectedKeywords: keywords,
                 peopleCount: people_count || 1,
-                startDate: travel_date, 
-                endDate: travel_date    
+                startDate: travel_date,
+                endDate: end_date
             });
 
             // 결과 페이지로 데이터 전달하며 이동
@@ -85,12 +111,39 @@ export default function PlanSetup() {
             {/* 1. 날짜 선택 */}
             <section style={sectionStyle}>
                 <span style={titleStyle}>📅 언제 떠나시나요?</span>
-                <input 
-                    type="date" 
-                    value={planConfig.travel_date || ''}
-                    onChange={(e) => handleConfigChange('travel_date', e.target.value)} 
-                    style={{...fullWidthControl, textAlign: 'center'}}
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div>
+                        <label style={{ fontSize: '13px', color: '#888', marginBottom: '6px', display: 'block' }}>시작일</label>
+                        <input
+                            type="date"
+                            value={planConfig.travel_date || ''}
+                            min={today}
+                            onChange={(e) => handleStartDateChange(e.target.value)}
+                            style={{...fullWidthControl, textAlign: 'center'}}
+                        />
+                    </div>
+                    <div>
+                        <label style={{ fontSize: '13px', color: '#888', marginBottom: '6px', display: 'block' }}>
+                            종료일 <span style={{ color: '#007BFF' }}>(최대 2박 3일)</span>
+                        </label>
+                        <input
+                            type="date"
+                            value={planConfig.end_date || ''}
+                            min={planConfig.travel_date || today}
+                            max={getMaxEndDate(planConfig.travel_date)}
+                            disabled={!planConfig.travel_date}
+                            onChange={(e) => handleConfigChange('end_date', e.target.value)}
+                            style={{...fullWidthControl, textAlign: 'center', opacity: planConfig.travel_date ? 1 : 0.4}}
+                        />
+                    </div>
+                    {planConfig.travel_date && planConfig.end_date && (
+                        <p style={{ textAlign: 'center', fontSize: '13px', color: '#007BFF', margin: 0, fontWeight: '600' }}>
+                            {Math.round((new Date(planConfig.end_date) - new Date(planConfig.travel_date)) / (1000 * 60 * 60 * 24))}박
+                            {' '}
+                            {Math.round((new Date(planConfig.end_date) - new Date(planConfig.travel_date)) / (1000 * 60 * 60 * 24)) + 1}일
+                        </p>
+                    )}
+                </div>
             </section>
 
             {/* 2. 인원 선택 */}
