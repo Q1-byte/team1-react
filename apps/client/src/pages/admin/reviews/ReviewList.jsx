@@ -49,17 +49,21 @@ function ReviewList() {
       });
   };
 
-  const activeReviews = reviews.filter(r => !r.isDeleted);
-  const avgRating = activeReviews.length > 0
-    ? (activeReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / activeReviews.length).toFixed(1)
+  // 삭제된 항목 제외 + 최신순 정렬
+  const visibleReviews = reviews
+    .filter(r => !r.isDeleted)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const avgRating = visibleReviews.length > 0
+    ? (visibleReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / visibleReviews.length).toFixed(1)
     : '0.0';
-  const totalViews = reviews.reduce((sum, r) => sum + (r.viewCount || 0), 0);
+  const totalViews = visibleReviews.reduce((sum, r) => sum + (r.viewCount || 0), 0);
 
   // 페이징 계산
-  const totalPages = Math.ceil(reviews.length / itemsPerPage);
+  const totalPages = Math.ceil(visibleReviews.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = reviews.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = visibleReviews.slice(indexOfFirstItem, indexOfLastItem);
 
   if (loading) {
     return <div>로딩 중...</div>;
@@ -76,7 +80,7 @@ function ReviewList() {
         <div className="card">
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>총 후기 수</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
-            {reviews.length}건
+            {visibleReviews.length}건
           </p>
         </div>
         <div className="card">
@@ -110,7 +114,7 @@ function ReviewList() {
           </thead>
           <tbody>
             {currentItems.map(review => (
-              <tr key={review.id} style={review.isDeleted ? { opacity: 0.5, textDecoration: 'line-through' } : {}}>
+              <tr key={review.id}>
                 <td>{review.id}</td>
                 <td>{review.authorAccountId}</td>
                 <td><strong>{review.title}</strong></td>
@@ -135,13 +139,9 @@ function ReviewList() {
                 </td>
                 <td>{review.createdAt ? new Date(review.createdAt).toLocaleDateString() : '-'}</td>
                 <td>
-                  {review.isDeleted ? (
-                    <span style={{ color: '#999' }}>삭제됨</span>
-                  ) : (
-                    <button onClick={() => handleDelete(review.id)} className="btn btn-danger btn-sm">
-                      삭제
-                    </button>
-                  )}
+                  <button onClick={() => handleDelete(review.id)} className="btn btn-danger btn-sm">
+                    삭제
+                  </button>
                 </td>
               </tr>
             ))}

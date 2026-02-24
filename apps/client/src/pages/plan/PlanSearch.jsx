@@ -188,24 +188,37 @@ export default function PlanSearch() {
                         </div>
 
                         <div className="input-group budget-section" style={{ marginTop: '10px' }}>
-                            <label style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <span>💰 최대 예산</span>
-                                <span style={{ color: '#005ADE', fontWeight: 'bold' }}>
-                                    {(Number(planConfig.budget_range?.[1]) || 100000).toLocaleString()}원
-                                </span>
-                            </label>
-                            <input
-                                type="range"
-                                min="100000"
-                                max="5000000"
-                                step="50000"
-                                style={{ width: '100%', marginTop: '10px', cursor: 'pointer' }}
-                                value={Number(planConfig.budget_range?.[1]) || 100000}
-                                onChange={(e) => handleConfigChange('budget_range', [0, Number(e.target.value)])}
-                            />
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#999', marginTop: '5px' }}>
-                                <span>10만원</span>
-                                <span>500만원</span>
+                            <label>💰 예산 선택</label>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginTop: '10px' }}>
+                                {[
+                                    { label: '절약', sub: '~20만원', value: 200000 },
+                                    { label: '보통', sub: '~40만원', value: 400000 },
+                                    { label: '여유', sub: '~100만원', value: 1000000 },
+                                    { label: '럭셔리', sub: '100만원+', value: 9999999 },
+                                ].map(({ label, sub, value }) => {
+                                    const isSelected = planConfig.budget_range?.[1] === value;
+                                    return (
+                                        <button
+                                            key={label}
+                                            type="button"
+                                            onClick={() => handleConfigChange('budget_range', [0, value])}
+                                            style={{
+                                                padding: '10px 4px',
+                                                borderRadius: '10px',
+                                                border: isSelected ? '2px solid #005ADE' : '1px solid #E5E7EB',
+                                                background: isSelected ? '#EFF6FF' : '#fff',
+                                                color: isSelected ? '#005ADE' : '#555',
+                                                cursor: 'pointer',
+                                                textAlign: 'center',
+                                                fontWeight: isSelected ? '700' : '400',
+                                                transition: 'all 0.15s',
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '14px' }}>{label}</div>
+                                            <div style={{ fontSize: '11px', marginTop: '3px', color: isSelected ? '#005ADE' : '#999' }}>{sub}</div>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

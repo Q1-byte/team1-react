@@ -11,6 +11,13 @@ import './MyPage.css';
 
 const TRAVEL_KEYWORDS = ['힐링', '자연', '스릴', '추억', '예술', '체험', '데이트', '트레킹'];
 
+const formatPhone = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+};
+
 const REGION_DATA = {
   1: "서울", 2: "인천", 3: "대전", 4: "울산", 5: "대구", 
   6: "광주", 7: "부산", 8: "세종", 9: "경기", 10: "강원", 
@@ -436,7 +443,7 @@ function MyPage() {
                 <div className="form-group"><label>아이디</label><input type="text" value={displayUser.username || ''} disabled /></div>
                 <div className="form-group"><label>이메일</label><input type="email" value={displayUser.email || ''} disabled /></div>
                 <div className="form-group"><label>닉네임</label><input type="text" value={editNickname} onChange={(e) => setEditNickname(e.target.value)} placeholder="닉네임을 입력하세요" /></div>
-                <div className="form-group"><label>연락처</label><input type="tel" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} /></div>
+                <div className="form-group"><label>연락처</label><input type="tel" value={editPhone} onChange={(e) => setEditPhone(formatPhone(e.target.value))} placeholder="010-1234-5678" /></div>
                 <div className="form-group keyword-section">
                   <label>여행 성향</label>
                   <div className="keyword-grid">

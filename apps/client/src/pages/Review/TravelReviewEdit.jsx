@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
@@ -10,7 +10,7 @@ const TravelReviewEdit = () => {
     const { user } = useAuth();
 
     const [formData, setFormData] = useState({
-        userId: user.id,
+        userId: user?.id,
         title: '',
         content: '',
         rating: 5,
@@ -23,19 +23,18 @@ const TravelReviewEdit = () => {
     useEffect(() => {
         api.get(`/reviews/${id}`)
             .then(res => {
-                // [추가] 본인 확인 로직
-                if (data.userId !== user.id && user.role !== 'admin') {
+                const data = res.data; // 버그 수정: 이전에는 data가 선언되지 않았음
+                if (data.userId !== user?.id && user?.role !== 'admin') {
                     alert("본인이 작성한 글만 수정할 수 있습니다.");
                     navigate('/reviews');
                     return;
                 }
-
                 setFormData({
                     userId: data.userId,
                     title: data.title,
                     content: data.content,
                     rating: data.rating,
-                    isPublic: data.isPublic || true
+                    isPublic: data.isPublic ?? true
                 });
                 setImages(data.images || []);
                 setLoading(false);
@@ -54,45 +53,32 @@ const TravelReviewEdit = () => {
             sortOrder: images.length + index,
             file: file
         }));
-        setImages([...images, ...newImages]);
+        setImages(prev => [...prev, ...newImages]);
+        e.target.value = '';
     };
 
     const handleRemoveImage = (index) => {
-        if (window.confirm("이미지를 삭제하시겠습니까? 본문의 [IMAGE_N] 순서와 어긋날 수 있습니다.")) {
-            const filtered = images.filter((_, i) => i !== index);
-            const reordered = filtered.map((img, i) => ({ ...img, sortOrder: i }));
-            setImages(reordered);
-        }
-    };
-
-    const handleInsertTag = (index) => {
-        const tag = `[IMAGE_${index + 1}]`;
-        setFormData(prev => ({ ...prev, content: prev.content + "\n" + tag + "\n" }));
+        if (!window.confirm("이미지를 삭제하시겠습니까?")) return;
+        setImages(prev => prev.filter((_, i) => i !== index).map((img, i) => ({ ...img, sortOrder: i })));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            // 1. 업로드할 파일(새로운 이미지)과 기존 이미지(HTTP URL) 구분
             const existingImages = images.filter(img => !img.file);
             const newFileImages = images.filter(img => img.file);
 
             let newlyUploadedImages = [];
             if (newFileImages.length > 0) {
                 const formDataUpload = new FormData();
-                newFileImages.forEach(img => {
-                    formDataUpload.append('files', img.file);
-                });
-
+                newFileImages.forEach(img => formDataUpload.append('files', img.file));
                 const uploadRes = await api.post('/files/upload', formDataUpload, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-
                 newlyUploadedImages = uploadRes.data;
             }
 
-            // 2. 기존 이미지와 새로 업로드된 이미지 합치기
             const finalImages = [
                 ...existingImages.map(img => ({ originName: img.originName, storedUrl: img.storedUrl })),
                 ...newlyUploadedImages.map(img => ({ originName: img.originName, storedUrl: img.storedUrl }))
@@ -128,8 +114,9 @@ const TravelReviewEdit = () => {
                     <input
                         type="text"
                         value={formData.title}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                         placeholder="제목을 입력하세요"
+                        required
                     />
                 </div>
 
@@ -139,39 +126,45 @@ const TravelReviewEdit = () => {
                         <select
                             className="rating-select"
                             value={formData.rating}
-                            onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
+                            onChange={(e) => setFormData(prev => ({ ...prev, rating: Number(e.target.value) }))}
                         >
-                            {[5, 4, 3, 2, 1].map(n => <option key={n} value={n}>{n}점 ({'★'.repeat(n)})</option>)}
+                            {[5, 4, 3, 2, 1].map(n => (
+                                <option key={n} value={n}>{'★'.repeat(n)}{'☆'.repeat(5 - n)} ({n}점)</option>
+                            ))}
                         </select>
                     </div>
                 </div>
 
-                <div className="image-upload-section">
-                    <label className="input-group label">이미지 관리 (다중 선택 가능)</label>
-                    <input type="file" multiple onChange={handleFileChange} className="file-input" />
-
-                    <div className="image-preview-container">
-                        {images.map((img, index) => (
-                            <div key={index} className="preview-card">
-                                <button type="button" className="delete-preview-btn" onClick={() => handleRemoveImage(index)}>×</button>
-                                <img src={img.storedUrl} className="preview-item" alt="preview" />
-                                <button type="button" className="insert-tag-btn" onClick={() => handleInsertTag(index)}>
-                                    본문 삽입
-                                </button>
-                                <span className="helper-text" style={{ textAlign: 'center' }}>[IMAGE_{index + 1}]</span>
-                            </div>
-                        ))}
-                    </div>
-                    <span className="helper-text">* 사진을 삭제하면 번호가 당겨집니다. 본문의 [IMAGE_N] 번호를 확인하세요.</span>
-                </div>
-
-                <div className="input-group" style={{ marginTop: '25px' }}>
+                <div className="input-group" style={{ marginTop: '10px' }}>
                     <label>본문 내용</label>
                     <textarea
                         value={formData.content}
-                        onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                        placeholder="글 작성 중 사진을 넣고 싶은 위치에서 위 이미지의 [본문 삽입]을 눌러보세요."
+                        onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                        placeholder="여행 이야기를 작성해 주세요."
+                        required
                     />
+                </div>
+
+                {/* 이미지 첨부 */}
+                <div className="input-group image-upload-section">
+                    <label>사진 첨부</label>
+                    <label className="file-upload-btn">
+                        + 사진 추가
+                        <input type="file" multiple accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                    </label>
+
+                    {images.length > 0 && (
+                        <div className="image-preview-container">
+                            {images.map((img, index) => (
+                                <div key={index} className="preview-card">
+                                    <button type="button" className="delete-preview-btn" onClick={() => handleRemoveImage(index)}>×</button>
+                                    <img src={img.storedUrl} className="preview-item" alt={img.originName || 'preview'} />
+                                    <span className="preview-filename">{img.originName}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <span className="helper-text">* 사진은 본문 하단에 표시됩니다.</span>
                 </div>
 
                 <div className="public-setting-area">
@@ -179,7 +172,7 @@ const TravelReviewEdit = () => {
                         <input
                             type="checkbox"
                             checked={formData.isPublic}
-                            onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                            onChange={(e) => setFormData(prev => ({ ...prev, isPublic: e.target.checked }))}
                         />
                         <span className="checkbox-text">이 후기를 공개로 설정합니다.</span>
                     </label>

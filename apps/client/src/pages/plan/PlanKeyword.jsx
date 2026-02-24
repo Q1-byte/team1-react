@@ -85,15 +85,30 @@ const PlanKeyword = () => {
                 <div className="plan-keyword-container">
                     {/* 1. 언제 떠나시나요? (가운데 정렬을 위한 setup-item 추가) */}
                     <div className="setup-item calendar-section">
-                        <label className="item-label">📅 언제 떠나시나요?</label>
+                        <label className="item-label">📅 언제 떠나시나요? <span style={{ fontSize: '12px', color: '#888', fontWeight: 'normal' }}>(최대 2박 3일)</span></label>
                         <div className="calendar-wrapper">
-                            <Calendar 
-                                onChange={(val) => handleConfigChange('travel_date', val)} 
-                                value={travel_date} 
-                                selectRange={true} 
-                                minDate={new Date()} 
+                            <Calendar
+                                onChange={(val) => {
+                                    if (Array.isArray(val)) {
+                                        const [start, end] = val;
+                                        const diffDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
+                                        if (diffDays > 2) {
+                                            const maxEnd = new Date(start);
+                                            maxEnd.setDate(maxEnd.getDate() + 2);
+                                            handleConfigChange('travel_date', [start, maxEnd]);
+                                            return;
+                                        }
+                                    }
+                                    handleConfigChange('travel_date', val);
+                                }}
+                                value={travel_date}
+                                selectRange={true}
+                                minDate={new Date()}
                             />
                         </div>
+                        <p style={{ textAlign: 'center', fontSize: '13px', color: '#888', marginTop: '8px' }}>
+                            현재는 최대 2박 3일까지의 일정만 계획하실 수 있어요.
+                        </p>
                     </div>
 
                     {/* 2. 인원 선택 (가운데 정렬을 위한 setup-item 추가) */}
