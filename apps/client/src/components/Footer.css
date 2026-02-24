@@ -15,4 +15,15 @@
     opacity: 0.8;
     }
 
+    .copyright {
+    color: #ffffff !important; /* 글자색을 흰색으로 강제 설정 */
+    opacity: 0.8;             /* 너무 쨍하면 0.8 정도로 투명도를 주어 부드럽게 표현 가능 */
+    margin: 10px 0;           /* 위아래 간격 살짝 추가 */
+    font-size: 14px;          /* 글자 크기도 적당하게 조절 */
+}
+
+
+.divider {
+  color: #ffffff; /* 또는 color: white; */
+}
     .footer-links button:hover { opacity: 1; }

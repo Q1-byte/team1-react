@@ -53,43 +53,30 @@ export default function ReviewSection() {
     };
 
     return (
-        <section className="review-section">
-            <div className="review-title-tag">REAL REVIEW</div>
-            <h2 className="review-main-title">사용자들의 솔직한 후기</h2>
+    <section className="review-section-final">
+        <div className="review-title-tag-final">REAL REVIEW</div>
+        <h2 className="review-main-title-final">사용자들의 솔직한 후기</h2>
 
-            <div className="slider-outer-container">
-                <button className="slide-btn left" onClick={() => scroll('left')}>&lt;</button>
-                
-                <div className="slider-inner-view">
-                    <div className="edge-overlay left-side"></div>
-                    <div className="edge-overlay right-side"></div>
-
-                    {/* 💡 컨테이너는 여기 하나만 있어야 합니다! */}
-                                        <div className="review-container" ref={scrollRef}>
-                        {loading ? (
-                            [1, 2, 3, 4, 5].map((i) => <ReviewSkeleton key={i} />)
-                        ) : reviews.length > 0 ? (
-                            // 🚩 여기 중괄호 {} 를 빼고 바로 map을 돌려야 합니다.
-                            reviews.map((review) => (
-                                <div 
-                                    key={review.id} 
-                                    className="review-card-wrapper" 
-                                    onClick={() => navigate('/reviews')}
-                                >
-                                    <ReviewCard 
-                                        stars={review.rating} 
-                                        text={review.title} 
-                                    />
-                                </div>
-                            ))
-                        ) : (
-                            <p className="no-reviews">작성된 리뷰가 없습니다.</p>
-                        )}
-                    </div>
+        {/* 이 래퍼가 버튼-카드-버튼을 가로로 꽉 잡아줍니다 */}
+        <div className="slider-outer-wrapper-final">
+            <button className="slide-btn-final left" onClick={() => scroll('left')}>&lt;</button>
+            
+            <div className="slider-inner-view-final">
+                <div className="review-container-final" ref={scrollRef}>
+                    {loading ? (
+                        [1, 2, 3, 4].map((i) => <ReviewSkeleton key={i} />)
+                    ) : (
+                        reviews.map((review) => (
+                            <div key={review.id} className="review-card-wrapper-final" onClick={() => navigate('/reviews')}>
+                                <ReviewCard stars={review.rating} text={review.title} />
+                            </div>
+                        ))
+                    )}
                 </div>
-
-                <button className="slide-btn right" onClick={() => scroll('right')}>&gt;</button>
             </div>
-        </section>
-    );
+
+            <button className="slide-btn-final right" onClick={() => scroll('right')}>&gt;</button>
+        </div>
+    </section>
+);
 }

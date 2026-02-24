@@ -109,7 +109,7 @@ export default function Footer() {
                         </ul>
                     </div>
                     </div>
-                     <button className="modal-confirm-btn" onClick={() => setIsPrivacyModalOpen(false)}>확인</button>
+                        <button className="modal-confirm-btn" onClick={() => setIsPrivacyModalOpen(false)}>확인</button>
                 </div>
                 
             </div>
