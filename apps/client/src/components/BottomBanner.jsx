@@ -1,20 +1,11 @@
-import React from 'react';
-import './BottomBanner.css'; // 전용 CSS 생성 권장
+import './BottomBanner.css';
 
 export default function BottomBanner() {
-    // 이미지 파일명 배열 (1번부터 4번까지)
-    const bannerImages = [
-        'bottombanner1.png',
-        'bottombanner2.png',
-        'bottombanner3.png',
-        'bottombanner4.png'
-    ];
-    
     const bannerData = [
-        { img: 'bottombanner1.png', url: 'https://knto.or.kr/eng/index' },
-        { img: 'bottombanner2.png', url: 'https://korean.visitkorea.or.kr/main/main.do' },
-        { img: 'bottombanner3.png', url: 'https://know.tour.go.kr/' },
-        { img: 'bottombanner4.png', url: 'https://www.koroad.or.kr/' }
+        { img: 'bottombanner1.webp', url: 'https://knto.or.kr/eng/index' },
+        { img: 'bottombanner2.webp', url: 'https://korean.visitkorea.or.kr/main/main.do' },
+        { img: 'bottombanner3.webp', url: 'https://know.tour.go.kr/' },
+        { img: 'bottombanner4.webp', url: 'https://www.koroad.or.kr/' }
     ];
 
     return (
@@ -36,10 +27,10 @@ export default function BottomBanner() {
                         className="illust-box-link"
                     >
                         <div className="illust-box">
-                            <img 
-                                src={`/banner/${item.img}`} 
-                                alt={`bottom-illust-${index + 1}`} 
-                                className="bottom-illust" 
+                            <img
+                                src={`/banner/${item.img}`}
+                                alt={`bottom-illust-${index + 1}`}
+                                className="bottom-illust"
                             />
                         </div>
                     </a>

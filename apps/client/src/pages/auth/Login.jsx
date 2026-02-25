@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -7,7 +7,10 @@ import './Auth.css';
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+
+  const successMessage = location.state?.successMessage || '';
 
   const [formData, setFormData] = useState({
     username: '',
@@ -63,6 +66,11 @@ function Login() {
         <p className="auth-subtitle">여행 계획을 시작하세요</p>
 
         <form onSubmit={handleSubmit} className="auth-form">
+          {successMessage && (
+            <div className="success-message">
+              {successMessage}
+            </div>
+          )}
           {error && (
             <div className="error-message">
               {error}

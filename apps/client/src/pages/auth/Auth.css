@@ -114,6 +114,15 @@
   cursor: not-allowed;
 }
 
+.success-message {
+  background-color: #e6f4ea;
+  color: #2e7d32;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
 .error-message {
   background-color: #fee;
   color: #c33;
