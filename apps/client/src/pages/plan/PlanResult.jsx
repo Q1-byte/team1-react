@@ -166,9 +166,8 @@ const PlanResult = () => {
         const loadData = async () => {
             setLoading(true);
             try {
-                if (location.state?.finalPlanData) {
-                    await fetchRealPlan();
-                } else if (planId) {
+                // planId가 있으면 무조건 DB에서 로드 (state가 남아있어도 재생성 금지)
+                if (planId) {
                     const res = await api.get(`/plans/${planId}?userId=${user?.id}`);
 
                     console.log("백엔드 응답 전체:", res);
@@ -237,8 +236,10 @@ const PlanResult = () => {
                         if (t) setTicket(t);
                         setProductsSaved(true);
                     }
+                } else if (location.state?.finalPlanData) {
+                    await fetchRealPlan();
                 } else {
-                    // ✅ state도 없고 planId URL param도 없는 경우 → sessionStorage에서 복원 시도
+                    // state도 없고 planId URL param도 없는 경우 → sessionStorage에서 복원 시도
                     const fallbackId = getLastSavedPlanIdFromSession();
                     if (fallbackId) {
                         console.log('[PlanResult] fallback planId from sessionStorage:', fallbackId);
@@ -400,6 +401,16 @@ const PlanResult = () => {
         }
 
         if (idToSave) {
+            // 현재 선택된 스팟으로 저장된 계획 업데이트 (일정 제거/추가 반영)
+            try {
+                await api.put(`/plans/${idToSave}/spots`, {
+                    spots: selectedOnly.map(d => ({ spotId: Number(d.id), day: d.day }))
+                });
+                console.log('[예약하기] 스팟 업데이트 성공 planId:', idToSave);
+            } catch (e) {
+                console.warn('[예약하기] 스팟 업데이트 실패 (백엔드 미구현일 수 있음):', e.response?.status);
+            }
+
             localStorage.setItem(`plan_products_${idToSave}`, JSON.stringify({
                 accommodation,
                 activity,

@@ -1,11 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 import ReviewCard from './ReviewCard';
-import ReviewSkeleton from './ReviewSkeleton'; // 아까 만든 스켈레톤 컴포넌트
+import ReviewSkeleton from './ReviewSkeleton';
 import './ReviewSection.css';
-
-// ... 상단 import 생략
 
 export default function ReviewSection() {
     const navigate = useNavigate();
@@ -16,20 +14,11 @@ export default function ReviewSection() {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/reviews');
-                
-                const actualData = Array.isArray(response.data) 
-                    ? response.data 
+                const response = await api.get('/api/reviews', { params: { size: 10 } });
+
+                const actualData = Array.isArray(response.data)
+                    ? response.data
                     : (response.data.content || []);
-                
-                // 🚩 테스트 로그 추가: 브라우저 콘솔(F12)에서 확인하세요!
-                console.log("==============================");
-                console.log("1. 전체 데이터 구조:", actualData);
-                if (actualData.length > 0) {
-                    console.log("2. 첫 번째 리뷰의 별점(rating):", actualData[0].rating);
-                    console.log("3. 첫 번째 리뷰의 제목(title):", actualData[0].title);
-                }
-                console.log("==============================");
 
                 setReviews(actualData);
             } catch (error) {

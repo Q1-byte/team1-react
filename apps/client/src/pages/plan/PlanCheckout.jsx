@@ -80,7 +80,7 @@ const PlanCheckout = () => {
 
     // 💡 수정된 통합 결제 처리 로직
     const handlePayment = async () => {
-        if (finalAmount === 0 && usePoints === 0) {
+        if (totalPrice === 0 && usePoints === 0) {
             alert("결제 금액이 0원입니다. 일정을 다시 확인해주세요.");
             return;
         }
@@ -91,13 +91,55 @@ const PlanCheckout = () => {
             return;
         }
 
-        // [핵심!] 토스/카카오로 떠나기 전, 모든 필수 정보를 localStorage에 안전하게 보관합니다.
-        localStorage.setItem('user_id', String(user.id)); // <-- 이 부분이 TossSuccess 에러를 해결합니다.
+        localStorage.setItem('user_id', String(user.id));
         localStorage.setItem('temp_plan_data', JSON.stringify(finalPlanData));
         if (finalPlanData?.plan_id) {
             localStorage.setItem('plan_id', String(finalPlanData.plan_id));
         }
         localStorage.setItem('use_points', String(usePoints));
+
+        // --- [포인트 전액 결제] PG 없이 바로 처리 ---
+        if (finalAmount === 0) {
+            try {
+                const response = await api.post('/payment/point-only', {
+                    plan_id: finalPlanData?.plan_id,
+                    user_id: user.id,
+                    use_point: usePoints,
+                    total_amount: totalPrice,
+                    plan_items: displayDetails,
+                });
+
+                // 마이페이지 영수증 조회용 localStorage 저장 (카카오/토스와 동일 방식)
+                const planId = finalPlanData?.plan_id;
+                if (planId) {
+                    localStorage.setItem(`payment_detail_${planId}`, JSON.stringify({
+                        ...finalPlanData,
+                        used_points: usePoints,
+                    }));
+                }
+
+                const earnedPoint = response.data?.earnedPoint;
+                if (earnedPoint > 0) {
+                    alert(`${earnedPoint.toLocaleString()}포인트 적립되었습니다!`);
+                }
+
+                localStorage.removeItem('temp_plan_data');
+                localStorage.removeItem('plan_id');
+                localStorage.removeItem('use_points');
+
+                navigate('/reserve/receipt', {
+                    replace: true,
+                    state: {
+                        finalPlanData: { ...finalPlanData, used_points: usePoints },
+                        paymentResult: response.data,
+                    }
+                });
+            } catch (error) {
+                console.error("포인트 결제 실패:", error);
+                alert("포인트 결제 중 오류가 발생했습니다.");
+            }
+            return;
+        }
 
         // --- [방식 1] 카카오페이 ---
         if (selectedMethod === 'kakaopay') {
@@ -289,6 +331,7 @@ const PlanCheckout = () => {
                         )}
                     </div>
 
+                    {finalAmount > 0 && (
                     <div className="payment-method-section">
                         <p className="method-label">결제 수단 선택</p>
                         <div className="method-grid">
@@ -304,10 +347,13 @@ const PlanCheckout = () => {
                             ))}
                         </div>
                     </div>
+                    )}
 
                     <div className="checkout-actions">
                         <button className="main-pay-btn" onClick={handlePayment}>
-                            {finalAmount.toLocaleString()}원 결제하기
+                            {finalAmount === 0
+                                ? `${usePoints.toLocaleString()} P 포인트로 결제하기`
+                                : `${finalAmount.toLocaleString()}원 결제하기`}
                         </button>
                         <button className="back-btn" onClick={handleBackToResult}>
                             일정 수정하러 가기
