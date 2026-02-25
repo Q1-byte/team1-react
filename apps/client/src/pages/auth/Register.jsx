@@ -117,7 +117,7 @@ function Register() {
       };
 
       await register(userData);
-      navigate('/login'); // 회원가입 성공 시 로그인 페이지로
+      navigate('/login', { state: { successMessage: '회원가입이 완료되었습니다! 로그인해주세요.' } });
     } catch (err) {
       setError(err.message || '회원가입에 실패했습니다.');
     } finally {

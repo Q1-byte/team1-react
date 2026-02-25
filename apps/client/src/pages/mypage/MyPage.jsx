@@ -46,10 +46,6 @@ function MyPage() {
   const [userInfo, setUserInfo] = useState(null);
   const [myInquiries, setMyInquiries] = useState([]);
 
-  const [accommodation, setAccommodation] = useState(null);
-  const [activity, setActivity] = useState(null);
-  const [ticket, setTicket] = useState(null);
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editPhone, setEditPhone] = useState('');
@@ -114,19 +110,6 @@ function MyPage() {
             }
           }
 
-          // ✅ 백엔드 컨트롤러 주소(/api/accommodations)와 ApiResponse 구조에 맞춰 수정
-          try {
-            const res = await api.get('/accommodations', { params: { limit: 2 } });
-            // 백엔드가 ApiResponse<List<AccommodationDto>> 형식을 사용하므로 res.data.data 참조
-            if (res.data && res.data.data) {
-              const list = res.data.data;
-              if (list.length > 0) {
-                setAccommodation(list[0]); // 첫 번째 숙소를 추천 상품으로 설정
-              }
-            }
-          } catch (e) {
-            console.log("추천 상품 로드 실패 (백엔드 경로 확인 필요)");
-          }
         }
       } catch (err) {
         console.error('탭 데이터 로드 실패:', err);
@@ -418,21 +401,6 @@ function MyPage() {
                 </div>
               )}
 
-              {/* ✅ 숙소 추천 영역 (백엔드 필드명 pricePerNight 적용) */}
-              {accommodation && (
-                <div className="recommendation-section" style={{ marginTop: '40px', padding: '20px', borderTop: '1px solid #eee' }}>
-                  <h3 style={{ marginBottom: '15px' }}>✨ {displayUser.username}님을 위한 추천 상품</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '15px' }}>
-                    <div className="recommend-card card-style" style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
-                      <span className="badge-ready" style={{ fontSize: '12px', padding: '2px 6px' }}>추천 숙소</span>
-                      <h4 style={{ margin: '10px 0 5px' }}>{accommodation.name}</h4>
-                      <p style={{ color: '#007bff', fontWeight: 'bold' }}>
-                        {accommodation.pricePerNight?.toLocaleString()}원~
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
