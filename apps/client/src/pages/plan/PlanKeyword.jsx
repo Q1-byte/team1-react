@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useOutletContext, useLocation } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -54,11 +54,21 @@ const PlanKeyword = () => {
         return; 
     }
 
+    // 새 일정 생성 전 이전 sessionStorage 초기화 (같은 날짜+지역으로 기존 plan 재사용 방지)
+    Object.keys(sessionStorage)
+        .filter(key => key.startsWith('saved_plan_'))
+        .forEach(key => sessionStorage.removeItem(key));
+
     // 💡 가챠에서 온 데이터가 있다면 그걸 사용하고, 없으면 planConfig 값을 사용합니다.
     const gachaData = location.state?.gachaResult || {};
 
-    navigate('/reserve/result', { 
-        state: { 
+    // 끝 날짜가 23:59:59로 오는 react-calendar 특성 대비: 둘 다 자정으로 정규화 후 비교
+    const startDay = new Date(travel_date[0]); startDay.setHours(0, 0, 0, 0);
+    const endDay = new Date(travel_date[1]); endDay.setHours(0, 0, 0, 0);
+    const computedTripDays = Math.round((endDay - startDay) / (1000 * 60 * 60 * 24)) + 1;
+
+    navigate('/reserve/result', {
+        state: {
             finalPlanData: {
                 ...planConfig, // 기존 설정값들
                 // 💡 중요: 가챠에서 넘어온 지역 정보를 명시적으로 덮어씌웁니다.
@@ -68,7 +78,8 @@ const PlanKeyword = () => {
                 keywords: fromGacha ? gachaData.keywords : selectedKeywords,
                 start_date: travel_date[0].toLocaleDateString(),
                 end_date: travel_date[1].toLocaleDateString(),
-                fromGacha: fromGacha 
+                trip_days: computedTripDays,
+                fromGacha: fromGacha
             } 
         } 
     }); 
