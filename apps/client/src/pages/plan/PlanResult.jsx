@@ -5,17 +5,6 @@ import './PlanResult.css';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 
-// sessionStorage에서 마지막으로 저장된 planId를 찾는 헬퍼
-const getLastSavedPlanIdFromSession = () => {
-    for (let i = 0; i < sessionStorage.length; i++) {
-        const key = sessionStorage.key(i);
-        if (key && key.startsWith('saved_plan_')) {
-            const val = sessionStorage.getItem(key);
-            if (val) return Number(val);
-        }
-    }
-    return null;
-};
 
 const API_BASE = 'http://localhost:8080';
 
@@ -52,7 +41,6 @@ const PlanResult = () => {
     const [accommodation, setAccommodation] = useState(null);
     const [activity, setActivity] = useState(null);
     const [ticket, setTicket] = useState(null);
-    const [productsSaved, setProductsSaved] = useState(false); // localStorage 복원 여부
 
     // ✨ [추가] 자동 저장 함수: 추천받은 즉시 DB에 기록
     // PlanResult.js 내 해당 함수 찾아서 수정
@@ -62,7 +50,7 @@ const PlanResult = () => {
         if (planId) return; // 이미 저장된 계획 조회 중
 
         // 컴포넌트 remount 시 중복 저장 방지: sessionStorage에 저장된 planId 확인
-        const sessionKey = `saved_plan_${user.id}_${finalPlanData.start_date}_${regionName}`;
+        const sessionKey = `saved_plan_${user.id}_${finalPlanData.start_date}_${regionName}_${subRegion || ''}`;
         const existingId = sessionStorage.getItem(sessionKey);
         if (existingId) {
             setSavedPlanId(Number(existingId));
@@ -136,16 +124,21 @@ const PlanResult = () => {
                 });
             }
 
-            // 1. 화면을 그리기 위해 스테이트 업데이트
-            setDetails(formattedDetails);
+            // 사용자가 선택한 일수만큼 자르기 (백엔드는 항상 3일 반환)
+            const tripDays = finalPlanData.trip_days || 3;
 
-            if (formattedDetails.length > 0) {
-                savePlanAutomatically(formattedDetails);
+            const trimmedDetails = formattedDetails.filter(d => d.day <= tripDays);
+
+            // 1. 화면을 그리기 위해 스테이트 업데이트
+            setDetails(trimmedDetails);
+
+            if (trimmedDetails.length > 0) {
+                savePlanAutomatically(trimmedDetails);
             }
 
             // 3. 첫 번째 날짜 탭 활성화
-            if (formattedDetails.length > 0) {
-                setActiveDay(Math.min(...formattedDetails.map(d => d.day)));
+            if (trimmedDetails.length > 0) {
+                setActiveDay(Math.min(...trimmedDetails.map(d => d.day)));
             }
         } catch (error) {
             console.error("API 에러 발생:", error);
@@ -153,6 +146,17 @@ const PlanResult = () => {
             setLoading(false);
         }
     };
+
+    // planId가 바뀌면 상품 관련 상태 초기화 (같은 /:planId 패턴 내 이동 시 리마운트 없음)
+    useEffect(() => {
+        hasFetchedProducts.current = false;
+        setAccommodation(null);
+        setActivity(null);
+        setTicket(null);
+        // parentRegionDbId 초기화: stale 값이 남아 이전 지역 상품이 조회되는 것을 방지
+        // planId 없으면 location.state(새 계획 데이터)에서 값을 가져오고, 있으면 DB 로드 후 세팅될 때까지 null
+        setParentRegionDbId(planId ? null : (finalPlanData.parent_region_db_id || null));
+    }, [planId]);
 
     // ✅ savedPlanId가 세팅되면 URL을 /reserve/:planId로 교체 (새로고침 대응)
     // ⚠️ location.state를 함께 전달해야 새 컴포넌트에서도 budgetMax 등을 읽을 수 있음
@@ -163,6 +167,9 @@ const PlanResult = () => {
     }, [savedPlanId]);
 
     useEffect(() => {
+        // planId로 DB 조회 시 userId가 필요 — user 로딩 전에는 대기
+        if (planId && !user?.id) return;
+
         const loadData = async () => {
             setLoading(true);
             try {
@@ -234,19 +241,13 @@ const PlanResult = () => {
                         if (a) setAccommodation(a);
                         if (act) setActivity(act);
                         if (t) setTicket(t);
-                        setProductsSaved(true);
                     }
                 } else if (location.state?.finalPlanData) {
                     await fetchRealPlan();
                 } else {
-                    // state도 없고 planId URL param도 없는 경우 → sessionStorage에서 복원 시도
-                    const fallbackId = getLastSavedPlanIdFromSession();
-                    if (fallbackId) {
-                        console.log('[PlanResult] fallback planId from sessionStorage:', fallbackId);
-                        navigate(`/reserve/${fallbackId}`, { replace: true });
-                        return; // navigate 후 useEffect가 다시 실행됨
-                    }
-                    setLoading(false);
+                    // state도 없고 planId도 없는 경우 → 처음부터 다시 시작
+                    navigate('/reserve', { replace: true });
+                    return;
                 }
             } catch (err) {
                 console.error("데이터 로드 실패:", err);
@@ -263,7 +264,7 @@ const PlanResult = () => {
     // (인증 컨텍스트가 비동기로 로드될 때 savePlanAutomatically가 user=null로 건너뛰는 경우 방지)
     useEffect(() => {
         if (!user?.id || details.length === 0 || planId || savedPlanId || hasSaved.current) return;
-        const sessionKey = `saved_plan_${user.id}_${finalPlanData.start_date}_${regionName}`;
+        const sessionKey = `saved_plan_${user.id}_${finalPlanData.start_date}_${regionName}_${subRegion || ''}`;
         const existingId = sessionStorage.getItem(sessionKey);
         if (existingId) {
             setSavedPlanId(Number(existingId));
@@ -288,36 +289,37 @@ const PlanResult = () => {
                 return { item, matchCount };
             });
             scored.sort((a, b) => b.matchCount - a.matchCount);
-            return scored[0]?.item || null;
+            // 최고 점수 항목들 중 랜덤 선택 (같은 지역·키워드일 때도 다양한 상품 노출)
+            const topScore = scored[0]?.matchCount ?? 0;
+            const topItems = scored.filter(s => s.matchCount === topScore);
+            return topItems[Math.floor(Math.random() * topItems.length)]?.item || null;
         };
-
-        if (productsSaved) return; // 저장된 상품이 있으면 재요청 안 함
 
         const fetchProducts = async () => {
             try {
-                console.log("상품 조회 시도 - ID:", parentRegionDbId, "이름:", regionName, "예산:", budgetMax);
 
-                // 숙박 일수 계산 (API 파라미터 계산에 먼저 필요)
+                // 숙박 일수 계산
                 const nights = (startDate && endDate)
                     ? Math.max(1, Math.round((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)))
                     : 2;
 
-                // --- 백엔드 API에 전달할 파라미터 계산 ---
-                // 숙소: pricePerNight 기준 → 예산 ÷ 숙박일수
-                // 액티비티·티켓: 1인 기준 → 예산 ÷ 인원수
-                const accomMaxPricePerNight = budgetMax > 0 ? Math.floor(budgetMax / Math.max(1, nights)) : null;
-                const perPersonMaxPrice = budgetMax > 0 ? Math.floor(budgetMax / Math.max(1, peopleCount)) : null;
+                // 예산을 카테고리별 비율로 배분: 숙소 50% / 액티비티 30% / 티켓 20%
+                // → 각 카테고리가 독립적으로 전체 예산을 쓰는 걸 방지
+                const accomBudget = budgetMax > 0 ? Math.floor(budgetMax * 0.5) : null;
+                const activityBudget = budgetMax > 0 ? Math.floor(budgetMax * 0.3) : null;
+                const ticketBudget = budgetMax > 0 ? Math.floor(budgetMax * 0.2) : null;
+
+                const accomMaxPricePerNight = accomBudget != null ? Math.floor(accomBudget / Math.max(1, nights)) : null;
+                const activityMaxPricePerPerson = activityBudget != null ? Math.floor(activityBudget / Math.max(1, peopleCount)) : null;
+                const ticketMaxPricePerPerson = ticketBudget != null ? Math.floor(ticketBudget / Math.max(1, peopleCount)) : null;
 
                 const regionParam = parentRegionDbId
                     ? { regionId: parentRegionDbId }
                     : { regionName: regionName.split(' ')[0] };
 
-                // 각 API에 맞는 파라미터 구성 (maxPrice = null 이면 파라미터 자체를 제외)
                 const accomParams = { ...regionParam, ...(accomMaxPricePerNight != null ? { maxPrice: accomMaxPricePerNight } : {}) };
-                const activityParams = { ...regionParam, ...(perPersonMaxPrice != null ? { maxPrice: perPersonMaxPrice } : {}) };
-                const ticketParams = { ...regionParam, ...(perPersonMaxPrice != null ? { maxPrice: perPersonMaxPrice } : {}) };
-
-                console.log("숙소 쿼리:", accomParams, "| 액티비티 쿼리:", activityParams);
+                const activityParams = { ...regionParam, ...(activityMaxPricePerPerson != null ? { maxPrice: activityMaxPricePerPerson } : {}) };
+                const ticketParams = { ...regionParam, ...(ticketMaxPricePerPerson != null ? { maxPrice: ticketMaxPricePerPerson } : {}) };
 
                 const [accomRes, activityRes, ticketRes] = await Promise.all([
                     axios.get(`${API_BASE}/api/accommodations`, { params: accomParams }),
@@ -327,17 +329,17 @@ const PlanResult = () => {
 
                 const cleanKeywords = selectedKeywords.map(k => k.replace('#', ''));
 
-                // 클라이언트 2차 필터: 백엔드가 전체 fallback 했을 경우 대비
-                const filterByBudget = (list, calcTotal) => {
+                // 클라이언트 2차 필터: 카테고리별 할당 예산 기준으로 재확인
+                const filterByBudget = (list, calcTotal, categoryBudget) => {
                     if (!list || list.length === 0) return list;
-                    if (budgetMax <= 0) return list;
-                    const filtered = list.filter(item => calcTotal(item) <= budgetMax);
+                    if (!categoryBudget || categoryBudget <= 0) return list;
+                    const filtered = list.filter(item => calcTotal(item) <= categoryBudget);
                     return filtered.length > 0 ? filtered : list; // 예산 내 상품 없으면 전체 fallback
                 };
 
-                const filteredAccom = filterByBudget(accomRes.data?.data, a => (a.pricePerNight || 0) * nights);
-                const filteredActivity = filterByBudget(activityRes.data?.data, a => (a.price || 0) * peopleCount);
-                const filteredTicket = filterByBudget(ticketRes.data?.data, t => (t.price || 0) * peopleCount);
+                const filteredAccom = filterByBudget(accomRes.data?.data, a => (a.pricePerNight || 0) * nights, accomBudget);
+                const filteredActivity = filterByBudget(activityRes.data?.data, a => (a.price || 0) * peopleCount, activityBudget);
+                const filteredTicket = filterByBudget(ticketRes.data?.data, t => (t.price || 0) * peopleCount, ticketBudget);
 
                 const bestAccom = pickByKeyword(filteredAccom, cleanKeywords);
                 const bestActivity = pickByKeyword(filteredActivity, cleanKeywords);
@@ -356,7 +358,7 @@ const PlanResult = () => {
 
         fetchProducts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loading, parentRegionDbId, productsSaved]);
+    }, [loading, parentRegionDbId]);
 
     const toggleItem = (id) => {
         setDetails(prev => prev.map(item =>

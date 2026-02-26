@@ -188,9 +188,10 @@ export default function PlanSearch() {
                         </div>
 
                         <div className="input-group budget-section" style={{ marginTop: '10px' }}>
-                            <label>💰 예산 선택</label>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginTop: '10px' }}>
+                            <label>💰 예산 선택 <span style={{ fontSize: '11px', color: '#999', fontWeight: 'normal' }}>(숙소·액티비티·티켓 합산 기준)</span></label>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px', marginTop: '10px' }}>
                                 {[
+                                    { label: '상관없음', sub: '필터 없음', value: 0 },
                                     { label: '절약', sub: '~20만원', value: 200000 },
                                     { label: '보통', sub: '~40만원', value: 400000 },
                                     { label: '여유', sub: '~100만원', value: 1000000 },
@@ -214,8 +215,8 @@ export default function PlanSearch() {
                                                 transition: 'all 0.15s',
                                             }}
                                         >
-                                            <div style={{ fontSize: '14px' }}>{label}</div>
-                                            <div style={{ fontSize: '11px', marginTop: '3px', color: isSelected ? '#005ADE' : '#999' }}>{sub}</div>
+                                            <div style={{ fontSize: '13px' }}>{label}</div>
+                                            <div style={{ fontSize: '10px', marginTop: '3px', color: isSelected ? '#005ADE' : '#999' }}>{sub}</div>
                                         </button>
                                     );
                                 })}
