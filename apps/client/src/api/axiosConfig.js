@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // API 인스턴스 생성
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
   withCredentials: true,  // 세션 쿠키 자동 전송 필수!
   headers: {
     'Content-Type': 'application/json'
