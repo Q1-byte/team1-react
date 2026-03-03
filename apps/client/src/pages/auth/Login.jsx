@@ -129,6 +129,7 @@ function Login() {
             카카오로 로그인
           </button>
 
+          {/* 구글 로그인 - 도메인 등록 필요하여 임시 비활성화
           <button
             type="button"
             className="social-btn google"
@@ -138,6 +139,7 @@ function Login() {
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" className="social-icon" />
             구글로 로그인
           </button>
+          */}
         </div>
 
         <div className="auth-links">
