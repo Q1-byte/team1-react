@@ -2,7 +2,8 @@
   "name": "@trip/client",
   "type": "module",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build": "vite build"
   },
   "dependencies": {
     "@tosspayments/payment-sdk": "^1.9.2",
