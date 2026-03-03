@@ -1,6 +1,6 @@
 // 백엔드 API 연동
 
-const API_BASE_URL = 'http://localhost:8080/api/user';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api/user`;
 
 // 백엔드 연결 여부 (false면 임시 데이터 사용)
 const USE_MOCK = false;

@@ -27,7 +27,7 @@ const GachaPage = () => {
             setShowList(false);
             setShowCapsule(false);
 
-            const response = await axios.get(`http://localhost:8080/api/gacha/draw?level=${level}`);
+            const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api/gacha/draw?level=${level}`);
             const data = response.data;
 
             // 0.8초 뒤 캡슐 등장 (더 빨리!)
