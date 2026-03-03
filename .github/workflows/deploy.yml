@@ -1,0 +1,52 @@
+name: Deploy Frontend to EC2
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: apps/client
+
+      - name: Create .env
+        run: |
+          echo "VITE_API_BASE_URL=http://${{ secrets.EC2_HOST }}:8080" > apps/client/.env
+          echo "VITE_KAKAO_MAP_KEY=${{ secrets.KAKAO_MAP_KEY }}" >> apps/client/.env
+
+      - name: Build
+        run: pnpm build
+        working-directory: apps/client
+
+      - name: Deploy to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          source: "apps/client/dist/*"
+          target: "/home/ubuntu/frontend"
+          strip_components: 3
+
+      - name: Restart Nginx
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: sudo systemctl restart nginx
