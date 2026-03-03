@@ -133,7 +133,7 @@ const TravelReviewDetail = () => {
     }
 
     // 비공개 리뷰: 작성자 본인 또는 관리자가 아니면 접근 차단
-    if (!review.isPublic && !(user && (review.userId === user.id || user.role === 'ADMIN'))) {
+    if (review.isPublic !== true && !(user && (review.userId === user.id || user.role === 'ADMIN'))) {
         return (
             <div className="error-wrap">
                 <p>비공개 후기입니다.</p>
