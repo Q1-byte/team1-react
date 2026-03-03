@@ -38,14 +38,14 @@ function ReviewList() {
     }
   };
 
-  const togglePublic = (id) => {
+  const toggleHidden = (id) => {
     api.patch(`/admin/reviews/${id}/visibility`)
       .then(() => {
         fetchReviews();
       })
       .catch(err => {
-        console.error('공개 상태 변경 실패:', err);
-        alert('공개 상태 변경에 실패했습니다.');
+        console.error('숨김 상태 변경 실패:', err);
+        alert('숨김 상태 변경에 실패했습니다.');
       });
   };
 
@@ -107,7 +107,8 @@ function ReviewList() {
               <th>후기 내용</th>
               <th>평점</th>
               <th>조회수</th>
-              <th>공개 여부</th>
+              <th>사용자 설정</th>
+              <th>어드민 숨김</th>
               <th>작성일</th>
               <th>관리</th>
             </tr>
@@ -128,13 +129,18 @@ function ReviewList() {
                 </td>
                 <td>{review.viewCount}</td>
                 <td>
+                  <span style={{ color: review.isPublic ? '#27ae60' : '#e74c3c', fontWeight: 'bold' }}>
+                    {review.isPublic ? '🟢 공개' : '🔴 비공개'}
+                  </span>
+                </td>
+                <td>
                   <button
-                    onClick={() => togglePublic(review.id)}
-                    className={`btn btn-sm ${review.isPublic ? 'btn-success' : ''}`}
-                    style={!review.isPublic ? { background: '#e74c3c', color: 'white' } : {}}
+                    onClick={() => toggleHidden(review.id)}
+                    className={`btn btn-sm ${review.isHidden ? '' : 'btn-success'}`}
+                    style={review.isHidden ? { background: '#e74c3c', color: 'white' } : {}}
                     disabled={review.isDeleted}
                   >
-                    {review.isPublic ? '공개' : '비공개'}
+                    {review.isHidden ? '숨김중 [표시]' : '표시중 [숨김]'}
                   </button>
                 </td>
                 <td>{review.createdAt ? new Date(review.createdAt).toLocaleDateString() : '-'}</td>

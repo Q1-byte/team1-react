@@ -14,7 +14,7 @@ const TravelReviewList = () => {
         api.get('/reviews')
             .then(res => {
                 const all = res.data.content || [];
-                setReviews(all.filter(r => r.isPublic !== false));
+                setReviews(all);
                 setLoading(false);
             })
             .catch(err => {
