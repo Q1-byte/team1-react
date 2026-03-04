@@ -7,7 +7,6 @@
     justify-content: space-between;
     align-items: center;
     padding: 40px 10%; /* 상하 패딩 추가로 여유 공간 확보 */
-    overflow: hidden;
     box-sizing: border-box;
 }
 
@@ -61,10 +60,6 @@
     height: 100%;
     object-fit: cover;
 }
-.bottom-illust:hover {
-    transform: translateY(-5px); /* 마우스 올리면 살짝 들림 */
-}
-
 /* 링크 태그 기본 스타일 제거 */
 .illust-box-link {
     text-decoration: none;
@@ -72,8 +67,11 @@
 }
 
 /* 마우스 올렸을 때 효과 */
+.illust-box {
+    transition: transform 0.3s ease;
+}
+
 .illust-box:hover {
     cursor: pointer;
     transform: translateY(-5px); /* 살짝 위로 들리는 효과 */
-    transition: all 0.3s ease;
 }
