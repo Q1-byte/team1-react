@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   getAdminInquiriesApi,
+  getAdminInquiryApi,
   answerInquiryApi,
   deleteAdminInquiryApi,
   getWaitingCountApi
@@ -13,6 +14,7 @@ function InquiryList() {
   const [totalPages, setTotalPages] = useState(0);
   const [statusFilter, setStatusFilter] = useState('');
   const [waitingCount, setWaitingCount] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
 
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [answerText, setAnswerText] = useState('');
@@ -29,6 +31,7 @@ function InquiryList() {
       const data = await getAdminInquiriesApi(page, 8, statusFilter);
       setInquiries(data.content || []);
       setTotalPages(data.totalPages || 0);
+      setTotalElements(data.totalElements || 0);
     } catch (error) {
       console.error('문의 목록 조회 실패:', error);
     } finally {
@@ -45,9 +48,16 @@ function InquiryList() {
     }
   };
 
-  const handleAnswer = (inquiry) => {
-    setSelectedInquiry(inquiry);
-    setAnswerText(inquiry.answer || '');
+  const handleAnswer = async (inquiry) => {
+    try {
+      const detail = await getAdminInquiryApi(inquiry.id);
+      setSelectedInquiry(detail);
+      setAnswerText(detail.answer || '');
+    } catch (error) {
+      console.error('문의 상세 조회 실패:', error);
+      setSelectedInquiry(inquiry);
+      setAnswerText(inquiry.answer || '');
+    }
   };
 
   const submitAnswer = async () => {
@@ -102,7 +112,7 @@ function InquiryList() {
         <div className="card" onClick={() => handleStatusFilter('')} style={{ cursor: 'pointer' }}>
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>전체 문의</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
-            {inquiries.length}건
+            {totalElements}건
           </p>
         </div>
         <div className="card" onClick={() => handleStatusFilter('WAIT')} style={{ cursor: 'pointer' }}>
@@ -226,24 +236,16 @@ function InquiryList() {
             </table>
 
             {totalPages > 1 && (
-              <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                <button
-                  onClick={() => setPage(p => Math.max(0, p - 1))}
-                  disabled={page === 0}
-                  className="btn btn-sm"
-                  style={{ marginRight: '10px' }}
-                >
-                  이전
-                </button>
-                <span>{page + 1} / {totalPages}</span>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                  disabled={page >= totalPages - 1}
-                  className="btn btn-sm"
-                  style={{ marginLeft: '10px' }}
-                >
-                  다음
-                </button>
+              <div style={{ marginTop: '20px', textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <button onClick={() => setPage(0)} disabled={page === 0} className="btn btn-sm">처음</button>
+                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="btn btn-sm">이전</button>
+                {Array.from({ length: totalPages }, (_, i) => i)
+                  .filter(num => { const s = Math.max(0, Math.min(page - 2, totalPages - 5)); return num >= s && num <= s + 4; })
+                  .map(num => (
+                    <button key={num} onClick={() => setPage(num)} className={`btn btn-sm ${page === num ? 'btn-primary' : ''}`}>{num + 1}</button>
+                  ))}
+                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="btn btn-sm">다음</button>
+                <button onClick={() => setPage(totalPages - 1)} disabled={page === totalPages - 1} className="btn btn-sm">마지막</button>
               </div>
             )}
           </>

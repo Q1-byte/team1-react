@@ -47,32 +47,24 @@
     padding: 0 30px;
 }
 
-/* 3. 뷰포트 (카드가 흐르는 창) */
+/* 3. 뷰포트 */
 .slider-inner-view-final {
     flex: 1;
     overflow: hidden;
-    position: relative;
     padding: 20px 0;
-    /* 내부 컨테이너 중앙 정렬 */
-    display: flex;
-    justify-content: center; 
 }
 
 /* 4. 카드 컨테이너 */
 .review-container-final {
-    display: flex !important;
-    gap: 30px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    width: 100%;
     padding: 10px 0;
 }
-.review-container-final::-webkit-scrollbar { display: none; }
 
 /* 5. 카드 디자인 */
 .review-card-wrapper-final {
-    flex: 0 0 350px !important;
     aspect-ratio: 1.6 / 1;
     background: white;
     border-radius: 20px;
@@ -127,10 +119,14 @@
     transition: all 0.2s;
     z-index: 10;
 }
-.slide-btn-final:hover {
+.slide-btn-final:hover:not(:disabled) {
     background: #005ADE !important;
     color: white !important;
     transform: scale(1.1);
+}
+.slide-btn-final:disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
 }
 
 /* 7. 반응형 (모바일 정렬) */

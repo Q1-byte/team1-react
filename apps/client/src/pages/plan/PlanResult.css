@@ -75,6 +75,18 @@
 
 .itinerary-card { display: flex; align-items: center; padding: 15px; border-radius: 12px; background: #fff; border: 1px solid #f0f0f0; margin-bottom: 15px; }
 .place-image img { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; }
+.no-image-placeholder {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    background: #e8edf5;
+    color: #999;
+    font-size: 11px;
+    font-weight: 500;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
 .place-info { flex: 1; margin-left: 15px; }
 .item-tag { font-size: 0.75rem; color: #007bff; background: #f0f7ff; padding: 2px 8px; border-radius: 10px; }
 

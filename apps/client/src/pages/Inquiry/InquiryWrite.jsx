@@ -87,7 +87,7 @@ const InquiryWrite = () => {
             <h2>1:1 문의하기</h2>
             <p className="form-desc">궁금하신 내용을 남겨주시면 영업일 기준 2~3일 내에 답변드립니다.</p>
 
-            {error && <p style={{ color: 'red', marginBottom: '15px' }}>{error}</p>}
+            {error && <p className="error-msg">{error}</p>}
 
             <form onSubmit={handleSubmit} className="inquiry-main-form">
                 <div className="form-group row">

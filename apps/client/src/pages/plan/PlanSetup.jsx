@@ -47,7 +47,7 @@ export default function PlanSetup() {
         setLoading(true);
         try {
             // 백엔드 API 호출
-            const response = await axios.post('http://localhost:8080/api/plans/recommend', {
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api/plans/recommend`, {
                 region: region_name,
                 subRegion: sub_region,
                 selectedKeywords: keywords,

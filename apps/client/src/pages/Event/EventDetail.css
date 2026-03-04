@@ -7,17 +7,24 @@
 
 /* 뒤로가기 버튼 */
 .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     margin-bottom: 20px;
-    padding: 8px 16px;
+    padding: 9px 18px;
     cursor: pointer;
-    border: none;
-    background: #f0f0f0;
-    border-radius: 4px;
+    border: 1.5px solid #005ADE;
+    background: white;
+    color: #005ADE;
+    border-radius: 8px;
     font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s;
 }
 
 .back-button:hover {
-    background: #e0e0e0;
+    background: #005ADE;
+    color: white;
 }
 
 /* 상세 카드 레이아웃 */

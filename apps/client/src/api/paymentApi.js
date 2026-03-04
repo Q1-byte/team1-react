@@ -10,3 +10,6 @@ export const getPayments = (page = 0, size = 10, status = '') => {
 
 export const cancelPayment = (id) =>
     api.patch(`${BASE}/${id}/cancel`).then(r => r.data);
+
+export const getPaymentStats = () =>
+    api.get(`${BASE}/stats`).then(r => r.data);

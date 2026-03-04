@@ -6,7 +6,7 @@ import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 
 
-const API_BASE = 'http://localhost:8080';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 const PlanResult = () => {
     const { planId } = useParams();
@@ -462,7 +462,16 @@ const PlanResult = () => {
                                 <div className="itinerary-list">
                                     {details.filter(item => item.day === activeDay).map(item => (
                                         <div key={item.id} className={`itinerary-card ${!item.is_selected ? 'removed' : ''}`}>
-                                            <div className="place-image"><img src={item.imageUrl} alt={item.name} /></div>
+                                            <div className="place-image">
+                                                {item.imageUrl ? (
+                                                    <img
+                                                        src={item.imageUrl}
+                                                        alt={item.name}
+                                                        onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }}
+                                                    />
+                                                ) : null}
+                                                <div className="no-image-placeholder" style={{ display: item.imageUrl ? 'none' : 'flex' }}>No Image</div>
+                                            </div>
                                             <div className="place-info">
                                                 <span className="item-tag">{item.type}</span>
                                                 <h4>{item.name}</h4>

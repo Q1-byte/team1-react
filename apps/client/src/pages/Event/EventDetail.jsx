@@ -71,7 +71,7 @@ const EventDetail = () => {
 
     return (
         <div className="detail-container">
-            <button className="back-button" onClick={() => navigate(-1)}>← 이전으로</button>
+            <button className="back-button" onClick={() => navigate(-1)}>‹ 목록으로</button>
             <div className="detail-card">
                 <img
                     src={event.url || "https://placehold.co/600x400"}
