@@ -60,7 +60,7 @@ export default function AdminLayout() {
         </nav>
 
         <div className="sidebar-footer">
-          <Link to="/">← 사이트로 돌아가기</Link>
+          <Link to="/" className="back-to-site-btn">사이트로 돌아가기</Link>
           <button onClick={handleLogout} className="logout-btn">
             로그아웃
           </button>

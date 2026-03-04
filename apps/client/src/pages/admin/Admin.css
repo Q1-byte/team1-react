@@ -221,19 +221,27 @@
   margin-top: auto;
 }
 
-.sidebar-footer a {
-  color: rgba(255, 255, 255, 0.6);
-  text-decoration: none;
-  font-size: 0.9rem;
+.back-to-site-btn {
   display: block;
-  padding: 10px 16px;
-  border-radius: 8px;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: transparent;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  margin-bottom: 0;
 }
 
-.sidebar-footer a:hover {
+.back-to-site-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  background: rgba(100, 149, 237, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .logout-btn {
