@@ -14,7 +14,7 @@ function UserList() {
   const fetchUsers = async (p = 0, kw = keyword, role = roleFilter) => {
     try {
       setLoading(true);
-      const data = await getUsers(p, 10, kw, role);
+      const data = await getUsers(p, 8, kw, role);
       setUsers(data.content || []);
       setTotalElements(data.totalElements || 0);
       setTotalPages(data.totalPages || 0);
@@ -236,24 +236,16 @@ function UserList() {
             </table>
 
             {totalPages > 1 && (
-              <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                <button
-                  onClick={() => setPage(p => Math.max(0, p - 1))}
-                  disabled={page === 0}
-                  className="btn btn-sm"
-                  style={{ marginRight: '10px' }}
-                >
-                  이전
-                </button>
-                <span>{page + 1} / {totalPages}</span>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                  disabled={page >= totalPages - 1}
-                  className="btn btn-sm"
-                  style={{ marginLeft: '10px' }}
-                >
-                  다음
-                </button>
+              <div style={{ marginTop: '20px', textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <button onClick={() => setPage(0)} disabled={page === 0} className="btn btn-sm">처음</button>
+                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="btn btn-sm">이전</button>
+                {Array.from({ length: totalPages }, (_, i) => i)
+                  .filter(num => { const s = Math.max(0, Math.min(page - 2, totalPages - 5)); return num >= s && num <= s + 4; })
+                  .map(num => (
+                    <button key={num} onClick={() => setPage(num)} className={`btn btn-sm ${page === num ? 'btn-primary' : ''}`}>{num + 1}</button>
+                  ))}
+                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="btn btn-sm">다음</button>
+                <button onClick={() => setPage(totalPages - 1)} disabled={page === totalPages - 1} className="btn btn-sm">마지막</button>
               </div>
             )}
           </>
