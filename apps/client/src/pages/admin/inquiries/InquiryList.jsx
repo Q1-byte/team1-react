@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   getAdminInquiriesApi,
+  getAdminInquiryApi,
   answerInquiryApi,
   deleteAdminInquiryApi,
   getWaitingCountApi
@@ -45,9 +46,16 @@ function InquiryList() {
     }
   };
 
-  const handleAnswer = (inquiry) => {
-    setSelectedInquiry(inquiry);
-    setAnswerText(inquiry.answer || '');
+  const handleAnswer = async (inquiry) => {
+    try {
+      const detail = await getAdminInquiryApi(inquiry.id);
+      setSelectedInquiry(detail);
+      setAnswerText(detail.answer || '');
+    } catch (error) {
+      console.error('문의 상세 조회 실패:', error);
+      setSelectedInquiry(inquiry);
+      setAnswerText(inquiry.answer || '');
+    }
   };
 
   const submitAnswer = async () => {

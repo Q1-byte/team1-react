@@ -12,7 +12,7 @@ const EventList = () => {
     const [selectedCategory, setSelectedCategory] = useState("전체");
 
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 8; // 한 페이지에 보여줄 개수 (조정 가능)
+    const itemsPerPage = 9; // 3x3 그리드
 
     // 카테고리 맵핑 (프론트 한글명 -> 백엔드 Enum 명칭)
     const categoryMapping = {
