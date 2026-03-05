@@ -67,6 +67,12 @@ export const getWaitingCountApi = async () => {
   return response.data;
 };
 
+// 문의 통계 조회 (전체, 대기, 답변완료)
+export const getAdminInquiryStatsApi = async () => {
+  const response = await api.get('/api/admin/inquiries/stats');
+  return response.data;
+};
+
 // 검색 (관리자)
 export const searchInquiriesApi = async (keyword, page = 0, size = 10) => {
   const response = await api.get('/api/admin/inquiries/search', {

@@ -4,7 +4,8 @@ import {
   getAdminInquiryApi,
   answerInquiryApi,
   deleteAdminInquiryApi,
-  getWaitingCountApi
+  getAdminInquiryStatsApi,
+  searchInquiriesApi
 } from '../../../api/inquiryApi';
 
 function InquiryList() {
@@ -13,8 +14,10 @@ function InquiryList() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [statusFilter, setStatusFilter] = useState('');
-  const [waitingCount, setWaitingCount] = useState(0);
+  const [totalStats, setTotalStats] = useState({ total: 0, waiting: 0, answered: 0 });
   const [totalElements, setTotalElements] = useState(0);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [activeSearch, setActiveSearch] = useState(''); // 실제 검색에 사용된 키워드
 
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [answerText, setAnswerText] = useState('');
@@ -22,13 +25,18 @@ function InquiryList() {
 
   useEffect(() => {
     fetchInquiries();
-    fetchWaitingCount();
-  }, [page, statusFilter]);
+    fetchStats();
+  }, [page, statusFilter, activeSearch]);
 
   const fetchInquiries = async () => {
     try {
       setLoading(true);
-      const data = await getAdminInquiriesApi(page, 8, statusFilter);
+      let data;
+      if (activeSearch) {
+        data = await searchInquiriesApi(activeSearch, page, 8);
+      } else {
+        data = await getAdminInquiriesApi(page, 8, statusFilter);
+      }
       setInquiries(data.content || []);
       setTotalPages(data.totalPages || 0);
       setTotalElements(data.totalElements || 0);
@@ -39,12 +47,12 @@ function InquiryList() {
     }
   };
 
-  const fetchWaitingCount = async () => {
+  const fetchStats = async () => {
     try {
-      const count = await getWaitingCountApi();
-      setWaitingCount(count || 0);
+      const stats = await getAdminInquiryStatsApi();
+      setTotalStats(stats || { total: 0, waiting: 0, answered: 0 });
     } catch (error) {
-      console.error('대기 문의 수 조회 실패:', error);
+      console.error('통계 조회 실패:', error);
     }
   };
 
@@ -73,7 +81,7 @@ function InquiryList() {
       setSelectedInquiry(null);
       setAnswerText('');
       fetchInquiries();
-      fetchWaitingCount();
+      fetchStats();
     } catch (error) {
       console.error('답변 등록 실패:', error);
       alert('답변 등록에 실패했습니다.');
@@ -89,7 +97,7 @@ function InquiryList() {
       await deleteAdminInquiryApi(id);
       alert('문의가 삭제되었습니다.');
       fetchInquiries();
-      fetchWaitingCount();
+      fetchStats();
     } catch (error) {
       console.error('문의 삭제 실패:', error);
       alert('문의 삭제에 실패했습니다.');
@@ -98,6 +106,15 @@ function InquiryList() {
 
   const handleStatusFilter = (status) => {
     setStatusFilter(status);
+    setActiveSearch(''); // 필터링 시 검색 초기화
+    setSearchKeyword('');
+    setPage(0);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setActiveSearch(searchKeyword);
+    setStatusFilter(''); // 검색 시 필터링 초기화
     setPage(0);
   };
 
@@ -109,24 +126,56 @@ function InquiryList() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="card" onClick={() => handleStatusFilter('')} style={{ cursor: 'pointer' }}>
+        <div className="card" onClick={() => handleStatusFilter('')} style={{ cursor: 'pointer', borderTop: !statusFilter && !activeSearch ? '4px solid #3498db' : 'none' }}>
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>전체 문의</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
-            {totalElements}건
+            {totalStats.total}건
           </p>
         </div>
-        <div className="card" onClick={() => handleStatusFilter('WAIT')} style={{ cursor: 'pointer' }}>
+        <div className="card" onClick={() => handleStatusFilter('WAIT')} style={{ cursor: 'pointer', borderTop: statusFilter === 'WAIT' ? '4px solid #f39c12' : 'none' }}>
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>대기 중</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0, color: '#f39c12' }}>
-            {waitingCount}건
+            {totalStats.waiting}건
           </p>
         </div>
-        <div className="card" onClick={() => handleStatusFilter('ANSWERED')} style={{ cursor: 'pointer' }}>
+        <div className="card" onClick={() => handleStatusFilter('ANSWERED')} style={{ cursor: 'pointer', borderTop: statusFilter === 'ANSWERED' ? '4px solid #2ecc71' : 'none' }}>
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>답변 완료</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0, color: '#2ecc71' }}>
-            {Math.max(0, totalElements - waitingCount)}건
+            {totalStats.answered}건
           </p>
         </div>
+      </div>
+
+      <div className="card" style={{ marginBottom: '24px', padding: '16px' }}>
+        <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px' }}>
+          <input
+            type="text"
+            placeholder="제목 또는 내용으로 검색..."
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '10px 16px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              fontSize: '14px'
+            }}
+          />
+          <button type="submit" className="btn btn-primary">검색</button>
+          {activeSearch && (
+            <button
+              type="button"
+              className="btn"
+              style={{ background: '#95a5a6', color: 'white' }}
+              onClick={() => {
+                setSearchKeyword('');
+                setActiveSearch('');
+              }}
+            >
+              초기화
+            </button>
+          )}
+        </form>
       </div>
 
       {selectedInquiry && (
