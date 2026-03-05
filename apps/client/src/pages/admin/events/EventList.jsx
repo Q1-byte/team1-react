@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../../api/axiosConfig';
+import { getEvents, createEvent, deleteEvent } from '../../../api/eventApi';
 
 const EMPTY_FORM = {
   name: '', address: '', addr2: '', category: '축제',
@@ -42,8 +43,7 @@ function EventList() {
   const fetchEvents = async (p = page) => {
     try {
       setLoading(true);
-      const res = await api.get('/api/events', { params: { page: p, size: 8 } });
-      const data = res.data;
+      const data = await getEvents(p, 8);
       if (data && data.content) {
         setEvents(data.content);
         setTotalPages(data.totalPages || 0);
@@ -69,7 +69,7 @@ function EventList() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    api.post('/api/events', formData)
+    createEvent(formData)
       .then(() => {
         alert('이벤트가 등록되었습니다.');
         setShowForm(false);
@@ -85,7 +85,7 @@ function EventList() {
 
   const handleDelete = (id) => {
     if (window.confirm('삭제하시겠습니까?')) {
-      api.delete(`/api/events/${id}`)
+      deleteEvent(id)
         .then(() => fetchEvents(page))
         .catch(err => {
           console.error('이벤트 삭제 실패:', err);

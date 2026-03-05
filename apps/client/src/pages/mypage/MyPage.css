@@ -1,10 +1,23 @@
 /* ==========================================
     1. 레이아웃 및 컨테이너 (Layout)
    ========================================== */
+.mypage-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.mypage-main {
+  flex: 1;
+  width: 100%;
+}
+
 .mypage-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 20px 32px 20px;
+  padding: 32px 20px;
   padding-top: 80px;
 }
 
@@ -22,26 +35,30 @@
   font-size: 24px;
   color: #2c3e50;
 }
+
 /* ==========================================
     2. 헤더 및 유저 정보 (Header & User)
    ========================================== */
 /* 배경색을 살짝 깔아 흰색 카드를 돋보이게 함 */
 /* 상단 헤더 카드 */
 .mypage-header-card {
-  background: linear-gradient(135deg, #007bff1f 0%, #c3dcfd 100%);;
+  background: linear-gradient(135deg, #007bff1f 0%, #c3dcfd 100%);
+  ;
   border-radius: 80px;
   padding: 35px 45px;
   display: flex;
   justify-content: space-between;
-  align-items: center; /* 세로 중앙 정렬 */
+  align-items: center;
+  /* 세로 중앙 정렬 */
   margin-bottom: 60px;
-  
+
 }
 
 /* 왼쪽 유저 정보 묶음 */
 .user-info {
   display: flex;
-  align-items: center; /* 이미지와 텍스트의 세로 중앙 정렬 */
+  align-items: center;
+  /* 이미지와 텍스트의 세로 중앙 정렬 */
   gap: 25px;
 }
 
@@ -49,20 +66,22 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  
+
   /* 배경색: 보라색이나 블루 계열 그라데이션을 주면 훨씬 예쁩니다 */
   background: #007bff;
   color: white;
-  
+
   /* 글자를 중앙으로 보내는 핵심 코드 */
   display: flex;
   justify-content: center;
   align-items: center;
-  
-  font-size: 36px; /* 첫 글자 크기 */
+
+  font-size: 36px;
+  /* 첫 글자 크기 */
   font-weight: 700;
-  box-shadow: 0 4px 15px rgba(110, 142, 251, 0.3); /* 아바타에 어울리는 그림자 */
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(110, 142, 251, 0.3);
+  /* 아바타에 어울리는 그림자 */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .user-text {
@@ -116,7 +135,8 @@
 .points-value {
   font-size: 32px;
   font-weight: 900;
-  color: #333; /* 검은색 계열로 더 심플하게 */
+  color: #333;
+  /* 검은색 계열로 더 심플하게 */
   letter-spacing: -1px;
 }
 
@@ -124,34 +144,46 @@
     3. 상세 버튼 스타일 (80x40px, 중앙정렬, 입체효과)
    ========================================== */
 
-  [class^="btn-sm-"] {
-    margin: 20px 10px 20px 0px;
-    width: 80px;
-    height: 40px;
-    
-    /* 정중앙 정렬을 위한 Flex 설정 */
-    display: inline-flex;
-    align-items: center;      /* 수직 중앙 */
-    justify-content: center;  /* 수평 중앙 */
-    
-    /* 텍스트 처짐 방지 핵심 포인트 */
-    line-height: 1;           /* 폰트 상하 여백 제거 */
-    padding: 0;               /* 내부 여백 완전 제거 */
-    
-    font-size: 12px;
-    font-weight: 600;         /* 가독성을 위해 두께 살짝 추가 */
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    top: 0;
+[class^="btn-sm-"] {
+  margin: 20px 10px 20px 0px;
+  width: 80px;
+  height: 40px;
+
+  /* 정중앙 정렬을 위한 Flex 설정 */
+  display: inline-flex;
+  align-items: center;
+  /* 수직 중앙 */
+  justify-content: center;
+  /* 수평 중앙 */
+
+  /* 텍스트 처짐 방지 핵심 포인트 */
+  line-height: 1;
+  /* 폰트 상하 여백 제거 */
+  padding: 0;
+  /* 내부 여백 완전 제거 */
+
+  font-size: 12px;
+  font-weight: 600;
+  /* 가독성을 위해 두께 살짝 추가 */
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  top: 0;
 }
 
 /* --- 호버 효과 (떠오름 + 그림자) --- */
-.btn-sm-c, .btn-sm-n, .btn-sm-w { background-color: #eeeeee; color: #555; }
-.btn-sm-c:hover, .btn-sm-n:hover {
+.btn-sm-c,
+.btn-sm-n,
+.btn-sm-w {
+  background-color: #eeeeee;
+  color: #555;
+}
+
+.btn-sm-c:hover,
+.btn-sm-n:hover {
   background-color: #e74c3c !important;
   color: white !important;
   transform: translateY(-4px);
@@ -159,12 +191,20 @@
 }
 
 
-.btn-sm-s, .btn-sm-q, .btn-sm-v, .btn-sm-p {
+.btn-sm-s,
+.btn-sm-q,
+.btn-sm-v,
+.btn-sm-p {
   align-items: center;
   background-color: #3498db;
   color: white;
 }
-.btn-sm-s:hover, .btn-sm-q:hover, .btn-sm-v:hover, .btn-sm-w:hover, .btn-sm-p:hover {
+
+.btn-sm-s:hover,
+.btn-sm-q:hover,
+.btn-sm-v:hover,
+.btn-sm-w:hover,
+.btn-sm-p:hover {
   background-color: #1a2a44 !important;
   color: white !important;
   transform: translateY(-4px);
@@ -179,11 +219,12 @@
 /* ==========================================
     4. 탭 메뉴 (Refined Capsule Style)
    ========================================== */
- /* 탭 메뉴 공통 스타일 */
+/* 탭 메뉴 공통 스타일 */
 .tab {
   padding: 12px 24px;
   border: 1px solid #eaeaea;
-  border-bottom: none; /* 아래쪽 선 제거 */
+  border-bottom: none;
+  /* 아래쪽 선 제거 */
   background-color: #f8f9fa;
   color: #666;
   border-radius: 12px 12px 0 0;
@@ -192,15 +233,19 @@
   /* 애니메이션을 위한 핵심 설정 */
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
-  top: 0; /* 움직임의 기준점 */
+  top: 0;
+  /* 움직임의 기준점 */
 }
 
 /* 🔥 마우스 호버 효과 (핵심) */
 .tab:hover {
-  background-color: #007bff; /* 배경 파란색 */
-  color: #ffffff;           /* 글씨 흰색 */
-  border-color: #007bff;     /* 테두리도 파란색으로 통일 */
- 
+  background-color: #007bff;
+  /* 배경 파란색 */
+  color: #ffffff;
+  /* 글씨 흰색 */
+  border-color: #007bff;
+  /* 테두리도 파란색으로 통일 */
+
 }
 
 /* ✅ 현재 선택된 탭 (Active) */
@@ -210,7 +255,8 @@
   color: #007bff;
   font-weight: 700;
   border-color: #eaeaea;
-  top: 0; /* 활성 탭은 고정하거나 취향에 따라 조정 */
+  top: 0;
+  /* 활성 탭은 고정하거나 취향에 따라 조정 */
   z-index: 2;
 }
 
@@ -230,7 +276,8 @@
 .mypage-tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: -1px; /* 본문 박스와 선 겹치기 */
+  margin-bottom: -1px;
+  /* 본문 박스와 선 겹치기 */
   position: relative;
   z-index: 1;
 }
@@ -245,6 +292,7 @@
   z-index: 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
 }
+
 /*/* ==========================================
     6. 상태 표시 배지 (Status Badge)
    ========================================== */
@@ -257,7 +305,8 @@
   padding: 4px 12px;
   font-size: 11px;
   font-weight: 600;
-  border-radius: 20px; /* 알약 모양 */
+  border-radius: 20px;
+  /* 알약 모양 */
   line-height: 1;
   min-width: 60px;
 }
@@ -270,7 +319,8 @@
 
 /* 결제완료 (PAID): 연두 바탕 + 하얀 글씨 */
 .badge-paid {
-  background-color: #2ecc71; /* 생동감 있는 연두색 */
+  background-color: #2ecc71;
+  /* 생동감 있는 연두색 */
   color: #ffffff;
 }
 
@@ -285,12 +335,16 @@
   background-color: #0c4870;
   color: #ffffff;
 }
-  /* 카드 상단: 제목(왼쪽)과 배지(오른쪽) 끝으로 배치 */
+
+/* 카드 상단: 제목(왼쪽)과 배지(오른쪽) 끝으로 배치 */
 .plan-header {
   display: flex;
-  align-items: center;      /* 세로 중앙 정렬 */
-  justify-content: space-between; /* 양 끝으로 밀어내기 */
-  gap: 16px;                /* 제목이 길어질 경우 최소 간격 */
+  align-items: center;
+  /* 세로 중앙 정렬 */
+  justify-content: space-between;
+  /* 양 끝으로 밀어내기 */
+  gap: 16px;
+  /* 제목이 길어질 경우 최소 간격 */
   margin-bottom: 20px;
   width: 100%;
 }
@@ -301,42 +355,55 @@
   font-size: 18px;
   font-weight: 700;
   color: #2c3e50;
-  
+
   /* 제목이 너무 길어서 배지를 침범할 때를 위한 처리 */
-  flex: 1;                  /* 남는 공간을 차지하게 함 */
+  flex: 1;
+  /* 남는 공간을 차지하게 함 */
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;  /* 길면 ... 처리 */
+  text-overflow: ellipsis;
+  /* 길면 ... 처리 */
 }
 
 /* 배지 스타일 (오른쪽에 고정) */
 [class^="badge-"] {
-  flex-shrink: 0;           /* 배지 크기 고정 */
-  margin-left: auto;        /* 명시적으로 오른쪽으로 밀기 */
+  flex-shrink: 0;
+  /* 배지 크기 고정 */
+  margin-left: auto;
+  /* 명시적으로 오른쪽으로 밀기 */
 }
 
-  
+
 /* ==========================================
     8. 내여행계획 카드
    ========================================== */
 
 /* 1. 카드를 감싸는 컨테이너: 가로로 나열 */
 .plan-grid {
-  display: flex;          /* 그리드 대신 플렉스 사용 */
-  flex-direction: row;    /* 가로 방향 배치 */
-  gap: 20px;              /* 카드 사이 간격 */
-  overflow-x: auto;       /* 카드가 많아지면 가로 스크롤 생성 */
-  padding: 10px 5px 20px 5px; /* 그림자가 잘리지 않게 하단 여백 */
-  align-items: stretch;   /* 카드들의 높이를 통일 */
+  display: flex;
+  /* 그리드 대신 플렉스 사용 */
+  flex-direction: row;
+  /* 가로 방향 배치 */
+  gap: 20px;
+  /* 카드 사이 간격 */
+  overflow-x: auto;
+  /* 카드가 많아지면 가로 스크롤 생성 */
+  padding: 10px 5px 20px 5px;
+  /* 그림자가 잘리지 않게 하단 여백 */
+  align-items: stretch;
+  /* 카드들의 높이를 통일 */
 }
 
 /* 2. 개별 카드: 가로폭을 내용에 맞게 */
 .plan-card {
   /* 고정 폭 대신 내용에 맞는 최소/최대 폭 설정 */
-  flex: 0 0 auto;         /* 카드가 찌그러지지 않게 설정 */
-  width: fit-content;     /* 텍스트 길이에 맞춰 카드 폭 결정 */
-  min-width: 250px;       /* 너무 좁아 보이는 것 방지 */
-  
+  flex: 0 0 auto;
+  /* 카드가 찌그러지지 않게 설정 */
+  width: fit-content;
+  /* 텍스트 길이에 맞춰 카드 폭 결정 */
+  min-width: 250px;
+  /* 너무 좁아 보이는 것 방지 */
+
   background: white;
   border: 1px solid #f0f0f0;
   border-radius: 16px;
@@ -349,17 +416,22 @@
 
 .plan-actions {
   display: flex;
-  justify-content: center; /* 가로 중앙 정렬 */
-  margin-top: auto;        /* 카드 하단으로 밀기 */
+  justify-content: center;
+  /* 가로 중앙 정렬 */
+  margin-top: auto;
+  /* 카드 하단으로 밀기 */
   width: 100%;
 }
 
 /* 3. 호버 시 효과 (말씀하신 튀어나오는 느낌 + 그림자) */
 .plan-card:hover {
-  transform: translateY(-8px); /* 위로 슥 올라오는 느낌 */
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08); /* 부드럽고 깊은 그림자 */
+  transform: translateY(-8px);
+  /* 위로 슥 올라오는 느낌 */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  /* 부드럽고 깊은 그림자 */
   border-color: #ddd;
 }
+
 /* ==========================================
     8-1. 최근 본 계획 카드
    ========================================== */
@@ -367,9 +439,12 @@
 /* 1. 카드를 가로로 나열하는 컨테이너 */
 .recent-list {
   display: flex;
-  flex-direction: row;    /* 세로에서 가로 배치로 변경 */
-  flex-wrap: wrap;        /* 자리가 모자라면 다음 줄로 자연스럽게 넘김 */
-  gap: 16px;              /* 카드 사이 간격 */
+  flex-direction: row;
+  /* 세로에서 가로 배치로 변경 */
+  flex-wrap: wrap;
+  /* 자리가 모자라면 다음 줄로 자연스럽게 넘김 */
+  gap: 16px;
+  /* 카드 사이 간격 */
   margin-top: 20px;
 }
 
@@ -377,13 +452,15 @@
 /* 개별 최근 본 계획 카드 */
 .recent-card {
   display: flex;
-  flex-direction: column; 
-  align-items: center;    /* 핵심: 카드 내 모든 요소를 세로축 중앙 정렬 */
-  text-align: center;     /* 핵심: 텍스트 중앙 정렬 */
-  
-  width: fit-content;     
-  min-width: 180px;       
-  
+  flex-direction: column;
+  align-items: center;
+  /* 핵심: 카드 내 모든 요소를 세로축 중앙 정렬 */
+  text-align: center;
+  /* 핵심: 텍스트 중앙 정렬 */
+
+  width: fit-content;
+  min-width: 180px;
+
   padding: 30px 24px 15px 24px;
   background: white;
   border: 1px solid #f0f0f0;
@@ -398,15 +475,17 @@
 .recent-info {
   display: flex;
   flex-direction: column;
-  align-items: center;    /* 내부 요소(제목, 날짜) 중앙 정렬 */
+  align-items: center;
+  /* 내부 요소(제목, 날짜) 중앙 정렬 */
   margin-bottom: 12px;
 }
 
 /* 제목과 태그를 감싸는 헤더 */
 .recent-header {
   display: flex;
-  flex-direction: column; /* 제목과 지역태그를 위아래로 쌓으면서 중앙 정렬 */
-  align-items: center;    
+  flex-direction: column;
+  /* 제목과 지역태그를 위아래로 쌓으면서 중앙 정렬 */
+  align-items: center;
   gap: 6px;
   margin-bottom: 4px;
 }
@@ -421,14 +500,19 @@
 .view-date {
   display: block;
   color: #95a5a6;
-  font-size: 11px;       /* 2줄이 되므로 폰트를 살짝 줄이면 더 예쁩니다 */
-  line-height: 1.4;      /* 줄 간격 확보 */
+  font-size: 11px;
+  /* 2줄이 되므로 폰트를 살짝 줄이면 더 예쁩니다 */
+  line-height: 1.4;
+  /* 줄 간격 확보 */
   margin-top: 4px;
-  
+
   /* 2줄 처리를 위한 핵심 설정 */
-  max-width: 120px;      /* 글자가 이 너비를 넘으면 줄바꿈됨 (글자수에 맞춰 조절) */
-  word-break: keep-all;  /* 단어 단위로 예쁘게 끊기 */
-  margin-left: auto;     /* 가로 중앙 정렬을 위해 auto 사용 */
+  max-width: 120px;
+  /* 글자가 이 너비를 넘으면 줄바꿈됨 (글자수에 맞춰 조절) */
+  word-break: keep-all;
+  /* 단어 단위로 예쁘게 끊기 */
+  margin-left: auto;
+  /* 가로 중앙 정렬을 위해 auto 사용 */
   margin-right: auto;
 }
 
@@ -436,26 +520,30 @@
 .recent-actions {
   width: 100%;
   display: flex;
-  justify-content: center; /* 버튼 가로 중앙 정렬 */
+  justify-content: center;
+  /* 버튼 가로 중앙 정렬 */
 }
 
 /* 호버 효과 (요청하신 수치 유지) */
 .recent-card:hover {
-  transform: translateY(-8px); 
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08); 
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
   border-color: #ddd;
 }
 
 /* 내부 간격 조정 */
 .recent-info {
-  margin-bottom: 5px;    /* 정보와 버튼 사이 간격 */
+  margin-bottom: 5px;
+  /* 정보와 버튼 사이 간격 */
 }
 
 .recent-actions {
   width: 100%;
   display: flex;
-  justify-content: center; /* 가로 중앙 정렬 */
-  gap: 10px;               /* 버튼 사이 간격 */
+  justify-content: center;
+  /* 가로 중앙 정렬 */
+  gap: 10px;
+  /* 버튼 사이 간격 */
   margin-top: auto;
 }
 
@@ -466,33 +554,40 @@
   8-2. 문의하러가기 버튼
    ========================================== */
 
-   /* 전체보러가기 텍스트 링크 스타일 */
+/* 전체보러가기 텍스트 링크 스타일 */
 .link-text-click {
   font-size: 15px;
-  color: #666b6b;      /* 부드러운 회색 */
-  cursor: pointer;     /* 마우스 올리면 손가락 모양 */
+  color: #666b6b;
+  /* 부드러운 회색 */
+  cursor: pointer;
+  /* 마우스 올리면 손가락 모양 */
   font-weight: 500;
   transition: all 0.2s;
-  user-select: none;   /* 텍스트 드래그 방지 */
+  user-select: none;
+  /* 텍스트 드래그 방지 */
 }
 
 /* 마우스를 올렸을 때 효과 */
 .link-text-click:hover {
-  color: #764ba2;          /* 강조 색상으로 변경 */
-  text-decoration: underline; /* 밑줄 추가로 클릭 유도 */
+  color: #764ba2;
+  /* 강조 색상으로 변경 */
+  text-decoration: underline;
+  /* 밑줄 추가로 클릭 유도 */
 }
 
 /* 헤더 정렬 확인 */
 .inquiry-header-row {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end; /* 제목과 텍스트 하단 높이 맞춤 */
+  align-items: flex-end;
+  /* 제목과 텍스트 하단 높이 맞춤 */
   margin-bottom: 20px;
 }
 
 .centered-action {
   display: flex;
-  justify-content: center; /* center에서 오른쪽으로 변경 */
+  justify-content: center;
+  /* center에서 오른쪽으로 변경 */
   margin-top: 20px;
 }
 
@@ -500,13 +595,13 @@
   8-3. 포인트 탭
    ========================================== */
 
-  /* 포인트 대시보드 상단 */
+/* 포인트 대시보드 상단 */
 .point-dashboard {
   background: linear-gradient(135deg, #fdfbfb 0%, #c7e2ff 100%);
   padding: 24px;
   border-radius: 16px;
   margin-bottom: 30px;
-  
+
   display: flex;
   justify-content: center;
 }
@@ -537,20 +632,25 @@
 
 /* 테이블 디자인 개선 */
 .data-table th {
-  background-color: #007bff; /* 아바타 배경색과 통일 */
-  color: #ffffff;            /* 글자색 흰색 */
+  background-color: #007bff;
+  /* 아바타 배경색과 통일 */
+  color: #ffffff;
+  /* 글자색 흰색 */
   padding: 16px 14px;
   font-size: 15px;
   font-weight: 700;
-  text-align: center !important;        /* 제목 중앙 정렬 */
+  text-align: center !important;
+  /* 제목 중앙 정렬 */
   border: none;
 }
 
 /* 2. 테이블 몸통: 중앙 정렬 및 틀어짐 방지 */
 .data-table td {
   padding: 16px 14px;
-  vertical-align: middle;    /* 세로 중앙 */
-  text-align: center;        /* 가로 중앙 */
+  vertical-align: middle;
+  /* 세로 중앙 */
+  text-align: center;
+  /* 가로 중앙 */
   border-bottom: 1px solid #f1f3f5;
   color: #444;
 }
@@ -558,9 +658,10 @@
 /* 3. 날짜 칸 배경색 제거 또는 통일 */
 /* 틀어져 보이는 원인이 될 수 있으므로, 배경색을 빼거나 연하게 처리합니다 */
 .data-table td.text-muted {
-  background-color: transparent; /* 배경색 제거 */
+  background-color: transparent;
+  /* 배경색 제거 */
   color: #868e96 !important;
-  
+
   font-size: 14px;
 }
 
@@ -568,7 +669,8 @@
 /* 만약 금액도 중앙이 좋다면 이 부분은 삭제하세요 */
 .data-table td.text-right {
   text-align: right;
-  padding-right: 30px; /* 우측 여백 확보 */
+  padding-right: 30px;
+  /* 우측 여백 확보 */
 }
 
 /* 5. 배지 중앙 정렬 보정 */
@@ -580,22 +682,37 @@
 
 /* 3. 호버 시 줄 전체 효과 */
 .hover-row:hover {
-    background-color: #f0f7ff; /* 마우스 올렸을 때 색상 */
+  background-color: #f0f7ff;
+  /* 마우스 올렸을 때 색상 */
 }
 
 /* 포인트 변동 색상 */
 .color-plus {
-  color: #007bff; /* 초록색 (적립) */
+  color: #007bff;
+  /* 초록색 (적립) */
 }
 
 .color-minus {
-  color: #e74c3c; /* 빨간색 (사용) */
+  color: #e74c3c;
+  /* 빨간색 (사용) */
 }
 
-.text-right { text-align: right; }
-.font-bold { font-weight: 700; }
-.font-medium { font-weight: 500; }
-.text-muted { color: #bdc3c7; font-size: 13px; }
+.text-right {
+  text-align: right;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.text-muted {
+  color: #bdc3c7;
+  font-size: 13px;
+}
 
 /* 포인트 전용 알약 모양 배지 */
 .badge-pill {
@@ -605,23 +722,49 @@
   font-weight: 600;
 }
 
-.badge-save { background-color: rgba(46, 204, 113, 0.1); color: #27ae60; }
-.badge-use { background-color: rgba(189, 195, 199, 0.2); color: #7f8c8d; }
+.badge-save {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: #27ae60;
+}
+
+.badge-use {
+  background-color: rgba(189, 195, 199, 0.2);
+  color: #7f8c8d;
+}
 
 
 /* ==========================================
    9. 반응형 (Responsive)
    ========================================== */
 @media (max-width: 768px) {
-  .mypage-header { flex-direction: column; gap: 20px; text-align: center; }
-  .user-points { text-align: center; }
-  .plan-grid { grid-template-columns: 1fr; }
-  .mypage-tabs { overflow-x: auto; }
-  .tab { white-space: nowrap; }
+  .mypage-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .user-points {
+    text-align: center;
+  }
+
+  .plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mypage-tabs {
+    overflow-x: auto;
+  }
+
+  .tab {
+    white-space: nowrap;
+  }
 }
 
 /* ─── 여행 성향 키워드 칩 ─── */
-.keyword-section { flex-direction: column; align-items: flex-start; }
+.keyword-section {
+  flex-direction: column;
+  align-items: flex-start;
+}
 
 .keyword-grid {
   display: grid;
@@ -653,5 +796,3 @@
   color: white;
   font-weight: 600;
 }
-
-

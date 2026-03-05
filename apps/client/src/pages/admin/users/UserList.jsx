@@ -7,6 +7,7 @@ function UserList() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [counts, setCounts] = useState({ total: 0, user: 0, admin: 0 });
 
   const [keyword, setKeyword] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
@@ -18,6 +19,11 @@ function UserList() {
       setUsers(data.content || []);
       setTotalElements(data.totalElements || 0);
       setTotalPages(data.totalPages || 0);
+
+      // 초기 로딩이거나 검색/필터가 없을 때 전체 카운트 업데이트
+      if (!kw && !role) {
+        setCounts(prev => ({ ...prev, total: data.totalElements || 0 }));
+      }
     } catch (err) {
       console.error('회원 목록 로드 실패:', err);
       alert('데이터를 불러오지 못했습니다.');
@@ -26,9 +32,29 @@ function UserList() {
     }
   };
 
+  const fetchCounts = async () => {
+    try {
+      const [uData, aData] = await Promise.all([
+        getUsers(0, 1, '', 'USER'),
+        getUsers(0, 1, '', 'ADMIN')
+      ]);
+      setCounts(prev => ({
+        ...prev,
+        user: uData.totalElements || 0,
+        admin: aData.totalElements || 0
+      }));
+    } catch (err) {
+      console.error('카운트 로드 실패:', err);
+    }
+  };
+
   useEffect(() => {
     fetchUsers(page, keyword, roleFilter);
   }, [page]);
+
+  useEffect(() => {
+    fetchCounts();
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -99,16 +125,16 @@ function UserList() {
           style={{ cursor: 'pointer', borderLeft: roleFilter === '' ? '4px solid #005ADE' : '4px solid transparent' }}
         >
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>전체 회원</h4>
-          <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{totalElements.toLocaleString()}명</p>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{counts.total.toLocaleString()}명</p>
         </div>
         <div
           className="card"
           onClick={() => handleRoleFilter('USER')}
           style={{ cursor: 'pointer', borderLeft: roleFilter === 'USER' ? '4px solid #2ecc71' : '4px solid transparent' }}
         >
-          <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>일반 회원 필터</h4>
+          <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>일반 회원</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0, color: '#2ecc71' }}>
-            {roleFilter === 'USER' ? `${totalElements.toLocaleString()}명` : '-'}
+            {counts.user.toLocaleString()}명
           </p>
         </div>
         <div
@@ -116,9 +142,9 @@ function UserList() {
           onClick={() => handleRoleFilter('ADMIN')}
           style={{ cursor: 'pointer', borderLeft: roleFilter === 'ADMIN' ? '4px solid #e74c3c' : '4px solid transparent' }}
         >
-          <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>관리자 필터</h4>
+          <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>관리자</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0, color: '#e74c3c' }}>
-            {roleFilter === 'ADMIN' ? `${totalElements.toLocaleString()}명` : '-'}
+            {counts.admin.toLocaleString()}명
           </p>
         </div>
       </div>

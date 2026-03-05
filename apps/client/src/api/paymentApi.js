@@ -13,3 +13,6 @@ export const cancelPayment = (id) =>
 
 export const getPaymentStats = () =>
     api.get(`${BASE}/stats`).then(r => r.data);
+
+export const getTodaySales = () =>
+    api.get(`${BASE}/today-sales`).then(r => r.data);

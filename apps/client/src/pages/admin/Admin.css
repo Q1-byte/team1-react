@@ -76,11 +76,56 @@
   margin: 0;
 }
 
-.stat-card.blue { border-left: 4px solid #005ADE; }
-.stat-card.green { border-left: 4px solid #2C5F9E; }
-.stat-card.red { border-left: 4px solid #6495ED; }
-.stat-card.orange { border-left: 4px solid #007bff; }
-.stat-card.yellow { border-left: 4px solid #9b59b6; }
+.stat-card.blue {
+  border-left: 4px solid #005ADE;
+}
+
+.stat-card.green {
+  border-left: 4px solid #2C5F9E;
+}
+
+.stat-card.red {
+  border-left: 4px solid #6495ED;
+}
+
+.stat-card.orange {
+  border-left: 4px solid #007bff;
+}
+
+.stat-card.yellow {
+  border-left: 4px solid #9b59b6;
+}
+
+/* 매출 특수 카드 스타일 */
+.stat-card.sales-total {
+  background: linear-gradient(135deg, #2C5F9E 0%, #005ADE 100%);
+  border: none;
+  color: white;
+}
+
+.stat-card.sales-total h3,
+.stat-card.sales-total .stat-number,
+.stat-card.sales-total .stat-detail {
+  color: white !important;
+}
+
+.stat-card.sales-today {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border: none;
+  color: white;
+}
+
+.stat-card.sales-today h3,
+.stat-card.sales-today .stat-number,
+.stat-card.sales-today .stat-detail {
+  color: white !important;
+}
+
+.stat-detail {
+  font-size: 12px;
+  color: #999;
+  margin: 12px 0 0 0;
+}
 
 /* 버튼 스타일 */
 .btn {
@@ -346,6 +391,11 @@
 .badge-success {
   background: #e6f4ea;
   color: #2e7d32;
+}
+
+.badge-warning {
+  background: #fff3e0;
+  color: #e65100;
 }
 
 /* 소형 버튼 */
