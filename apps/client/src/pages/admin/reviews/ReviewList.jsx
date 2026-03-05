@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
-import api from '../../../api';
+import api from '../../../api/axiosConfig';
 
 function ReviewList() {
   const [reviews, setReviews] = useState([]);
+  const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
   const fetchReviews = () => {
     setLoading(true);
-    api.get('/admin/reviews', { params: { size: 100 } })
+    api.get('/api/admin/reviews', { params: { page: 0, size: 100 } })
       .then(res => {
-        setReviews(res.data.content || []);
+        const data = res.data?.data ?? res.data;
+        setReviews(data.content || []);
+        setTotalElements(data.totalElements || data.length || 0);
       })
       .catch(err => {
         console.error('리뷰 목록 조회 실패:', err);
@@ -26,7 +29,7 @@ function ReviewList() {
 
   const handleDelete = (id) => {
     if (window.confirm('후기를 삭제하시겠습니까?')) {
-      api.delete(`/admin/reviews/${id}`)
+      api.delete(`/api/admin/reviews/${id}`)
         .then(() => {
           alert('삭제되었습니다.');
           fetchReviews();
@@ -39,7 +42,7 @@ function ReviewList() {
   };
 
   const toggleHidden = (id) => {
-    api.patch(`/admin/reviews/${id}/visibility`)
+    api.patch(`/api/admin/reviews/${id}/visibility`)
       .then(() => {
         fetchReviews();
       })
@@ -80,7 +83,7 @@ function ReviewList() {
         <div className="card">
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>총 후기 수</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
-            {visibleReviews.length}건
+            {totalElements.toLocaleString()}건
           </p>
         </div>
         <div className="card">
