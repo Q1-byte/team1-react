@@ -124,7 +124,7 @@ function InquiryList() {
         <div className="card" onClick={() => handleStatusFilter('ANSWERED')} style={{ cursor: 'pointer' }}>
           <h4 style={{ margin: '0 0 8px 0', color: '#7f8c8d', fontSize: '14px' }}>답변 완료</h4>
           <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0, color: '#2ecc71' }}>
-            {inquiries.filter(i => i.status === 'ANSWERED').length}건
+            {Math.max(0, totalElements - waitingCount)}건
           </p>
         </div>
       </div>
