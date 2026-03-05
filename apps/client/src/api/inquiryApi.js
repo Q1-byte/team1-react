@@ -61,9 +61,9 @@ export const deleteAdminInquiryApi = async (id) => {
   return response.data;
 };
 
-// 답변 대기 문의 수 (관리자)
-export const getWaitingCountApi = async () => {
-  const response = await api.get('/api/admin/inquiries/waiting-count');
+// 문의 통계 조회 (전체, 대기, 답변완료)
+export const getAdminInquiryStatsApi = async () => {
+  const response = await api.get('/api/admin/inquiries/stats');
   return response.data.data;
 };
 
