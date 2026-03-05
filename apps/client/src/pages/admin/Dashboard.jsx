@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getUsers } from '../../api/userApi';
 import { getSpots } from '../../api/spotApi';
 import { getPayments } from '../../api/paymentApi';
+import { getAdminInquiryStatsApi } from '../../api/inquiryApi';
 import { getEvents } from '../../api/eventApi';
 import api from '../../api/axiosConfig';
 import './Admin.css';
@@ -28,7 +29,7 @@ function AdminDashboard() {
           getUsers(0, 1),
           getSpots(0, 1),
           getPayments(0, 1, 'COMPLETED'),
-          api.get('/api/admin/inquiries/waiting-count').then(r => ({ waiting: r.data?.data ?? r.data })),
+          getAdminInquiryStatsApi(),
           api.get('/api/admin/reviews', { params: { size: 1 } }).then(r => r.data),
           api.get('/api/admin/payments/today-sales').then(r => r.data),
           api.get('/api/admin/payments/stats').then(r => r.data),
