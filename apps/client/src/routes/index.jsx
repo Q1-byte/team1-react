@@ -6,6 +6,7 @@ import React from 'react';
 // 페이지 임포트
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
+import FindPassword from '../pages/auth/FindPassword';
 import OAuthCallback from '../pages/auth/OAuthCallback';
 import MyPage from '../pages/mypage/MyPage';
 import GachaPage from '../pages/gacha/GachaPage';
@@ -156,6 +157,7 @@ export const router = createBrowserRouter([
   // 3. 인증 관련 (GuestRoute/ProtectedRoute 적용)
   { path: '/login', element: <GuestRoute><Login /></GuestRoute> },
   { path: '/register', element: <GuestRoute><Register /></GuestRoute> },
+  { path: '/find-password', element: <GuestRoute><FindPassword /></GuestRoute> },
   { path: '/oauth/callback', element: <OAuthCallback /> },
   { path: '/mypage', element: <ProtectedRoute><MyPage /></ProtectedRoute> },
 

@@ -232,6 +232,62 @@ export const checkUsernameApi = async (username) => {
 };
 
 /**
+ * 본인 확인 API (아이디 + 이메일 일치 여부)
+ */
+export const verifyUserApi = async (username, email) => {
+  if (USE_MOCK) {
+    const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+    const user = users.find(u => u.username === username && u.email === email);
+    if (!user) {
+      throw new Error('아이디 또는 이메일이 일치하지 않습니다.');
+    }
+    return { success: true };
+  }
+
+  const response = await fetch(`${API_BASE_URL}/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ username, email }),
+  });
+
+  const result = await response.json();
+  if (!result.success) {
+    throw new Error(result.message || '아이디 또는 이메일이 일치하지 않습니다.');
+  }
+
+  return result;
+};
+
+/**
+ * 비밀번호 재설정 API
+ */
+export const resetPasswordApi = async (username, newPassword) => {
+  if (USE_MOCK) {
+    const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+    const updated = users.map(u =>
+      u.username === username ? { ...u, password: newPassword } : u
+    );
+    localStorage.setItem('mock_users', JSON.stringify(updated));
+    return { success: true };
+  }
+
+  const response = await fetch(`${API_BASE_URL}/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ username, newPassword }),
+  });
+
+  const result = await response.json();
+  if (!result.success) {
+    throw new Error(result.message || '비밀번호 변경에 실패했습니다.');
+  }
+
+  return result;
+};
+
+/**
  * 이메일 중복 체크 API
  */
 export const checkEmailApi = async (email) => {
